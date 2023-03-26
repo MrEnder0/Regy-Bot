@@ -1,4 +1,4 @@
-use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::ChannelId}, prelude::*};
+use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, GuildId}}, prelude::*};
 use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}};
 use regex::Regex;
 
@@ -94,6 +94,41 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         msg.channel_id.say(ctx, echo).await?;
     } else if arg == "amdev" {
         msg.reply(ctx, "Yes master uwu xo").await?;
+    } else if arg == "notify" {
+        let guild_id = msg.guild_id.expect("This is a guild");
+        let mut members = guild_id.members(&ctx, None, None).await.expect("Could not get members");
+
+        members.retain(|member| !member.user.bot);
+        for member in members {
+            let user_id = member.user.id;
+            let channel = user_id.create_dm_channel(&ctx).await.expect("Could not create dm channel");
+            match channel.send_message(&ctx, |m| {
+                m.content("Hello there! **This is a test notification from Regy. (maybe your second...)** In the future this **will only be used for major info**, **if you wish to not receive these notifications** right-click my pfp on our dms and select mute and then until I turn it back on this will make your discord not get notified by these messages.")
+            }).await {
+                Ok(_) => {
+                    println!("Sent notification to {}", user_id);
+                    tokio::time::sleep(tokio::time::Duration::from_millis(25)).await;
+                },
+                Err(e) => {
+                    eprintln!("Could not send message to {}: {:?}", user_id, e);
+                }
+            }
+        }
+        println!("Notified all members");
+
+
+        //let guild = msg.guild(&ctx.cache).await.unwrap();
+        //println!("Pending to send message to {} members in guild", guild.member_count);
+        //let members = guild.members(&ctx.http, None, None).await.unwrap();
+        //for member in members {
+        //    if let Err(why) = member.user.dm(&ctx.http, |m| m.content("Hello there! **This is a test notification from Regy.** In the future this **will only be used for major info**, **if you wish to not receive these notifications** right-click my pfp on our dms and select mute and then until I turn it back on this will make your discord not get notified by these messages.")).await {
+        //        println!("Error sending message: {:?}", why);
+        //    } else {
+        //        println!("Sent message to {}", member.user.name);
+        //    }
+        //    tokio::time::sleep(tokio::time::Duration::from_millis(22)).await;
+        //}
+
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
         msg.reply(ctx, invalid_arg_message).await?;
@@ -134,7 +169,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         let mut regex_file = OpenOptions::new().append(true).open("regex").expect("Unable to open regex");
         regex_file.write_all(regex.as_bytes()).expect("Unable to write to regex");
         regex_file.write_all("\n".as_bytes()).expect("Unable to write to regex");
-        let reply_message = format!("Successfully added the following phrase to the blocked regex phrases:\n{}", regex);
+        let reply_message = format!("Successfully added the following phrase to the blocked regex phrases:\n||```{}```||", regex);
         msg.reply(ctx, reply_message).await?;
     } else if arg == "listregex" {
         let mut regex_file = File::open("regex").expect("Unable to open regex");
