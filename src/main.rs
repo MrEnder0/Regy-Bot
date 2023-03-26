@@ -37,8 +37,8 @@ impl EventHandler for Handler {
                             msg.author.dm(&ctx.http, |m| m.content(format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment."))).await.expect("Unable to dm user");
                             //send message in log channel
                             let log_channel = ChannelId(977663676574204054);
-                            log_channel.say(&ctx.http, format!("`{}` sent a message that matched a regex pattern", msg.author.id)).await.unwrap();
-                            println!("{} sent a message that matched a regex pattern", msg.author.id);
+                            log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content)).await.unwrap();
+                            println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
                             let ctx_clone = ctx.clone();
                             tokio::spawn(async move {
                                 tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
