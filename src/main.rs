@@ -1,4 +1,4 @@
-use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready}, prelude::*};
+use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::ChannelId}, prelude::*};
 use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}};
 use regex::Regex;
 
@@ -34,6 +34,10 @@ impl EventHandler for Handler {
                                 println!("Error deleting message: {:?}", why);
                             }
                             let message_id = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
+                            msg.author.dm(&ctx.http, |m| m.content(format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment."))).await.expect("Unable to dm user");
+                            //send message in log channel
+                            let log_channel = ChannelId(977663676574204054);
+                            log_channel.say(&ctx.http, format!("`{}` sent a message that matched a regex pattern", msg.author.id)).await.unwrap();
                             println!("{} sent a message that matched a regex pattern", msg.author.id);
                             let ctx_clone = ctx.clone();
                             tokio::spawn(async move {
@@ -69,12 +73,12 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         msg.reply(ctx, "You need to specify an dev command you silly uwu kitten :heart:").await?;
         return Ok(());
     } else if arg == "help" {
-        msg.reply(ctx, "The dev commands are:\n\n`dev help` - Shows this message\n`dev runid` - Shows the runID of the bot\n`dev rust` - Says why Rust is the best programming language\n`dev echo` - Echoes the message\n`dev amdev` - Says if you are dev").await?;
+        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev runid` - Shows the runID of the bot\n`dev rust` - Says why Rust is the best programming language\n`dev echo` - Echoes the message\n`dev amdev` - Says if you are dev").await?;
     } else if arg == "runid" {
         let mut run_id_file = File::open("runID").expect("Unable to open runID");
         let mut run_id = String::new();
         run_id_file.read_to_string(&mut run_id).expect("Unable to read runID");
-        let status_message = format!("The session runID is:\n{}", run_id);
+        let status_message = format!("The session runID is:\n`{}`", run_id);
         msg.reply(ctx, status_message).await?;
     } else if arg == "rust" {
         msg.reply(ctx, "Rust is an excellent programming language that offers a unique combination of safety, speed, and concurrency. It is a modern language designed to provide low-level control and system-level programming, while also ensuring memory safety and preventing many common programming errors such as null pointer dereferences and buffer overflows. Rust achieves this by using a system of ownership and borrowing that guarantees at compile-time that programs are free of these errors. Additionally, Rust's concurrency model allows developers to write efficient and safe concurrent code, making it an ideal choice for building scalable and high-performance applications.\n\nAnother reason why Rust is the best language is its vibrant and growing community. Rust has a passionate and dedicated community of developers who actively contribute to the language, libraries, and tools. This community is committed to creating high-quality and reliable software that is both performant and secure. Additionally, Rust's popularity is on the rise, and many companies, including Mozilla, Dropbox, and Cloudflare, have adopted Rust for their critical systems and applications. As a result, there are numerous resources available for learning Rust, including online courses, books, and tutorials, making it easy for new developers to get started with the language. Overall, Rust's unique combination of safety, speed, and community support makes it an excellent choice for building robust and scalable software systems.").await.expect("Sadly could not say why Rust is the best programming language.");
@@ -116,7 +120,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         msg.reply(ctx, "You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
         return Ok(());
     } else if arg == "help" {
-        msg.reply(ctx, "The staff commands are:\n\n`staff help` - Shows this message\n`staff addregex` - Add a new regex phrase to the list\n`staff listregex` - Lists all the current blocked regex phrases\n`staff amstaff` - Says if you are staff").await?;
+        msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff addregex` - Add a new regex phrase to the list\n`staff listregex` - Lists all the current blocked regex phrases\n`staff amstaff` - Says if you are staff").await?;
     } else if arg == "addregex" {
         //run a for loop on the args and add them to the regex file all together on one line
         let mut args = msg.content.split(" ");
