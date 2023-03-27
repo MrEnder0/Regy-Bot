@@ -1,5 +1,8 @@
+mod toml_manager;
+
 use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}}, prelude::*};
-use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}};
+use toml_manager::{gen_config, load_config};
+use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}, path::Path};
 use regex::Regex;
 
 struct Handler;
@@ -12,48 +15,50 @@ struct General;
 impl EventHandler for Handler {
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
-        let mut run_id_file = File::open("runID").expect("Unable to open runID");
-        let mut run_id = String::new();
-        run_id_file.read_to_string(&mut run_id).expect("Unable to read runID");
-        let run_id = run_id.parse::<u64>().expect("Unable to parse runID");
-        let mut run_id_file = File::create("runID").expect("Unable to open runID");
-        run_id_file.write_all((run_id + 1).to_string().as_bytes()).expect("Unable to write runID");
     }
     async fn message(&self, ctx: Context, msg: Message) {
         let content = msg.content.chars().rev().collect::<String>();
         if !content.is_empty() {
-            if !msg.author.bot {
-                //if bot pinged
-                if msg.mentions_user_id(ctx.cache.current_user_id().await) {
-                    let ctx = ctx.clone();
-                    msg.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
-                }
-                if msg.author.id != 687897073047306270 {
-                    let regex_file = File::open("regex").expect("Unable to open regex");
-                    let reader = BufReader::new(regex_file);
-                    let regex: Vec<String> = reader.lines().map(|line| line.unwrap()).collect();
 
-                    for regex in regex {
-                        if Regex::new(&regex).expect("Unable to parse regex").is_match(msg.content.as_str()) {
-                            if let Err(why) = msg.delete(&ctx.http).await {
-                                println!("Error deleting message: {:?}", why);
-                            }
-                            let message_id = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
-                            msg.author.dm(&ctx.http, |m| m.content(format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment."))).await.expect("Unable to dm user");
-                            //send message in log channel
-                            let log_channel = ChannelId(977663676574204054);
-                            log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content)).await.unwrap();
-                            println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
-                            let ctx_clone = ctx.clone();
-                            tokio::spawn(async move {
-                                tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
-                                if let Err(why) = msg.channel_id.delete_message(&ctx_clone.http, message_id).await {
-                                    println!("Error deleting message: {:?}", why);
-                                }
-                            });
-                            return;
-                        }
+            //Ignores messages from bots
+            if msg.author.bot {
+                return;
+            }
+            
+            //Reply to pings
+            if msg.mentions_user_id(ctx.cache.current_user_id().await) {
+                let ctx = ctx.clone();
+                msg.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
+            }
+
+            //Ignores messages from staff
+            if msg.author.id == 687897073047306270 {
+                return;
+            }
+
+            let regex_file = File::open("regex").expect("Unable to open regex");
+            let reader = BufReader::new(regex_file);
+            let regex: Vec<String> = reader.lines().map(|line| line.unwrap()).collect();
+
+            for regex in regex {
+                if Regex::new(&regex).expect("Unable to parse regex").is_match(msg.content.as_str()) {
+                    if let Err(why) = msg.delete(&ctx.http).await {
+                        println!("Error deleting message: {:?}", why);
                     }
+                    let message_id = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
+                    msg.author.dm(&ctx.http, |m| m.content(format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment."))).await.expect("Unable to dm user");
+                    //send message in log channel
+                    let log_channel = ChannelId(977663676574204054);
+                    log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content)).await.unwrap();
+                    println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
+                    let ctx_clone = ctx.clone();
+                    tokio::spawn(async move {
+                        tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+                        if let Err(why) = msg.channel_id.delete_message(&ctx_clone.http, message_id).await {
+                            println!("Error deleting message: {:?}", why);
+                        }
+                    });
+                    return;
                 }
             }
         }
@@ -79,14 +84,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
     
     } else if arg == "help" {
-        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev run_id` - Shows the runID of the bot\n`dev echo` - Echoes the message\n`dev am_dev` - Says if you are dev").await?;
-    
-    } else if arg == "run_id" {
-        let mut run_id_file = File::open("runID").expect("Unable to open runID");
-        let mut run_id = String::new();
-        run_id_file.read_to_string(&mut run_id).expect("Unable to read runID");
-        let status_message = format!("The session runID is:\n`{}`", run_id);
-        msg.reply(ctx, status_message).await?;
+        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev echo` - Echoes the message\n`dev am_dev` - Says if you are dev").await?;
     
     } else if arg == "echo" {
         if let Err(why) = msg.delete(&ctx.http).await {
@@ -255,7 +253,15 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[tokio::main]
 async fn main() {
-    let token = "token";
+    //check for config file
+    if !Path::new("config.toml").exists() {
+        gen_config();
+    }
+
+    //load config
+    let config = load_config();
+    let token = config.token;
+    let staff = config.staff;
 
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("<|"))
