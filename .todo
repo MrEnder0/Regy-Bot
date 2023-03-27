@@ -5,4 +5,3 @@ Note none of these plans are guaranteed and also their may be other changes that
 [ ] Use database (sqlite)
 [ ] Remove runID thing
 [ ] Use toml system for staff and dev roles and token
-[ ] Add pfp / banner graber commands
