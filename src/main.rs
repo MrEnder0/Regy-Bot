@@ -79,9 +79,9 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
     
     } else if arg == "help" {
-        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev runid` - Shows the runID of the bot\n`dev echo` - Echoes the message\n`dev amdev` - Says if you are dev").await?;
+        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev run_id` - Shows the runID of the bot\n`dev echo` - Echoes the message\n`dev am_dev` - Says if you are dev").await?;
     
-    } else if arg == "runid" {
+    } else if arg == "run_id" {
         let mut run_id_file = File::open("runID").expect("Unable to open runID");
         let mut run_id = String::new();
         run_id_file.read_to_string(&mut run_id).expect("Unable to read runID");
@@ -98,7 +98,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
             echo.push(' ');
         }
         msg.channel_id.say(ctx, echo).await?;
-    } else if arg == "amdev" {
+    } else if arg == "am_dev" {
         msg.reply(ctx, "Yes master uwu xo").await?;
 
     /*} else if arg == "notify" {
@@ -162,7 +162,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
 
     } else if arg == "help" {
-        msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff add_regex` - Add a new regex phrase to the list\n`staff list_regex` - Lists all the current blocked regex phrases\n`staff grab_pfp` - Grabs a specified users pfp\n`staff grab_banner` - Grabs a specified users banner\n`staff amstaff` - Says if you are staff").await?;
+        msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff add_regex` - Add a new regex phrase to the list\n`staff list_regex` - Lists all the current blocked regex phrases\n`staff grab_pfp` - Grabs a specified users pfp\n`staff grab_banner` - Grabs a specified users banner\n`staff am_staff` - Says if you are staff").await?;
     } else if arg == "add_regex" {
         let mut args = msg.content.split(" ");
         args.next();
@@ -216,8 +216,8 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         let user = UserId(user_id).to_user(ctx).await?;
         msg.reply(ctx, user.banner_url().unwrap_or("This user does not have a banner".to_string())).await?;
 
-    } else if arg == "amstaff" {
-        msg.reply(ctx, "Yes master uwu xo").await?;
+    } else if arg == "am_staff" {
+        msg.reply(ctx, "Yes master uwu xo... Now do some moderation and stop making me do it :|").await?;
 
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
@@ -237,12 +237,12 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
 
     } else if arg == "help" {
-        msg.reply(ctx, "The user commands are:\n`user help` - Shows this message\n`user whyrust` - Shows why rust is the best language\n`user amuser` - Says if you are a user...").await?;
+        msg.reply(ctx, "The user commands are:\n`user help` - Shows this message\n`user why_rust` - Shows why rust is the best language\n`user am_user` - Says if you are a user...").await?;
 
-    } else if arg == "amuser" {
+    } else if arg == "am_user" {
         msg.reply(ctx, "Why would you not be a user you skid :skull:").await?;
 
-    } else if arg == "whyrust" {
+    } else if arg == "why_rust" {
         msg.reply(ctx, "Rust is an excellent programming language that offers a unique combination of safety, speed, and concurrency. It is a modern language designed to provide low-level control and system-level programming, while also ensuring memory safety and preventing many common programming errors such as null pointer dereferences and buffer overflows. Rust achieves this by using a system of ownership and borrowing that guarantees at compile-time that programs are free of these errors. Additionally, Rust's concurrency model allows developers to write efficient and safe concurrent code, making it an ideal choice for building scalable and high-performance applications.\n\nAnother reason why Rust is the best language is its vibrant and growing community. Rust has a passionate and dedicated community of developers who actively contribute to the language, libraries, and tools. This community is committed to creating high-quality and reliable software that is both performant and secure. Additionally, Rust's popularity is on the rise, and many companies, including Mozilla, Dropbox, and Cloudflare, have adopted Rust for their critical systems and applications. As a result, there are numerous resources available for learning Rust, including online courses, books, and tutorials, making it easy for new developers to get started with the language. Overall, Rust's unique combination of safety, speed, and community support makes it an excellent choice for building robust and scalable software systems.").await.expect("Sadly could not say why Rust is the best programming language.");
 
     } else {
