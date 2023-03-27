@@ -1,11 +1,11 @@
-use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, GuildId}}, prelude::*};
+use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId}}, prelude::*};
 use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}};
 use regex::Regex;
 
 struct Handler;
 
 #[group]
-#[commands(dev, staff)]
+#[commands(dev, staff, user)]
 struct General;
 
 #[async_trait]
@@ -94,7 +94,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         msg.channel_id.say(ctx, echo).await?;
     } else if arg == "amdev" {
         msg.reply(ctx, "Yes master uwu xo").await?;
-    } else if arg == "notify" {
+    /*} else if arg == "notify" {
         let guild_id = msg.guild_id.expect("This is a guild");
         let mut members = guild_id.members(&ctx, None, None).await.expect("Could not get members");
 
@@ -127,8 +127,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         //        println!("Sent message to {}", member.user.name);
         //    }
         //    tokio::time::sleep(tokio::time::Duration::from_millis(22)).await;
-        //}
-
+        }*/
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
         msg.reply(ctx, invalid_arg_message).await?;
@@ -183,6 +182,26 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         msg.reply(ctx, status_message).await?;
     } else if arg == "amstaff" {
         msg.reply(ctx, "Yes master uwu xo").await?;
+    } else {
+        let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
+        msg.reply(ctx, invalid_arg_message).await?;
+    }
+
+    Ok(())
+}
+
+#[command]
+async fn user(ctx: &Context, msg: &Message) -> CommandResult {
+    let mut args = msg.content.split(" ");
+    args.next();
+    let arg = args.next().unwrap_or("none");
+    if arg == "none" {
+        msg.reply(ctx, "You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
+        return Ok(());
+    } else if arg == "help" {
+        msg.reply(ctx, "The user commands are:\n`user help` - Shows this message\n`user amuser` - Says if you are a user...").await?;
+    } else if arg == "amuser" {
+        msg.reply(ctx, "Why would you not be a user you skid :skull:").await?;
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
         msg.reply(ctx, invalid_arg_message).await?;
