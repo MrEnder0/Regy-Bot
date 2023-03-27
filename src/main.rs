@@ -164,7 +164,6 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
     } else if arg == "help" {
         msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff add_regex` - Add a new regex phrase to the list\n`staff list_regex` - Lists all the current blocked regex phrases\n`staff grab_pfp` - Grabs a specified users pfp\n`staff grab_banner` - Grabs a specified users banner\n`staff amstaff` - Says if you are staff").await?;
     } else if arg == "add_regex" {
-        //run a for loop on the args and add them to the regex file all together on one line
         let mut args = msg.content.split(" ");
         args.next();
         args.next();
@@ -173,6 +172,13 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             regex.push_str(arg);
             regex.push_str(" ");
         }
+
+        //Prevents for empty regex
+        if regex.is_empty() || regex == " " {
+            msg.reply(ctx, "You need to specify a regex phrase to add, we don't want to block all messages right???").await?;
+            return Ok(());
+        }
+
         let mut regex_file = OpenOptions::new().append(true).open("regex").expect("Unable to open regex");
         regex_file.write_all(regex.as_bytes()).expect("Unable to write to regex");
         regex_file.write_all("\n".as_bytes()).expect("Unable to write to regex");
