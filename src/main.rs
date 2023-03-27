@@ -1,4 +1,4 @@
-use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId}}, prelude::*};
+use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}}, prelude::*};
 use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}};
 use regex::Regex;
 
@@ -77,16 +77,17 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
     if arg == "none" {
         msg.reply(ctx, "You need to specify an dev command you silly uwu kitten :heart:").await?;
         return Ok(());
+    
     } else if arg == "help" {
-        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev runid` - Shows the runID of the bot\n`dev rust` - Says why Rust is the best programming language\n`dev echo` - Echoes the message\n`dev amdev` - Says if you are dev").await?;
+        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev runid` - Shows the runID of the bot\n`dev echo` - Echoes the message\n`dev amdev` - Says if you are dev").await?;
+    
     } else if arg == "runid" {
         let mut run_id_file = File::open("runID").expect("Unable to open runID");
         let mut run_id = String::new();
         run_id_file.read_to_string(&mut run_id).expect("Unable to read runID");
         let status_message = format!("The session runID is:\n`{}`", run_id);
         msg.reply(ctx, status_message).await?;
-    } else if arg == "rust" {
-        msg.reply(ctx, "Rust is an excellent programming language that offers a unique combination of safety, speed, and concurrency. It is a modern language designed to provide low-level control and system-level programming, while also ensuring memory safety and preventing many common programming errors such as null pointer dereferences and buffer overflows. Rust achieves this by using a system of ownership and borrowing that guarantees at compile-time that programs are free of these errors. Additionally, Rust's concurrency model allows developers to write efficient and safe concurrent code, making it an ideal choice for building scalable and high-performance applications.\n\nAnother reason why Rust is the best language is its vibrant and growing community. Rust has a passionate and dedicated community of developers who actively contribute to the language, libraries, and tools. This community is committed to creating high-quality and reliable software that is both performant and secure. Additionally, Rust's popularity is on the rise, and many companies, including Mozilla, Dropbox, and Cloudflare, have adopted Rust for their critical systems and applications. As a result, there are numerous resources available for learning Rust, including online courses, books, and tutorials, making it easy for new developers to get started with the language. Overall, Rust's unique combination of safety, speed, and community support makes it an excellent choice for building robust and scalable software systems.").await.expect("Sadly could not say why Rust is the best programming language.");
+    
     } else if arg == "echo" {
         if let Err(why) = msg.delete(&ctx.http).await {
             println!("Error deleting message: {:?}", why);
@@ -99,6 +100,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         msg.channel_id.say(ctx, echo).await?;
     } else if arg == "amdev" {
         msg.reply(ctx, "Yes master uwu xo").await?;
+
     /*} else if arg == "notify" {
         let guild_id = msg.guild_id.expect("This is a guild");
         let mut members = guild_id.members(&ctx, None, None).await.expect("Could not get members");
@@ -121,7 +123,6 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         }
         println!("Notified all members");
 
-
         //let guild = msg.guild(&ctx.cache).await.unwrap();
         //println!("Pending to send message to {} members in guild", guild.member_count);
         //let members = guild.members(&ctx.http, None, None).await.unwrap();
@@ -133,6 +134,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         //    }
         //    tokio::time::sleep(tokio::time::Duration::from_millis(22)).await;
         }*/
+
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
         msg.reply(ctx, invalid_arg_message).await?;
@@ -158,9 +160,10 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
     if arg == "none" {
         msg.reply(ctx, "You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
         return Ok(());
+
     } else if arg == "help" {
-        msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff addregex` - Add a new regex phrase to the list\n`staff listregex` - Lists all the current blocked regex phrases\n`staff amstaff` - Says if you are staff").await?;
-    } else if arg == "addregex" {
+        msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff add_regex` - Add a new regex phrase to the list\n`staff list_regex` - Lists all the current blocked regex phrases\n`staff grab_pfp` - Grabs a specified users pfp\n`staff grab_banner` - Grabs a specified users banner\n`staff amstaff` - Says if you are staff").await?;
+    } else if arg == "add_regex" {
         //run a for loop on the args and add them to the regex file all together on one line
         let mut args = msg.content.split(" ");
         args.next();
@@ -175,7 +178,8 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         regex_file.write_all("\n".as_bytes()).expect("Unable to write to regex");
         let reply_message = format!("Successfully added the following phrase to the blocked regex phrases:\n||```{}```||", regex);
         msg.reply(ctx, reply_message).await?;
-    } else if arg == "listregex" {
+
+    } else if arg == "list_regex" {
         let mut regex_file = File::open("regex").expect("Unable to open regex");
         let mut regex = String::new();
         regex_file.read_to_string(&mut regex).expect("Unable to read regex");
@@ -185,8 +189,30 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         }
         let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```{}```||", regex);
         msg.reply(ctx, status_message).await?;
+
+    } else if arg == "grab_pfp" {
+        let user_id = args.next().unwrap_or("none");
+        if user_id == "none" {
+            msg.reply(ctx, "You need to specify a user id you silly kitten :heart:").await?;
+            return Ok(());
+        }
+        let user_id = user_id.parse::<u64>().unwrap();
+        let user = UserId(user_id).to_user(ctx).await?;
+        msg.reply(ctx, user.face()).await?;
+    
+    } else if arg == "grab_banner" {
+        let user_id = args.next().unwrap_or("none");
+        if user_id == "none" {
+            msg.reply(ctx, "You need to specify a user id you silly kitten :heart:").await?;
+            return Ok(());
+        }
+        let user_id = user_id.parse::<u64>().unwrap();
+        let user = UserId(user_id).to_user(ctx).await?;
+        msg.reply(ctx, user.banner_url().unwrap_or("This user does not have a banner".to_string())).await?;
+
     } else if arg == "amstaff" {
         msg.reply(ctx, "Yes master uwu xo").await?;
+
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
         msg.reply(ctx, invalid_arg_message).await?;
@@ -203,10 +229,16 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
     if arg == "none" {
         msg.reply(ctx, "You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
         return Ok(());
+
     } else if arg == "help" {
-        msg.reply(ctx, "The user commands are:\n`user help` - Shows this message\n`user amuser` - Says if you are a user...").await?;
+        msg.reply(ctx, "The user commands are:\n`user help` - Shows this message\n`user whyrust` - Shows why rust is the best language\n`user amuser` - Says if you are a user...").await?;
+
     } else if arg == "amuser" {
         msg.reply(ctx, "Why would you not be a user you skid :skull:").await?;
+
+    } else if arg == "whyrust" {
+        msg.reply(ctx, "Rust is an excellent programming language that offers a unique combination of safety, speed, and concurrency. It is a modern language designed to provide low-level control and system-level programming, while also ensuring memory safety and preventing many common programming errors such as null pointer dereferences and buffer overflows. Rust achieves this by using a system of ownership and borrowing that guarantees at compile-time that programs are free of these errors. Additionally, Rust's concurrency model allows developers to write efficient and safe concurrent code, making it an ideal choice for building scalable and high-performance applications.\n\nAnother reason why Rust is the best language is its vibrant and growing community. Rust has a passionate and dedicated community of developers who actively contribute to the language, libraries, and tools. This community is committed to creating high-quality and reliable software that is both performant and secure. Additionally, Rust's popularity is on the rise, and many companies, including Mozilla, Dropbox, and Cloudflare, have adopted Rust for their critical systems and applications. As a result, there are numerous resources available for learning Rust, including online courses, books, and tutorials, making it easy for new developers to get started with the language. Overall, Rust's unique combination of safety, speed, and community support makes it an excellent choice for building robust and scalable software systems.").await.expect("Sadly could not say why Rust is the best programming language.");
+
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
         msg.reply(ctx, invalid_arg_message).await?;
