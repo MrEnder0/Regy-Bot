@@ -31,9 +31,16 @@ impl EventHandler for Handler {
                 msg.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
             }
 
-            //Ignores messages from staff
-            if msg.author.id == 687897073047306270 {
+            //Ignores moderation from devs
+            if msg.author.id == 687897073047306270 || msg.author.id == 598280691066732564  {
                 return;
+            }
+
+            //Ignores moderation from staff
+            for staff in load_config().staff {
+                if msg.author.id == UserId(staff.parse::<u64>().unwrap()) {
+                    return;
+                }
             }
 
             let regex_file = File::open("regex").expect("Unable to open regex");
@@ -258,10 +265,8 @@ async fn main() {
         gen_config();
     }
 
-    //load config
-    let config = load_config();
-    let token = config.token;
-    let staff = config.staff;
+    //load token from config file
+    let token = load_config().token;
 
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("<|"))
