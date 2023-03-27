@@ -23,6 +23,11 @@ impl EventHandler for Handler {
         let content = msg.content.chars().rev().collect::<String>();
         if !content.is_empty() {
             if !msg.author.bot {
+                //if bot pinged
+                if msg.mentions_user_id(ctx.cache.current_user_id().await) {
+                    let ctx = ctx.clone();
+                    msg.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
+                }
                 if msg.author.id != 687897073047306270 {
                     let regex_file = File::open("regex").expect("Unable to open regex");
                     let reader = BufReader::new(regex_file);
@@ -215,7 +220,7 @@ async fn main() {
     let token = "token";
 
     let framework = StandardFramework::new()
-        .configure(|c| c.prefix("regy<|"))
+        .configure(|c| c.prefix("<|"))
         .group(&GENERAL_GROUP);
 
     let mut client = Client::builder(&token)
