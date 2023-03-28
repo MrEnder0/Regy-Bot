@@ -1,7 +1,10 @@
 # Future plans
 Note none of these plans are guaranteed and also there may be other changes that are not stated below.
 
-# Full release 2
+# Release 2
 [ ] User suggest command
-[ ] Moderation logging to file
+[ ] Store block phrases in toml using base64 encoding
 [ ] Dev init shutdown command
+
+# Release 3
+[ ] Moderation logging to file
