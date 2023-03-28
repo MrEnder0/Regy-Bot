@@ -53,7 +53,7 @@ impl EventHandler for Handler {
                         println!("Error deleting message: {:?}", why);
                     }
                     let message_id = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
-                    msg.author.dm(&ctx.http, |m| m.content(format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment."))).await.expect("Unable to dm user");
+                    msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment.")).await.expect("Unable to dm user");
                     //send message in log channel
                     let log_channel = ChannelId(977663676574204054);
                     log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content)).await.unwrap();
@@ -80,7 +80,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
     }
 
-    let mut args = msg.content.split(" ");
+    let mut args = msg.content.split(' ');
     args.next();
     let arg = args.next().unwrap_or("none");
     if arg == "none" {
@@ -145,7 +145,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
     }
 
-    let mut args = msg.content.split(" ");
+    let mut args = msg.content.split(' ');
     args.next();
     let arg = args.next().unwrap_or("none");
     if arg == "none" {
@@ -155,7 +155,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
     } else if arg == "help" {
         msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff add_regex` - Add a new regex phrase to the list\n`staff list_regex` - Lists all the current blocked regex phrases\n`staff grab_pfp` - Grabs a specified users pfp\n`staff grab_banner` - Grabs a specified users banner\n`staff am_staff` - Says if you are staff").await?;
     } else if arg == "add_regex" {
-        let mut args = msg.content.split(" ");
+        let mut args = msg.content.split(' ');
         args.next();
         args.next();
         let mut regex = String::new();
@@ -220,7 +220,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn user(ctx: &Context, msg: &Message) -> CommandResult {
-    let mut args = msg.content.split(" ");
+    let mut args = msg.content.split(' ');
     args.next();
     let arg = args.next().unwrap_or("none");
     if arg == "none" {
