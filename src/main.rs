@@ -1,9 +1,10 @@
 mod toml_manager;
 
 use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}}, prelude::*};
-use toml_manager::{gen_config, load_config};
 use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}, path::Path};
 use regex::Regex;
+
+use toml_manager::{gen_config, load_config};
 
 struct Handler;
 
@@ -19,7 +20,6 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let content = msg.content.chars().rev().collect::<String>();
         if !content.is_empty() {
-
             //Ignores messages from bots
             if msg.author.bot {
                 return;
@@ -74,11 +74,8 @@ impl EventHandler for Handler {
 
 #[command]
 async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
-    let mut dev_file = File::open("devs").expect("Unable to open devs");
-    let mut devs = String::new();
-    dev_file.read_to_string(&mut devs).expect("Unable to read devs");
-    let devs = devs.split(" ").collect::<Vec<&str>>();
-    if !devs.contains(&msg.author.id.to_string().as_str()) {
+    //Ignore message from non-devs
+    if msg.author.id != 687897073047306270 && msg.author.id != 598280691066732564  {
         msg.reply(ctx, "You are not dev you skid :skull:").await?;
         return Ok(());
     }
@@ -150,11 +147,10 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
-    let mut staff_file = File::open("staff").expect("Unable to open staff");
-    let mut staff = String::new();
-    staff_file.read_to_string(&mut staff).expect("Unable to read staff");
-    let staff = staff.split(" ").collect::<Vec<&str>>();
-    if !staff.contains(&msg.author.id.to_string().as_str()) {
+    //Ignore message from non-staff
+    let staff = load_config().staff;
+    let user_id = msg.author.id.to_string();
+    if !staff.contains(&user_id) {
         msg.reply(ctx, "You are not staff you skid :skull:").await?;
         return Ok(());
     }

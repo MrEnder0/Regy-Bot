@@ -1,7 +1,7 @@
 # Future plans
 Note none of these plans are guaranteed and also there may be other changes that are not stated below.
 
-# Full release 1
-[ ] Use database (sqlite)
-[ ] Remove runID thing
-[ ] Use toml system for staff and dev roles and token
+# Full release 2
+[ ] User suggest command
+[ ] Moderation logging to file
+[ ] Dev init shutdown command
