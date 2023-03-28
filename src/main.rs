@@ -125,17 +125,6 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
             }
         }
         println!("Notified all members");
-
-        //let guild = msg.guild(&ctx.cache).await.unwrap();
-        //println!("Pending to send message to {} members in guild", guild.member_count);
-        //let members = guild.members(&ctx.http, None, None).await.unwrap();
-        //for member in members {
-        //    if let Err(why) = member.user.dm(&ctx.http, |m| m.content("Hello there! **This is a test notification from Regy.** In the future this **will only be used for major info**, **if you wish to not receive these notifications** right-click my pfp on our dms and select mute and then until I turn it back on this will make your discord not get notified by these messages.")).await {
-        //        println!("Error sending message: {:?}", why);
-        //    } else {
-        //        println!("Sent message to {}", member.user.name);
-        //    }
-        //    tokio::time::sleep(tokio::time::Duration::from_millis(22)).await;
         }*/
 
     } else {
