@@ -10,3 +10,4 @@ tokio = { version = "1.25.0", features = ["full"] }
 regex = "1.5.4"
 serde = { version = "1.0.158", features = ["derive"] }
 toml = "0.5.8"
+base64 = "0.21.0"

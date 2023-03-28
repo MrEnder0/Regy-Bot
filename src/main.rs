@@ -1,10 +1,10 @@
 mod toml_manager;
 
 use serenity::{async_trait, framework::standard::{CommandResult, macros::{command, group}, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}}, prelude::*};
-use std::{fs::{File, OpenOptions}, io::{Read, Write, BufReader, BufRead}, path::Path};
+use std::path::Path;
 use regex::Regex;
 
-use toml_manager::{gen_config, load_config};
+use toml_manager::{gen_config, get_config, add_block_phrase, list_block_phrases};
 
 struct Handler;
 
@@ -37,18 +37,17 @@ impl EventHandler for Handler {
             }
 
             //Ignores moderation from staff
-            for staff in load_config().staff {
+            for staff in get_config().staff {
                 if msg.author.id == UserId(staff.parse::<u64>().unwrap()) {
                     return;
                 }
             }
 
-            let regex_file = File::open("regex").expect("Unable to open regex");
-            let reader = BufReader::new(regex_file);
-            let regex: Vec<String> = reader.lines().map(|line| line.unwrap()).collect();
+            let list_block_phrases = list_block_phrases();
 
-            for regex in regex {
-                if Regex::new(&regex).expect("Unable to parse regex").is_match(msg.content.as_str()) {
+            for phrase in list_block_phrases {
+                let re = Regex::new(&phrase).unwrap();
+                if re.is_match(&msg.content) {
                     if let Err(why) = msg.delete(&ctx.http).await {
                         println!("Error deleting message: {:?}", why);
                     }
@@ -67,7 +66,7 @@ impl EventHandler for Handler {
                     });
                     return;
                 }
-            }
+            }            
         }
     }
 }
@@ -138,7 +137,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
 #[command]
 async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
     //Ignore message from non-staff
-    let staff = load_config().staff;
+    let staff = get_config().staff;
     let user_id = msg.author.id.to_string();
     if !staff.contains(&user_id) {
         msg.reply(ctx, "You are not staff you skid :skull:").await?;
@@ -158,33 +157,34 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         let mut args = msg.content.split(' ');
         args.next();
         args.next();
-        let mut regex = String::new();
+        let mut new_block_phrase = String::new();
         for arg in args {
-            regex.push_str(arg);
-            regex.push_str(" ");
+            new_block_phrase.push_str(arg);
+            new_block_phrase.push_str(" ");
         }
 
         //Prevents for empty regex
-        if regex.is_empty() || regex == " " {
-            msg.reply(ctx, "You need to specify a regex phrase to add, we don't want to block all messages right???").await?;
+        if new_block_phrase.is_empty() || new_block_phrase == " " || new_block_phrase.len() < 3 {
+            msg.reply(ctx, "You need to specify a regex phrase to add; it cant be empty and it also cant be less than 3 characters long.").await?;
             return Ok(());
         }
 
-        let mut regex_file = OpenOptions::new().append(true).open("regex").expect("Unable to open regex");
-        regex_file.write_all(regex.as_bytes()).expect("Unable to write to regex");
-        regex_file.write_all("\n".as_bytes()).expect("Unable to write to regex");
-        let reply_message = format!("Successfully added the following phrase to the blocked regex phrases:\n||```{}```||", regex);
-        msg.reply(ctx, reply_message).await?;
+        let new_block_phrase_clone = new_block_phrase.clone();
+        add_block_phrase(new_block_phrase);
+
+        let status_message = format!("Added the regex phrase:\n||```{}```||", new_block_phrase_clone);
+        msg.reply(ctx, status_message).await?;
+
 
     } else if arg == "list_regex" {
-        let mut regex_file = File::open("regex").expect("Unable to open regex");
-        let mut regex = String::new();
-        regex_file.read_to_string(&mut regex).expect("Unable to read regex");
-        if regex.is_empty() {
-            msg.reply(ctx, "There are no regex").await?;
-            return Ok(());
+        let blocked_phrases = list_block_phrases();
+        let mut formated_blocked_phrases = String::new();
+        for phrase in blocked_phrases {
+            formated_blocked_phrases.push_str(&phrase);
+            formated_blocked_phrases.push_str("\n");
         }
-        let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```{}```||", regex);
+
+        let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```{}```||", formated_blocked_phrases);
         msg.reply(ctx, status_message).await?;
 
     } else if arg == "grab_pfp" {
@@ -258,7 +258,7 @@ async fn main() {
     }
 
     //load token from config file
-    let token = load_config().token;
+    let token = get_config().token;
 
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("<|"))
