@@ -103,6 +103,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
     } else if arg == "am_dev" {
         msg.reply(ctx, "Yes master uwu xo").await?;
 
+    // Disabled due to Gatito from Discord Developer Compliance being an ass
     /*} else if arg == "notify" {
         let guild_id = msg.guild_id.expect("This is a guild");
         let mut members = guild_id.members(&ctx, None, None).await.expect("Could not get members");
