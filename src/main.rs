@@ -75,7 +75,7 @@ impl EventHandler for Handler {
 #[command]
 async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
     //Ignore message from non-devs
-    if msg.author.id != 687897073047306270 && msg.author.id != 598280691066732564  {
+    if msg.author.id != 687897073047306270 && msg.author.id != 598280691066732564 && msg.author.id != 1056383394470182922  {
         msg.reply(ctx, "You are not dev you skid :skull:").await?;
         return Ok(());
     }
