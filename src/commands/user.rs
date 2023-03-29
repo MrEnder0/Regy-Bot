@@ -13,6 +13,10 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
         msg.reply(ctx, "The user commands are:\n`user help` - Shows this message\n`user why_rust` - Shows why rust is the best language\n`user info` - Tells you a full description of what Regy is\n`user whats_regex` - Explains what regex is\n`user am_user` - Says if you are a user...").await?;
 
     } else if arg == "am_user" {
+        if msg.author.id == 687897073047306270 {
+            msg.reply(ctx, "Why would you not be a user you skid :skull: \nOh wait... Your Ender :sweat_smile:... Sorry I still love u, your not a skid. :heart: :hot_face:").await?;
+            return Ok(());
+        }
         msg.reply(ctx, "Why would you not be a user you skid :skull:").await?;
 
     } else if arg == "why_rust" {
