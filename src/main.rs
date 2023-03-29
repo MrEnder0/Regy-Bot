@@ -25,9 +25,9 @@ impl EventHandler for Handler {
                 return;
             }
 
-            //Ignores dm messages
+            //Reply to dm messages
             if msg.guild_id.is_none() {
-                msg.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker named Gatito I cant. :) lots of love though for trying :heart:").await.expect("Unable to reply to dm");
+                msg.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker named Gatito I cant. :upside_down: Lots of to you :heart:").await.expect("Unable to reply to dm");
                 return;
             }
             

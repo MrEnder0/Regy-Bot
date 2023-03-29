@@ -12,7 +12,7 @@ pub fn gen_config() {
     let config = Config {
         token: "token".to_string(),
         staff: vec!["000000000000000000".to_string()],
-        block_phrases: vec![general_purpose::STANDARD_NO_PAD.encode("regy test phrase").to_string()],
+        block_phrases: vec![general_purpose::STANDARD_NO_PAD.encode("regy test phrase")],
     };
     //write to file
     let toml = toml::to_string(&config).unwrap();
@@ -27,7 +27,7 @@ pub fn get_config() -> Config {
 
 pub fn add_block_phrase (phrase: String) {
     let mut config = get_config();
-    config.block_phrases.push(general_purpose::STANDARD_NO_PAD.encode(phrase).to_string());
+    config.block_phrases.push(general_purpose::STANDARD_NO_PAD.encode(phrase));
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
@@ -40,5 +40,5 @@ pub fn list_block_phrases () -> Vec<String> {
         let phrase = &phrase[..phrase.len() - 1];
         phrases.push(phrase.to_string());
     }
-    return phrases;
+    phrases
 }
