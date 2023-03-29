@@ -240,18 +240,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "discord-bot"
-version = "0.1.0"
-dependencies = [
- "base64 0.21.0",
- "regex",
- "serde",
- "serenity",
- "tokio",
- "toml",
-]
-
-[[package]]
 name = "encoding_rs"
 version = "0.8.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -831,6 +819,18 @@ name = "regex-syntax"
 version = "0.6.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1"
+
+[[package]]
+name = "regy_bot"
+version = "1.0.7"
+dependencies = [
+ "base64 0.21.0",
+ "regex",
+ "serde",
+ "serenity",
+ "tokio",
+ "toml",
+]
 
 [[package]]
 name = "reqwest"
