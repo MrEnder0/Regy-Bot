@@ -42,7 +42,7 @@ impl EventHandler for Handler {
             }
 
             //Ignores moderation from devs
-            if msg.author.id == 687897073047306270 || msg.author.id == 598280691066732564  {
+            if msg.author.id == 687897073047306270 || msg.author.id == 598280691066732564 || msg.author.id == 1056383394470182922 {
                 return;
             }
 
