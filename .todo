@@ -2,7 +2,7 @@
 Note none of these plans are guaranteed and also there may be other changes that are not stated below.
 
 # Release 2
-[ ] User suggestion command
+[x] Complete restructure
 [x] Store block phrases in toml using base64 encoding
 [o] Dev init shutdown command
     [x] Ability to shutdown bot from command
@@ -10,3 +10,4 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 3
 [ ] Moderation logging to file
+[ ] User suggestion command
