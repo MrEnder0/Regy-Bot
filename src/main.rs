@@ -92,7 +92,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
     
     } else if arg == "help" {
-        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev echo` - Echoes the message\n`dev am_dev` - Says if you are dev").await?;
+        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev echo` - Echoes the message\n`dev shutdown` - Shuts down the bot after a 120 second countdown\n`dev am_dev` - Says if you are dev").await?;
     
     } else if arg == "echo" {
         if let Err(why) = msg.delete(&ctx.http).await {
@@ -104,6 +104,16 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
             echo.push(' ');
         }
         msg.channel_id.say(ctx, echo).await?;
+
+    } else if arg == "shutdown" {
+        msg.reply(ctx, "Regy will down in 120 seconds...").await?;
+        let msg_clone = msg.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(tokio::time::Duration::from_secs(120)).await;
+            println!("Shutdown from dev commands sent from {}", msg_clone.author.id);
+            std::process::exit(0);
+        });
+
     } else if arg == "am_dev" {
         msg.reply(ctx, "Yes master uwu xo").await?;
 
