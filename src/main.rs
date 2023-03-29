@@ -24,6 +24,12 @@ impl EventHandler for Handler {
             if msg.author.bot {
                 return;
             }
+
+            //Ignores dm messages
+            if msg.guild_id.is_none() {
+                msg.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker named Gatito I cant. :) lots of love though for trying :heart:").await.expect("Unable to reply to dm");
+                return;
+            }
             
             //Reply to pings
             if msg.mentions_user_id(ctx.cache.current_user_id().await) {
@@ -53,7 +59,6 @@ impl EventHandler for Handler {
                     }
                     let message_id = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
                     msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment.")).await.expect("Unable to dm user");
-                    //send message in log channel
                     let log_channel = ChannelId(977663676574204054);
                     log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content)).await.unwrap();
                     println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
@@ -153,6 +158,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
 
     } else if arg == "help" {
         msg.reply(ctx, "The staff commands are:\n`staff help` - Shows this message\n`staff add_regex` - Add a new regex phrase to the list\n`staff list_regex` - Lists all the current blocked regex phrases\n`staff grab_pfp` - Grabs a specified users pfp\n`staff grab_banner` - Grabs a specified users banner\n`staff am_staff` - Says if you are staff").await?;
+    
     } else if arg == "add_regex" {
         let mut args = msg.content.split(' ');
         args.next();
