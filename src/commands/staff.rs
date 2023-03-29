@@ -28,7 +28,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         let mut new_block_phrase = String::new();
         for arg in args {
             new_block_phrase.push_str(arg);
-            new_block_phrase.push_str(" ");
+            new_block_phrase.push(' ');
         }
 
         //Prevents for empty regex
@@ -46,13 +46,13 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
 
     } else if arg == "list_regex" {
         let blocked_phrases = toml::list_block_phrases();
-        let mut formated_blocked_phrases = String::new();
+        let mut formatted_blocked_phrases = String::new();
         for phrase in blocked_phrases {
-            formated_blocked_phrases.push_str(&phrase);
-            formated_blocked_phrases.push_str("\n");
+            formatted_blocked_phrases.push_str(&phrase);
+            formatted_blocked_phrases.push('\n');
         }
 
-        let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```{}```||", formated_blocked_phrases);
+        let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```{}```||", formatted_blocked_phrases);
         msg.reply(ctx, status_message).await?;
 
     } else if arg == "grab_pfp" {
