@@ -1,11 +1,11 @@
 [package]
 name = "regy_bot"
-version = "1.1"
+version = "1.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-serenity = { version = "0.10.9", features = ["framework"] }
+serenity = { version = "0.10.9", features = ["framework", "builder"] }
 tokio = { version = "1.25.9", features = ["full"] }
 regex = "1.7.3"
 serde = { version = "1.0.158", features = ["derive"] }
