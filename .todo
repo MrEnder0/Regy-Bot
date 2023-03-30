@@ -13,6 +13,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Shutdown command
 
 # Release 3
+[x] Use of embeds
 [ ] Moderation logging to file
 [ ] Del_regex command
 [ ] Suggestion command
