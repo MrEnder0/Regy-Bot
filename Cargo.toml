@@ -5,9 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-serenity = { version = "0.10", features = ["framework"] }
-tokio = { version = "1.25.0", features = ["full"] }
-regex = "1.5.4"
+serenity = { version = "0.10.9", features = ["framework"] }
+tokio = { version = "1.25.9", features = ["full"] }
+regex = "1.7.3"
 serde = { version = "1.0.158", features = ["derive"] }
-toml = "0.5.8"
+toml = "0.7.3"
 base64 = "0.21.0"
