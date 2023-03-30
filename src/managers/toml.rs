@@ -5,6 +5,7 @@ use serde::{Serialize, Deserialize};
 pub struct Config {
     pub token: String,
     pub staff: Vec<String>,
+    pub log_channel: u64,
     pub block_phrases: Vec<String>,
 }
 
@@ -12,6 +13,7 @@ pub fn gen_config() {
     let config = Config {
         token: "token".to_string(),
         staff: vec!["000000000000000000".to_string()],
+        log_channel: 000000000000000000,
         block_phrases: vec![general_purpose::STANDARD_NO_PAD.encode("regy test phrase")],
     };
     //write to file

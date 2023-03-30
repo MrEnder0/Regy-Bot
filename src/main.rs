@@ -1,7 +1,7 @@
 mod managers;
 mod commands;
 
-use serenity::{async_trait, framework::standard::{macros::group, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}}, prelude::*};
+use serenity::{async_trait, framework::standard::{macros::group, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}}, builder::CreateEmbed, prelude::*};
 use std::path::Path;
 use regex::Regex;
 
@@ -63,9 +63,19 @@ impl EventHandler for Handler {
                     }
                     let message_id = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
                     msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment.")).await.expect("Unable to dm user");
-                    let log_channel = ChannelId(977663676574204054);
-                    log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
+                    let log_channel = ChannelId(toml::get_config().log_channel);
+
+                    let mut embed = CreateEmbed::default();
+                    embed.title("Message blocked due to matching a set regex pattern");
+                    embed.description(format!("<@{}> sent a message that matched a regex pattern", msg.author.id));
+                    embed.color(0xFFA500);
+                    embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
+                    log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed");
+
+                    //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
+
                     println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
+
                     let ctx_clone = ctx.clone();
                     tokio::spawn(async move {
                         tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
