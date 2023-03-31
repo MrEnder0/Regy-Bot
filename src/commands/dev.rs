@@ -1,9 +1,13 @@
-use serenity::{framework::standard::{CommandResult, macros::command}, model::{channel::Message}, prelude::*};
+use serenity::{
+    framework::standard::{CommandResult, macros::command},
+    model::{channel::Message, id::ChannelId},
+    prelude::*,
+};
 
 #[command]
 async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
-    //Ignore message from non-devs
-    if msg.author.id != 687897073047306270 && msg.author.id != 598280691066732564 && msg.author.id != 1056383394470182922  {
+    // Ignore message from non-devs
+    if msg.author.id != 687897073047306270 && msg.author.id != 598280691066732564 && msg.author.id != 1056383394470182922 {
         msg.reply(ctx, "You are not dev you skid :skull:").await?;
         return Ok(());
     }
@@ -12,18 +16,17 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
     args.next();
     let arg = args.next().unwrap_or("none");
     if arg == "none" {
-        msg.reply(ctx, "You need to specify an dev command you silly uwu kitten :heart:").await?;
+        msg.reply(ctx, "You need to specify a dev command you silly uwu kitten :heart:").await?;
         return Ok(());
-    
     } else if arg == "help" {
         msg.reply(ctx, "The dev commands are:\n\
                         `dev help` - Shows this message\n\
                         `dev echo` - Echoes the message\n\
                         `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
                         `dev hai` - Says hello back :3\n\
-                        `dev am_dev` - Says if you are dev"
-                    ).await?;
-    
+                        `dev am_dev` - Says if you are dev\n\
+                        `dev ban` - Bans a user\n\
+                        `dev lock` - Locks all channels").await?;
     } else if arg == "echo" {
         if let Err(why) = msg.delete(&ctx.http).await {
             println!("Error deleting message: {:?}", why);
@@ -34,7 +37,6 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
             echo.push(' ');
         }
         msg.channel_id.say(ctx, echo).await?;
-
     } else if arg == "shutdown" {
         msg.reply(ctx, "Regy will down in 120 seconds...").await?;
         let msg_clone = msg.clone();
@@ -43,41 +45,27 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
             println!("Shutdown from dev commands sent from {}", msg_clone.author.id);
             std::process::exit(0);
         });
-
     } else if arg == "am_dev" {
         msg.reply(ctx, "Yes master uwu xo").await?;
-
-    // Disabled due to Gatito from Discord Developer Compliance being an ass
-    /*} else if arg == "notify" {
-        let guild_id = msg.guild_id.expect("This is a guild");
-        let mut members = guild_id.members(&ctx, None, None).await.expect("Could not get members");
-
-        members.retain(|member| !member.user.bot);
-        for member in members {
-            let user_id = member.user.id;
-            let channel = user_id.create_dm_channel(&ctx).await.expect("Could not create dm channel");
-            match channel.send_message(&ctx, |m| {
-                m.content("Hello there! **This is a test notification from Regy. (maybe your second...)** In the future this **will only be used for major info**, **if you wish to not receive these notifications** right-click my pfp on our dms and select mute and then until I turn it back on this will make your discord not get notified by these messages.")
-            }).await {
-                Ok(_) => {
-                    println!("Sent notification to {}", user_id);
-                    tokio::time::sleep(tokio::time::Duration::from_millis(25)).await;
-                },
-                Err(e) => {
-                    eprintln!("Could not send message to {}: {:?}", user_id, e);
+    } else if arg == "ban" {
+        let user_id = args.next().and_then(|s| s.parse::<u64>().ok());
+        if let Some(user_id) = user_id {
+            let reason = args.collect::<Vec<&str>>().join(" ");
+            let guild_id = msg.guild_id.expect("This command only works in a server");
+            guild_id.ban_with_reason(&ctx.http, user_id, 7, &reason).await?;
+            msg.reply(ctx, format!("User with ID {} has been banned with reason: {}", user_id, reason)).await?;
+        } else {
+            msg.reply(ctx, "Please provide a user ID to ban.").await?;
+        }
+    } else if arg == "lock" {
+        let channels = msg.guild_id.expect("This command only works in a server")
+            .channels(&ctx.http)
+            .await?;
+        for channel in channels {
+            if let Ok(text_channel) = channel.to_channel_text() {
+                if text_channel.send_message(&ctx.http, |m| m.content("This channel has been locked.")).await.is_ok() {
+                    println!("Locked channel: {}", text_channel.id);
                 }
             }
         }
-        println!("Notified all members");
-        }*/
-
-    } else if arg == "hai" {
-        msg.reply(ctx, "Hai hai! 😸🐾 \n \nI am Discord kitten, nya~ 🐱🌸 \n \nI will do my best to fulfill your requests, uwu~ 😊 \n \nLet's pawty and have some kawaii fun, nya~ 🎉🎀 \n \nDon't worry, I'll try not to mispurr too many words, nya~ 😸👌").await?;
-    
-    } else {
-        let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
-        msg.reply(ctx, invalid_arg_message).await?;
-    }
-
-    Ok(())
-}
+        msg.reply(ctx
