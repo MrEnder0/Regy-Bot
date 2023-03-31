@@ -10,11 +10,11 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
 
     } else if arg == "help" {
-        msg.reply(ctx, "The user commands are:\n
-                        `user help` - Shows this message\n
-                        `user why_rust` - Shows why rust is the best language\n
-                        `user info` - Tells you a full description of what Regy is\n
-                        `user whats_regex` - Explains what regex is\n
+        msg.reply(ctx, "The user commands are:\n\
+                        `user help` - Shows this message\n\
+                        `user why_rust` - Shows why rust is the best language\n\
+                        `user info` - Tells you a full description of what Regy is\n\
+                        `user whats_regex` - Explains what regex is\n\
                         `user am_user` - Says if you are a user..."
                     ).await?;
 

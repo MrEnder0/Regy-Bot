@@ -19,12 +19,12 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
 
     } else if arg == "help" {
-        msg.reply(ctx, "The staff commands are:\n
-                        `staff help` - Shows this message\n
-                        `staff add_regex` - Add a new regex phrase to the list\n
-                        `staff list_regex` - Lists all the current blocked regex phrases\n
-                        `staff grab_pfp` - Grabs a specified users pfp\n
-                        `staff grab_banner` - Grabs a specified users banner\n
+        msg.reply(ctx, "The staff commands are:\n\
+                        `staff help` - Shows this message\n\
+                        `staff add_regex` - Add a new regex phrase to the list\n\
+                        `staff list_regex` - Lists all the current blocked regex phrases\n\
+                        `staff grab_pfp` - Grabs a specified users pfp\n\
+                        `staff grab_banner` - Grabs a specified users banner\n\
                         `staff am_staff` - Says if you are staff"
                     ).await?;
     
