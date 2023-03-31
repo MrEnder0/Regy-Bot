@@ -16,7 +16,13 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
     
     } else if arg == "help" {
-        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev echo` - Echoes the message\n`dev shutdown` - Shuts down the bot after a 120 second countdown\n`dev am_dev` - Says if you are dev\n`dev hai` - Says hello back :3").await?;
+        msg.reply(ctx, "The dev commands are:\n
+                        `dev help` - Shows this message\n
+                        `dev echo` - Echoes the message\n
+                        `dev shutdown` - Shuts down the bot after a 120 second countdown\n
+                        `dev hai` - Says hello back :3\n
+                        `dev am_dev` - Says if you are dev"
+                    ).await?;
     
     } else if arg == "echo" {
         if let Err(why) = msg.delete(&ctx.http).await {
