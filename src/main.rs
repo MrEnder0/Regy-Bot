@@ -62,7 +62,7 @@ impl EventHandler for Handler {
                     if let Err(why) = msg.delete(&ctx.http).await {
                         println!("Error deleting message: {:?}", why);
                     }
-                    let message_id = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
+                    let reply_msg = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
                     msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment.")).await.expect("Unable to dm user");
                     let log_channel = ChannelId(toml::get_config().log_channel);
 
@@ -71,9 +71,10 @@ impl EventHandler for Handler {
                     embed.description(format!("<@{}> sent a message that matched a regex pattern", msg.author.id));
                     embed.color(0xFFA500);
                     embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
-                    embed.footer(|f| f.text("React with 🚫 to dismiss this report and log to console"));
-
-                    log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed");
+                    embed.footer(|f| f.text("React with 🚫 to dismiss this and log to console"));
+                    let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
+                    let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
+                    embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
                     //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
 
@@ -82,7 +83,7 @@ impl EventHandler for Handler {
                     let ctx_clone = ctx.clone();
                     tokio::spawn(async move {
                         tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
-                        if let Err(why) = msg.channel_id.delete_message(&ctx_clone.http, message_id).await {
+                        if let Err(why) = msg.channel_id.delete_message(&ctx_clone.http, reply_msg).await {
                             println!("Error deleting message: {:?}", why);
                         }
                     });
@@ -100,6 +101,11 @@ impl EventHandler for Handler {
 
         //Only allow staff to use reactions
         if !toml::get_config().staff.contains(&reaction.user_id.unwrap().to_string()) {
+            return;
+        }
+
+        //Ignores reactions from the bot
+        if reaction.user_id.unwrap() == ctx.cache.current_user_id().await {
             return;
         }
 
