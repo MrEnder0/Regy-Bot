@@ -16,7 +16,7 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         return Ok(());
     
     } else if arg == "help" {
-        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev echo` - Echoes the message\n`dev shutdown` - Shuts down the bot after a 120 second countdown\n`dev am_dev` - Says if you are dev").await?;
+        msg.reply(ctx, "The dev commands are:\n`dev help` - Shows this message\n`dev echo` - Echoes the message\n`dev shutdown` - Shuts down the bot after a 120 second countdown\n`dev am_dev` - Says if you are dev\n`dev hai` - Says hello back :3").await?;
     
     } else if arg == "echo" {
         if let Err(why) = msg.delete(&ctx.http).await {
@@ -65,6 +65,9 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
         println!("Notified all members");
         }*/
 
+    } else if arg == "hai" {
+        msg.reply(ctx, "Hai hai! 😸🐾 \n \nI am Discord kitten, nya~ 🐱🌸 \n \nI will do my best to fulfill your requests, uwu~ 😊 \n \nLet's pawty and have some kawaii fun, nya~ 🎉🎀 \n \nDon't worry, I'll try not to mispurr too many words, nya~ 😸👌").await?;
+    
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
         msg.reply(ctx, invalid_arg_message).await?;
