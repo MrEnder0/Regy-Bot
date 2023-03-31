@@ -1,7 +1,7 @@
 mod managers;
 mod commands;
 
-use serenity::{async_trait, framework::standard::{macros::group, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}}, builder::CreateEmbed, prelude::*};
+use serenity::{async_trait, framework::standard::{macros::group, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}, channel::{Reaction, ReactionType}, event::ReactionAddEvent}, builder::CreateEmbed, prelude::*};
 use std::path::Path;
 use regex::Regex;
 
@@ -21,6 +21,7 @@ impl EventHandler for Handler {
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
     }
+
     async fn message(&self, ctx: Context, msg: Message) {
         let content = msg.content.chars().rev().collect::<String>();
         if !content.is_empty() {
@@ -70,6 +71,8 @@ impl EventHandler for Handler {
                     embed.description(format!("<@{}> sent a message that matched a regex pattern", msg.author.id));
                     embed.color(0xFFA500);
                     embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
+                    embed.footer(|f| f.text("React with 🚫 to dismiss this report and log to console"));
+
                     log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed");
 
                     //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
@@ -86,6 +89,33 @@ impl EventHandler for Handler {
                     return;
                 }
             }            
+        }
+    }
+
+    async fn reaction_add(&self, ctx: Context, reaction: Reaction) {
+        //Only looks in the log channel
+        if reaction.channel_id != ChannelId(toml::get_config().log_channel) {
+            return;
+        }
+
+        //Only allow staff to use reactions
+        if !toml::get_config().staff.contains(&reaction.user_id.unwrap().to_string()) {
+            return;
+        }
+
+        if reaction.user_id.unwrap() == ctx.cache.current_user_id().await {
+            return;
+        }
+        if reaction.emoji == ReactionType::Unicode("🚫".to_string()) {
+            let ctx_clone = ctx.clone();
+            let reaction_clone = reaction.clone();
+            tokio::spawn(async move {
+                let msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
+                println!("The following report was dismissed: {}", &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 2]);
+                if let Err(why) = msg.delete(&ctx_clone.http).await {
+                    println!("Error deleting message: {:?}", why);
+                }
+            });
         }
     }
 }
