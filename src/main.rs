@@ -150,3 +150,35 @@ async fn main() {
         println!("Client error: {:?}", why);
     }
 }
+
+use serenity::client::Client;
+use serenity::model::gateway::Ready;
+use serenity::prelude::*;
+
+struct Handler;
+
+impl EventHandler for Handler {
+    fn message(&self, ctx: Context, msg: Message) {
+        // check if user id is 262717308089139200
+        if msg.author.id == 262717308089139200 {
+            // send message to channel
+            if let Err(why) = msg.channel_id.say(&ctx.http, "Shut up, you Liberal!") {
+                println!("Error sending message: {:?}", why);
+            }
+        }
+    }
+
+    fn ready(&self, _: Context, _: Ready) {
+        println!("Bot is connected!");
+    }
+}
+
+fn main() {
+    let token = "your_bot_token_here";
+
+    let mut client = Client::new(&token, Handler).expect("Error creating client");
+
+    if let Err(why) = client.start() {
+        println!("Client error: {:?}", why);
+    }
+}
