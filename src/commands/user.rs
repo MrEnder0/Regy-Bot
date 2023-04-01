@@ -24,8 +24,12 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
             return Ok(());
         } else if msg.author.id == 598280691066732564 {
             msg.reply(ctx, "i hate you 1984 i hate you 1984 i hate you 1984").await?;
+        } else if msg.author.id == 262717308089139200 {
+            msg.reply(ctx, "Shut up, you liberal! You are infecting the minds of our children with your LGBTQ+ Propaganda!").await?;
+        } else if msg.author.id == 927579571396698182 {
+            msg.reply(ctx, "Awwww~ aren't you a cute little Neko! Ofcourse you're a user :D").await?;
         }
-
+}
         msg.reply(ctx, "Why would you not be a user you skid :skull:").await?;
 
     } else if arg == "why_rust" {
