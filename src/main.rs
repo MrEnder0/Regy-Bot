@@ -94,20 +94,6 @@ impl EventHandler for Handler {
     }
 
     async fn reaction_add(&self, ctx: Context, reaction: Reaction) {
-        //Only looks in the log channel
-        if reaction.channel_id != ChannelId(toml::get_config().log_channel) {
-            return;
-        }
-
-        //Only allow staff to use reactions
-        if !toml::get_config().staff.contains(&reaction.user_id.unwrap().to_string()) {
-            return;
-        }
-
-        //Ignores reactions from the bot
-        if reaction.user_id.unwrap() == ctx.cache.current_user_id().await {
-            return;
-        }
 
         if reaction.user_id.unwrap() == ctx.cache.current_user_id().await {
             return;
