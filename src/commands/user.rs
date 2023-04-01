@@ -33,20 +33,15 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
                 return Ok(());
             }
             598280691066732564 => {
-                msg.reply(ctx, "i hate you 1984 i hate you 1984 i hate you 1984")
-                    .await?;
+                msg.reply(ctx, "i hate you 1984 i hate you 1984 i hate you 1984").await?;
                 return Ok(());
             }
             262717308089139200 => {
-                msg.reply(ctx, "Shut up, you liberal! You are infecting the minds of our children with your LGBTQ+ Propaganda!").await?;
+                msg.reply(ctx, "Shut up! You are infecting the minds of our children with your Propaganda!").await?;
                 return Ok(());
             }
             927579571396698182 => {
-                msg.reply(
-                    ctx,
-                    "Awwww~ aren't you a cute little Neko! Ofcourse you're a user :D",
-                )
-                .await?;
+                msg.reply(ctx, "Awwww~ aren't you a cute little Neko! Ofcourse you're a user :D").await?;
                 return Ok(());
             }
             275787354688585730 => {
@@ -54,8 +49,7 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
                 return Ok(());
             }
             _ => {
-                msg.reply(ctx, "Why would you not be a user you skid :skull:")
-                    .await?;
+                msg.reply(ctx, "Why would you not be a user you skid :skull:").await?;
                 return Ok(());
             }
         },
