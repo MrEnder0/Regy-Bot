@@ -68,12 +68,17 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         "list_regex" => {
             let blocked_phrases = toml::list_block_phrases();
             let mut formatted_blocked_phrases = String::new();
-            for phrase in blocked_phrases {
+            for (id, phrase) in blocked_phrases {
+                formatted_blocked_phrases.push_str(&id.to_string());
+                formatted_blocked_phrases.push_str(&" | ");
                 formatted_blocked_phrases.push_str(&phrase);
                 formatted_blocked_phrases.push('\n');
             }
 
-            let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```{}```||", formatted_blocked_phrases);
+            let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n\
+            ||```                  ID                 | REGEX\n\
+            {}\
+            ```||", formatted_blocked_phrases);
             msg.reply(ctx, status_message).await?;
             return Ok(());
         }
