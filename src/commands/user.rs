@@ -54,7 +54,7 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
                     ).await?;
 
     } else {
-        let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
+        let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg.replace("@", "@\u{200B}"));
         msg.reply(ctx, invalid_arg_message).await?;
     }
 
