@@ -24,12 +24,15 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
             return Ok(());
         } else if msg.author.id == 598280691066732564 {
             msg.reply(ctx, "i hate you 1984 i hate you 1984 i hate you 1984").await?;
+            return Ok(());
         } else if msg.author.id == 262717308089139200 {
             msg.reply(ctx, "Shut up, you liberal! You are infecting the minds of our children with your LGBTQ+ Propaganda!").await?;
+            return Ok(());
         } else if msg.author.id == 927579571396698182 {
             msg.reply(ctx, "Awwww~ aren't you a cute little Neko! Ofcourse you're a user :D").await?;
+            return Ok(());
         }
-}
+
         msg.reply(ctx, "Why would you not be a user you skid :skull:").await?;
 
     } else if arg == "why_rust" {
@@ -42,17 +45,13 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
         msg.reply(ctx, "Regex, short for Regular Expression, is a sequence of characters that defines a search pattern. It is used to search, replace, and manipulate text in programming and text editing tools. It provides a powerful and flexible way to match and manipulate strings of text based on certain patterns or rules.").await?;
 
     } else if arg == "skid" {
-        msg.reply(ctx, "The term 'skid' <@&1087534862937890896> can have different meanings depending on the context in which it is used. Here are a few possible definitions:
-
-\n\nA skid <@&1087534862937890896> is a flat, wooden or metal platform that is used for transporting heavy loads. The platform is placed on top of a set of runners or wheels, and the load is placed on the platform. The platform is then pulled or pushed along the ground.
-
-\n\nIn driving, a skid <@&1087534862937890896> occurs when a vehicle's tires lose traction with the road surface, causing the vehicle to slide or spin out of control. Skids can occur for various reasons, such as wet or icy roads, sharp turns taken at high speeds, or sudden braking.
-
-\n\nIn the oil and gas industry, a skid <@&1087534862937890896> refers to a modular system that contains equipment for processing or controlling fluids, such as oil or gas. The skid is designed to be easily transported and installed, and can be connected to other skids to form a larger processing or control system.
-
-\n\nIn construction, a skid <@&1087534862937890896> steer is a type of compact, maneuverable loader that is used for digging, pushing, and carrying materials. The loader is mounted on four wheels or tracks, and can be operated by a single person.
-
-\n\nThese are just a few examples of the different meanings of the term 'skid.' <@&1087534862937890896> The exact meaning of the term will depend on the context in which it is used.").await?;
+        msg.reply(ctx, "The term 'skid' <@&1087534862937890896> can have different meanings depending on the context in which it is used. Here are a few possible definitions:\n\
+                        A skid <@&1087534862937890896> is a flat, wooden or metal platform that is used for transporting heavy loads. The platform is placed on top of a set of runners or wheels, and the load is placed on the platform. The platform is then pulled or pushed along the ground.\n\
+                        In driving, a skid <@&1087534862937890896> occurs when a vehicle's tires lose traction with the road surface, causing the vehicle to slide or spin out of control. Skids can occur for various reasons, such as wet or icy roads, sharp turns taken at high speeds, or sudden braking.\n\
+                        In the oil and gas industry, a skid <@&1087534862937890896> refers to a modular system that contains equipment for processing or controlling fluids, such as oil or gas. The skid is designed to be easily transported and installed, and can be connected to other skids to form a larger processing or control system.\n\
+                        In construction, a skid <@&1087534862937890896> steer is a type of compact, maneuverable loader that is used for digging, pushing, and carrying materials. The loader is mounted on four wheels or tracks, and can be operated by a single person.\n\
+                        These are just a few examples of the different meanings of the term 'skid.' <@&1087534862937890896> The exact meaning of the term will depend on the context in which it is used."
+                    ).await?;
 
     } else {
         let invalid_arg_message = format!("Invalid argument '{}' but its ok I still care abt u :heart:", arg);
