@@ -20,7 +20,7 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
 
     } else if arg == "am_user" {
         if msg.author.id == 687897073047306270 {
-            msg.reply(ctx, "Why would you not be a user you skid :skull: \nOh wait... Your Ender :sweat_smile:... Sorry I still love u, your not a skid. :heart: :hot_face:").await?;
+            msg.reply(ctx, "Why would you not be a user you skid :skull: \nOh wait... You're Ender :sweat_smile:... Sorry I still love u, you're not a skid. :heart: :hot_face:").await?;
             return Ok(());
         } else if msg.author.id == 598280691066732564 {
             msg.reply(ctx, "i hate you 1984 i hate you 1984 i hate you 1984").await?;
