@@ -8,7 +8,7 @@ use serenity::{
 async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
     //Ignore message from non-devs
     match msg.author.id.as_u64() {
-        687897073047306270 | 598280691066732564 | 275787354688585730 | 1056383394470182922 => {
+        687897073047306270 | 598280691066732564 => {
             let mut args = msg.content.split(' ');
             args.next();
             let arg = args.next().unwrap_or("none");
