@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash::Hash};
+use std::{collections::HashMap};
 
 use uuid::Uuid;
 use base64::{Engine as _, engine::general_purpose};
@@ -40,6 +40,14 @@ pub fn add_block_phrase (phrase: String) {
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
+
+pub fn remove_block_phrase (id: Uuid) {
+    let mut config = get_config();
+    config.block_phrases.remove(&id);
+    let toml = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", toml).unwrap();
+}
+
 
 pub fn list_block_phrases () -> HashMap<Uuid, String> {
     let config = get_config();

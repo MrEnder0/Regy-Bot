@@ -68,7 +68,7 @@ impl EventHandler for Handler {
 
                     let mut embed = CreateEmbed::default();
                     embed.title("Message blocked due to matching a set regex pattern");
-                    embed.description(format!("<@{}> sent a message that matched a regex pattern", msg.author.id));
+                    embed.description(format!("<@{}> sent a message that matched regex pattern \"{}\"", msg.author.id, id));
                     embed.color(0xFFA500);
                     embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
                     embed.footer(|f| f.text("React with 🚫 to dismiss this and log to console"));
