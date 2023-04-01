@@ -30,7 +30,8 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
                             `staff help` - Shows this message\n\
                             `staff add_regex` - Add a new regex phrase to the list\n\
                             `staff list_regex` - Lists all the current blocked regex phrases\n\
-                            `staff grab_pfp` - Grabs a specified users pfp\n\
+                            `staff grab_pfp` - Grabs a specified user's pfp\n\
+                            `staff grab_timestamp` - Find out when a specified user's account was made \n\
                             `staff grab_banner` - Grabs a specified users banner\n\
                             `staff am_staff` - Says if you are staff",
             )
@@ -89,6 +90,28 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             let user_id = user_id.parse::<u64>().unwrap();
             let user = UserId(user_id).to_user(ctx).await?;
             msg.reply(ctx, user.face()).await?;
+            return Ok(());
+        }
+        "grab_timestamp" => {
+            let user_id = args.next().unwrap_or("none");
+            if user_id == "none" {
+                msg.reply(
+                    ctx,
+                    "You need to specify a user id you silly kitten :heart:",
+                )
+                .await?;
+                return Ok(());
+            }
+            let user_id = user_id.parse::<u64>().unwrap();
+            let user = UserId(user_id).to_user(ctx).await?;
+            msg.reply(
+                ctx,
+                format!(
+                    "Account was created on <t:{:?}:D>.",
+                    user.created_at().timestamp()
+                ),
+            )
+            .await?;
             return Ok(());
         }
         "grab_banner" => {
