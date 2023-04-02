@@ -14,6 +14,13 @@ async fn user(ctx: &Context, msg: &Message) -> CommandResult {
             msg.reply(ctx, "You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
             return Ok(());
         }
+        
+        "Das Reich" => {
+            msg.reply(ctx, "Welcome to the group! One of US! One OF US! ONE OF US! https://discord.gg/bvfBaAHNt5").await?;
+            return Ok(());
+        }
+
+
         "help" => {
             msg.reply(
                 ctx,
