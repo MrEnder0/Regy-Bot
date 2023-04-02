@@ -15,6 +15,13 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         msg.reply(ctx, "You are not staff you skid :skull:").await?;
         return Ok(());
     }
+        
+        
+    "Das Reich" => {
+        msg.reply(ctx, "Welcome to the group! One of US! One OF US! ONE OF US! https://discord.gg/bvfBaAHNt5").await?;
+        return Ok(());
+    }
+
 
     let mut args = msg.content.split(' ');
     args.next();
