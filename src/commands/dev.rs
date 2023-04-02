@@ -35,7 +35,14 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
                     )
                     .await?;
                     return Ok(());
+                }        
+
+                "Das Reich" => {
+                    msg.reply(ctx, "Welcome to the group! One of US! One OF US! ONE OF US! https://discord.gg/bvfBaAHNt5").await?;
+                    return Ok(());
                 }
+
+
                 "echo" => {
                     if let Err(why) = msg.delete(&ctx.http).await {
                         println!("Error deleting message: {:?}", why);
