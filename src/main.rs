@@ -1,7 +1,14 @@
 mod managers;
 mod commands;
 
-use serenity::{async_trait, framework::standard::{macros::group, StandardFramework}, model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId}, channel::{Reaction, ReactionType}}, builder::CreateEmbed, prelude::*};
+use serenity::{
+    async_trait,
+    framework::standard::{macros::group, StandardFramework},
+    model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId},
+    channel::{Reaction, ReactionType}},
+    builder::CreateEmbed,
+    prelude::*
+};
 use std::path::Path;
 use regex::Regex;
 
