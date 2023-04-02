@@ -4,6 +4,7 @@ use serenity::{
     model::{channel::Message, prelude::UserId},
     prelude::*,
 };
+use uuid::Uuid;
 
 #[command]
 async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
@@ -29,6 +30,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
                 "The staff commands are:\n\
                             `staff help` - Shows this message\n\
                             `staff add_regex` - Add a new regex phrase to the list\n\
+                            `staff remove_regex` - Remove a regex phrase from the list\n\
                             `staff list_regex` - Lists all the current blocked regex phrases\n\
                             `staff grab_pfp` - Grabs a specified user's pfp\n\
                             `staff grab_timestamp` - Find out when a specified user's account was made \n\
@@ -65,15 +67,39 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             msg.reply(ctx, status_message).await?;
             return Ok(());
         }
+        "remove_regex" => {
+            let id = args.next().unwrap_or("none");
+            if id == "none" {
+                msg.reply(
+                    ctx,
+                    "You need to specify a UUID you silly kitten :heart:",
+                )
+                .await?;
+                return Ok(());
+            }
+            let id = id.parse::<Uuid>().unwrap();
+            toml::remove_block_phrase(id);
+            let status_message = format!(
+                "Removed the regex phrase with UUID: {}",
+                id
+            );
+            msg.reply(ctx, status_message).await?;
+            return Ok(());
+        }
         "list_regex" => {
             let blocked_phrases = toml::list_block_phrases();
             let mut formatted_blocked_phrases = String::new();
-            for phrase in blocked_phrases {
+            for (id, phrase) in blocked_phrases {
+                formatted_blocked_phrases.push_str(&id.to_string());
+                formatted_blocked_phrases.push_str(&" | ");
                 formatted_blocked_phrases.push_str(&phrase);
                 formatted_blocked_phrases.push('\n');
             }
 
-            let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```{}```||", formatted_blocked_phrases);
+            let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n\
+            ||```                  ID                 | REGEX\n\
+            {}\
+            ```||", formatted_blocked_phrases);
             msg.reply(ctx, status_message).await?;
             return Ok(());
         }

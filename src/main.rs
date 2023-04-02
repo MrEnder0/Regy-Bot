@@ -56,7 +56,7 @@ impl EventHandler for Handler {
 
             let list_block_phrases = toml::list_block_phrases();
 
-            for phrase in list_block_phrases {
+            for (id, phrase) in list_block_phrases {
                 let re = Regex::new(&phrase).unwrap();
                 if re.is_match(&msg.content) {
                     if let Err(why) = msg.delete(&ctx.http).await {
@@ -68,7 +68,7 @@ impl EventHandler for Handler {
 
                     let mut embed = CreateEmbed::default();
                     embed.title("Message blocked due to matching a set regex pattern");
-                    embed.description(format!("<@{}> sent a message that matched a regex pattern", msg.author.id));
+                    embed.description(format!("<@{}> sent a message that matched regex pattern \"{}\"", msg.author.id, id));
                     embed.color(0xFFA500);
                     embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
                     embed.footer(|f| f.text("React with 🚫 to dismiss this and log to console"));
@@ -84,7 +84,7 @@ impl EventHandler for Handler {
                     tokio::spawn(async move {
                         tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
                         if let Err(why) = msg.channel_id.delete_message(&ctx_clone.http, reply_msg).await {
-                            println!("Error deleting message: {:?}", why);
+                            eprintln!("Error deleting message: {:?}", why);
                         }
                     });
                     return;
