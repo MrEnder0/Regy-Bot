@@ -73,7 +73,14 @@ pub fn add_offense(id: u64) {
 pub fn dismiss_offense(id: u64) {
     let mut config = get_config();
     let offenses = config.offenses.entry(id.to_string()).or_insert(1);
-    *offenses -= 1;
+    if *offenses == 0 {
+        return;
+    } else if *offenses == 1{
+        *offenses = 0;
+    } else {
+        *offenses -= 1;
+    }
+
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
