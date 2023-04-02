@@ -88,7 +88,7 @@ impl EventHandler for Handler {
 
                     let data = LogData {
                         importance: "INFO".to_string(),
-                        message: format!("{} Has sent a rule which is not allowed due to the set regex patterns", msg.author.id),
+                        message: format!("{} has sent a message which is not allowed due to the set regex patterns", msg.author.id),
                     };
 
                     log_this(data);
