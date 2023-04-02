@@ -4,3 +4,4 @@ staff
 regex
 runID
 config.toml
+*.log
