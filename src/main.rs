@@ -64,7 +64,7 @@ impl EventHandler for Handler {
 
             let list_block_phrases = list_block_phrases();
 
-            for (id, phrase) in list_block_phrases {
+            for (_id, phrase) in list_block_phrases {
                 let re = Regex::new(&phrase).unwrap();
                 if re.is_match(&msg.content) {
                     if let Err(why) = msg.delete(&ctx.http).await {
