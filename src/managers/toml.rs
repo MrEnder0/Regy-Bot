@@ -1,8 +1,7 @@
-use std::{collections::HashMap};
-
-use uuid::Uuid;
 use base64::{Engine as _, engine::general_purpose};
 use serde::{Serialize, Deserialize};
+use std::{collections::HashMap};
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
