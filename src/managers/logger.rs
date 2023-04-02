@@ -1,6 +1,6 @@
 use std::fs::OpenOptions;
 use std::io::prelude::*;
-use chrono::prelude::*;
+use chrono::Local;
 
 pub struct LogData {
     pub importance: String,
@@ -8,8 +8,8 @@ pub struct LogData {
 }
 
 pub fn log_this(data: LogData) {
-    let current_time = Local::now();
-    let formatted_time = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
+    let date = Local::now();
+    let formatted_time = date.format("%Y-%m-%d %H:%M:%S");
 
     let file = OpenOptions::new()
         .append(true)
