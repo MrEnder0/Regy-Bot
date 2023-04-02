@@ -5,7 +5,8 @@ use serenity::{async_trait, framework::standard::{macros::group, StandardFramewo
 use std::path::Path;
 use regex::Regex;
 
-use crate::managers::*;
+use crate::managers::toml::*;
+use crate::managers::logger::*;
 use crate::commands::dev::*;
 use crate::commands::staff::*;
 use crate::commands::user::*;
@@ -48,13 +49,13 @@ impl EventHandler for Handler {
             }
 
             //Ignores moderation from staff
-            for staff in toml::get_config().staff {
+            for staff in get_config().staff {
                 if msg.author.id == UserId(staff.parse::<u64>().unwrap()) {
                     return;
                 }
             }
 
-            let list_block_phrases = toml::list_block_phrases();
+            let list_block_phrases = list_block_phrases();
 
             for (id, phrase) in list_block_phrases {
                 let re = Regex::new(&phrase).unwrap();
@@ -64,7 +65,7 @@ impl EventHandler for Handler {
                     }
                     let reply_msg = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
                     msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment.")).await.expect("Unable to dm user");
-                    let log_channel = ChannelId(toml::get_config().log_channel);
+                    let log_channel = ChannelId(get_config().log_channel);
 
                     let mut embed = CreateEmbed::default();
                     embed.title("Message blocked due to matching a set regex pattern");
@@ -77,6 +78,13 @@ impl EventHandler for Handler {
                     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
                     //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
+
+                    let data = LogData {
+                        importance: "INFO".to_string(),
+                        message: format!("{} Has sent a rule which is not allowed due to the set regex patterns", msg.author.id),
+                    };
+
+                    log_this(data);
 
                     println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
 
@@ -95,12 +103,12 @@ impl EventHandler for Handler {
 
     async fn reaction_add(&self, ctx: Context, reaction: Reaction) {
         //Only looks in the log channel
-        if reaction.channel_id != ChannelId(toml::get_config().log_channel) {
+        if reaction.channel_id != ChannelId(get_config().log_channel) {
             return;
         }
 
         //Only allow staff to use reactions
-        if !toml::get_config().staff.contains(&reaction.user_id.unwrap().to_string()) {
+        if !get_config().staff.contains(&reaction.user_id.unwrap().to_string()) {
             return;
         }
 
@@ -118,6 +126,12 @@ impl EventHandler for Handler {
             tokio::spawn(async move {
                 let msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
                 println!("The following report was dismissed: {}", &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 2]);
+                let data = LogData {
+                    importance: "INFO".to_string(),
+                    message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
+                };
+                log_this(data);
+
                 if let Err(why) = msg.delete(&ctx_clone.http).await {
                     println!("Error deleting message: {:?}", why);
                 }
@@ -130,11 +144,11 @@ impl EventHandler for Handler {
 async fn main() {
     //check for config file
     if !Path::new("config.toml").exists() {
-        toml::gen_config();
+        gen_config();
     }
 
     //load token from config file
-    let token = toml::get_config().token;
+    let token = get_config().token;
 
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("<|"))
@@ -146,7 +160,19 @@ async fn main() {
         .await
         .expect("Error creating client");
 
+    let data = LogData {
+        importance: "INFO".to_string(),
+        message: "Starting Regy".to_string(),
+    };
+    log_this(data);
+
     if let Err(why) = client.start().await {
         println!("Client error: {:?}", why);
+        let data = LogData {
+            importance: "ERROR".to_string(),
+            message: format!("Client error: {:?}", why),
+        };
+        log_this(data);
+
     }
 }

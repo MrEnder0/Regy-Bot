@@ -16,7 +16,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Use of embeds
 [x] Logging channel now config option
 [x] Report dismissing
-[ ]Logging to file
+[x]Logging to file
 
 #Release 4
 [ ] Suggestion command

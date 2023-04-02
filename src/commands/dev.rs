@@ -4,6 +4,8 @@ use serenity::{
     prelude::*,
 };
 
+use crate::managers::logger::*;
+
 #[command]
 async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
     //Ignore message from non-devs
@@ -55,6 +57,12 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
                             "Shutdown from dev commands sent from {}",
                             msg_clone.author.id
                         );
+                        //log
+                        let log_data = LogData {
+                            importance: "INFO".to_string(),
+                            message: format!("Shutdown from dev commands sent from {}",msg_clone.author.id),
+                        };
+                        log_this(log_data);
                         std::process::exit(0);
                     });
                     return Ok(());
