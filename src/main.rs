@@ -134,7 +134,6 @@ impl EventHandler for Handler {
             tokio::spawn(async move {
                 let msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
                 let user_id = &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 1];
-                println!("{}", user_id);
 
                 let data = LogData {
                     importance: "INFO".to_string(),
