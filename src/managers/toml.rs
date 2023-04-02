@@ -8,8 +8,8 @@ pub struct Config {
     pub token: String,
     pub staff: Vec<String>,
     pub log_channel: u64,
-    // pub block_phrases: Vec<String>,
-    pub block_phrases: HashMap<Uuid, String>
+    pub block_phrases: HashMap<Uuid, String>,
+    pub offenses: HashMap<String, u32>
 }
 
 pub fn gen_config() {
@@ -20,7 +20,8 @@ pub fn gen_config() {
         staff: vec!["000000000000000000".to_string()],
         log_channel: 000000000000000000,
         // block_phrases: vec![general_purpose::STANDARD_NO_PAD.encode("regy test phrase")],
-        block_phrases: phr
+        block_phrases: phr,
+        offenses: HashMap::new()
     };
     //write to file
     let toml = toml::to_string(&config).unwrap();
@@ -59,4 +60,20 @@ pub fn list_block_phrases () -> HashMap<Uuid, String> {
         phrases.insert(id, phrase.to_string());
     }
     phrases
+}
+
+pub fn add_offense(id: u64) {
+    let mut config = get_config();
+    let offenses = config.offenses.entry(id.to_string()).or_insert(0);
+    *offenses += 1;
+    let toml = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", toml).unwrap();
+}
+
+pub fn dismiss_offense(id: u64) {
+    let mut config = get_config();
+    let offenses = config.offenses.entry(id.to_string()).or_insert(1);
+    *offenses -= 1;
+    let toml = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", toml).unwrap();
 }

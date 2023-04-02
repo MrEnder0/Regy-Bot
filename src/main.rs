@@ -75,9 +75,9 @@ impl EventHandler for Handler {
                     let log_channel = ChannelId(get_config().log_channel);
 
                     let mut embed = CreateEmbed::default();
-                    embed.title("Message blocked due to matching a set regex pattern");
-                    embed.description(format!("<@{}> sent a message that matched regex pattern \"{}\"", msg.author.id, id));
                     embed.color(0xFFA500);
+                    embed.title("Message blocked due to matching a set regex pattern");
+                    embed.field("The user who broke a regx pettern is below:", format!("<@{}>", msg.author.id), false);
                     embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
                     embed.footer(|f| f.text("React with 🚫 to dismiss this and log to console"));
                     let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
@@ -94,6 +94,7 @@ impl EventHandler for Handler {
                     log_this(data);
 
                     println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
+                    add_offense(msg.author.id.into());
 
                     let ctx_clone = ctx.clone();
                     tokio::spawn(async move {
@@ -132,12 +133,20 @@ impl EventHandler for Handler {
             let reaction_clone = reaction.clone();
             tokio::spawn(async move {
                 let msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
-                println!("The following report was dismissed: {}", &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 2]);
+                let user_id = &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 1];
+                println!("{}", user_id);
+
                 let data = LogData {
                     importance: "INFO".to_string(),
                     message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
                 };
                 log_this(data);
+
+                dismiss_offense(user_id.parse::<u64>().unwrap().into());
+
+                //dm the user that the report was dismissed
+                let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
+                user.dm(&ctx_clone.http, |m| m.content("Your report has been dismissed by a staff member due to it being found as being a false positive.")).await.expect("Unable to dm user");
 
                 if let Err(why) = msg.delete(&ctx_clone.http).await {
                     println!("Error deleting message: {:?}", why);
