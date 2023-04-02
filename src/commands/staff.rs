@@ -1,4 +1,4 @@
-use crate::toml;
+use crate::managers::toml;
 use serenity::{
     framework::standard::{macros::command, CommandResult},
     model::{channel::Message, prelude::UserId},
