@@ -91,16 +91,36 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             let mut formatted_blocked_phrases = String::new();
             for (id, phrase) in blocked_phrases {
                 formatted_blocked_phrases.push_str(&id.to_string());
-                formatted_blocked_phrases.push_str(&" | ");
+                formatted_blocked_phrases.push_str(" | ");
                 formatted_blocked_phrases.push_str(&phrase);
                 formatted_blocked_phrases.push('\n');
             }
 
-            let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n\
-            ||```                  ID                 | REGEX\n\
-            {}\
-            ```||", formatted_blocked_phrases);
-            msg.reply(ctx, status_message).await?;
+            let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | REGEX\n{}```||", formatted_blocked_phrases);
+            let channel_id = msg.channel_id;
+
+            if status_message.len() > 2000 {
+                channel_id.say(ctx, "The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**").await?;
+                let mut split_status_message = String::new();
+                //remove the warning message
+                let status_message = status_message[75..status_message.len()].to_string();
+                let status_message = status_message[5..status_message.len() - 5].to_string();
+                let mut line_count = 0;
+                for line in status_message.lines() {
+                    split_status_message.push_str(line);
+                    split_status_message.push('\n');
+                    line_count += 1;
+                    if line_count == 5 {
+                        let message_part = format!("```{}```", split_status_message);
+                        channel_id.say(ctx, message_part).await?;
+                        split_status_message = String::new();
+                        line_count = 0;
+                        tokio::time::sleep(std::time::Duration::from_millis(40)).await;
+                    }
+                }
+            } else {
+                msg.reply(ctx, status_message).await?;
+            }
             return Ok(());
         }
         "grab_pfp" => {
