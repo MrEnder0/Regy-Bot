@@ -141,7 +141,7 @@ impl EventHandler for Handler {
                 };
                 log_this(data);
 
-                dismiss_offense(user_id.parse::<u64>().unwrap().into());
+                dismiss_offense(user_id.parse::<u64>().unwrap());
 
                 //dm the user that the report was dismissed
                 let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
