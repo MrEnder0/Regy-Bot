@@ -53,11 +53,8 @@ async fn dev(ctx: &Context, msg: &Message) -> CommandResult {
                     let msg_clone = msg.clone();
                     tokio::spawn(async move {
                         tokio::time::sleep(tokio::time::Duration::from_secs(120)).await;
-                        println!(
-                            "Shutdown from dev commands sent from {}",
-                            msg_clone.author.id
-                        );
-                        //log
+                        println!("Shutdown from dev commands sent from {}", msg_clone.author.id);
+
                         let log_data = LogData {
                             importance: "INFO".to_string(),
                             message: format!("Shutdown from dev commands sent from {}",msg_clone.author.id),
