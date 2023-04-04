@@ -132,7 +132,7 @@ impl EventHandler for Handler {
             let ctx_clone = ctx.clone();
             let reaction_clone = reaction.clone();
             tokio::spawn(async move {
-                let msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
+                let mut msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
                 let user_id = &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 1];
 
                 let data = LogData {
@@ -143,13 +143,23 @@ impl EventHandler for Handler {
 
                 dismiss_offense(user_id.parse::<u64>().unwrap());
 
-                //dm the user that the report was dismissed
                 let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
                 user.dm(&ctx_clone.http, |m| m.content("Your report has been dismissed by a staff member due to it being found as being a false positive.")).await.expect("Unable to dm user");
 
-                if let Err(why) = msg.delete(&ctx_clone.http).await {
-                    println!("Error deleting message: {:?}", why);
-                }
+                let mut embed = CreateEmbed::default();
+                embed.color(0x00FF00);
+                embed.title("Message blocked due to matching a set regex pattern");
+                embed.field("The user who broke a regx pettern is below:", format!("<@{}>", user_id), false);
+                embed.field("Their message is the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
+                embed.footer(|f| f.text("This report has been dismissed by a staff member"));
+                msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
+
+                msg.delete_reaction_emoji(&ctx_clone.http, ReactionType::Unicode("🚫".to_string())).await.ok();
+
+                //Delete the embed
+                /*if let Err(why) = msg.delete(&ctx_clone.http).await {
+                //    println!("Error deleting message: {:?}", why);
+                }*/
             });
         }
     }
