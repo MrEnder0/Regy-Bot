@@ -93,7 +93,7 @@ impl EventHandler for Handler {
 
                     log_this(data);
 
-                    println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}", msg.author.id, msg.content);
+                    println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}\n\nThere message broke the following pattern:\n{}", msg.author.id, msg.content, phrase);
                     add_offense(msg.author.id.into());
 
                     let ctx_clone = ctx.clone();
