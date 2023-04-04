@@ -19,7 +19,6 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Logging to file
 
 #Release 4
-[ ] Suggestion command
 [x] Del_regex command
-[ ] Punishment saving to toml
+[x] Punishment saving to toml
 [x] List user punishments command
