@@ -77,9 +77,9 @@ impl EventHandler for Handler {
                     let mut embed = CreateEmbed::default();
                     embed.color(0xFFA500);
                     embed.title("Message blocked due to matching a set regex pattern");
-                    embed.field("The user who broke a regx pettern is below:", format!("<@{}>", msg.author.id), false);
+                    embed.field("The user who broke a regx pattern is below:", format!("<@{}>", msg.author.id), false);
                     embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
-                    embed.footer(|f| f.text("React with 🚫 to dismiss this and log to console"));
+                    embed.footer(|f| f.text("React with 🚫 to dismiss this offense"));
                     let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
                     let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
                     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
@@ -149,9 +149,9 @@ impl EventHandler for Handler {
                 let mut embed = CreateEmbed::default();
                 embed.color(0x00FF00);
                 embed.title("Message blocked due to matching a set regex pattern");
-                embed.field("The user who broke a regx pettern is below:", format!("<@{}>", user_id), false);
+                embed.field("The user who broke a regx pattern is below:", format!("<@{}>", user_id), false);
                 embed.field("Their message is the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
-                embed.footer(|f| f.text("This report has been dismissed by a staff member"));
+                embed.footer(|f| f.text("This offense has been dismissed by a staff member"));
                 msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
 
                 msg.delete_reaction_emoji(&ctx_clone.http, ReactionType::Unicode("🚫".to_string())).await.ok();
