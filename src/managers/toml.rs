@@ -9,7 +9,7 @@ pub struct Config {
     pub staff: Vec<String>,
     pub log_channel: u64,
     pub block_phrases: HashMap<Uuid, String>,
-    pub offenses: HashMap<String, u32>
+    pub infractions: HashMap<String, u32>
 }
 
 pub fn gen_config() {
@@ -21,7 +21,7 @@ pub fn gen_config() {
         log_channel: 000000000000000000,
         // block_phrases: vec![general_purpose::STANDARD_NO_PAD.encode("regy test phrase")],
         block_phrases: phr,
-        offenses: HashMap::new()
+        infractions: HashMap::new()
     };
     //write to file
     let toml = toml::to_string(&config).unwrap();
@@ -62,23 +62,29 @@ pub fn list_block_phrases () -> HashMap<Uuid, String> {
     phrases
 }
 
-pub fn add_offense(id: u64) {
+pub fn add_infraction(id: u64) {
     let mut config = get_config();
-    let offenses = config.offenses.entry(id.to_string()).or_insert(0);
-    *offenses += 1;
+    let infractions = config.infractions.entry(id.to_string()).or_insert(0);
+    *infractions += 1;
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
 
-pub fn dismiss_offense(id: u64) {
+pub fn list_infractions(id: u64) -> u32 {
     let mut config = get_config();
-    let offenses = config.offenses.entry(id.to_string()).or_insert(1);
-    if *offenses == 0 {
+    let infractions = config.infractions.entry(id.to_string()).or_insert(0);
+    *infractions
+}
+
+pub fn dismiss_infraction(id: u64) {
+    let mut config = get_config();
+    let infractions = config.infractions.entry(id.to_string()).or_insert(1);
+    if *infractions == 0 {
         return;
-    } else if *offenses == 1{
-        *offenses = 0;
+    } else if *infractions == 1{
+        *infractions = 0;
     } else {
-        *offenses -= 1;
+        *infractions -= 1;
     }
 
     let toml = toml::to_string(&config).unwrap();

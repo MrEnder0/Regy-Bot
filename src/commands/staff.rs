@@ -1,4 +1,5 @@
 use crate::managers::toml;
+use chrono::format::format;
 use serenity::{
     framework::standard::{macros::command, CommandResult},
     model::{channel::Message, prelude::UserId},
@@ -123,6 +124,37 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             }
             return Ok(());
         }
+        "add_infraction" => {
+            let user_id = args.next().unwrap_or("none");
+            if user_id == "none" {
+                msg.reply(
+                    ctx,
+                    "You need to specify a user id you silly kitten :heart:",
+                )
+                .await?;
+                return Ok(());
+            }
+            let user_id = user_id.parse::<u64>().unwrap();
+            toml::add_infraction(user_id);
+            msg.reply(ctx, "Added infraction to the specified user.").await?;
+            return Ok(());
+        }
+        "list_infractions" => {
+            let user_id = args.next().unwrap_or("none");
+            if user_id == "none" {
+                msg.reply(
+                    ctx,
+                    "You need to specify a user id you silly kitten :heart:",
+                )
+                .await?;
+                return Ok(());
+            }
+            let user_id = user_id.parse::<u64>().unwrap();
+            let infractions = toml::list_infractions(user_id);
+            let formatted_infractions = format!("Infractions for {} is:\n{}", user_id, infractions);
+            msg.reply(ctx, formatted_infractions).await?;
+            return Ok(());
+        }
         "grab_pfp" => {
             let user_id = args.next().unwrap_or("none");
             if user_id == "none" {
@@ -136,28 +168,6 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             let user_id = user_id.parse::<u64>().unwrap();
             let user = UserId(user_id).to_user(ctx).await?;
             msg.reply(ctx, user.face()).await?;
-            return Ok(());
-        }
-        "grab_timestamp" => {
-            let user_id = args.next().unwrap_or("none");
-            if user_id == "none" {
-                msg.reply(
-                    ctx,
-                    "You need to specify a user id you silly kitten :heart:",
-                )
-                .await?;
-                return Ok(());
-            }
-            let user_id = user_id.parse::<u64>().unwrap();
-            let user = UserId(user_id).to_user(ctx).await?;
-            msg.reply(
-                ctx,
-                format!(
-                    "Account was created on <t:{:?}:D>.",
-                    user.created_at().timestamp()
-                ),
-            )
-            .await?;
             return Ok(());
         }
         "grab_banner" => {

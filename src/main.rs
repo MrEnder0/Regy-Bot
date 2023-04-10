@@ -71,7 +71,7 @@ impl EventHandler for Handler {
                         println!("Error deleting message: {:?}", why);
                     }
                     let reply_msg = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
-                    msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued offenses will result in greater punishment.")).await.expect("Unable to dm user");
+                    msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
                     let log_channel = ChannelId(get_config().log_channel);
 
                     let mut embed = CreateEmbed::default();
@@ -79,7 +79,7 @@ impl EventHandler for Handler {
                     embed.title("Message blocked due to matching a set regex pattern");
                     embed.field("The user who broke a regx pattern is below:", format!("<@{}>", msg.author.id), false);
                     embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
-                    embed.footer(|f| f.text("React with 🚫 to dismiss this offense"));
+                    embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
                     let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
                     let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
                     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
@@ -94,7 +94,7 @@ impl EventHandler for Handler {
                     log_this(data);
 
                     println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}\n\nThere message broke the following pattern:\n{}", msg.author.id, msg.content, phrase);
-                    add_offense(msg.author.id.into());
+                    add_infraction(msg.author.id.into());
 
                     let ctx_clone = ctx.clone();
                     tokio::spawn(async move {
@@ -141,7 +141,7 @@ impl EventHandler for Handler {
                 };
                 log_this(data);
 
-                dismiss_offense(user_id.parse::<u64>().unwrap());
+                dismiss_infraction(user_id.parse::<u64>().unwrap());
 
                 let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
                 user.dm(&ctx_clone.http, |m| m.content("Your report has been dismissed by a staff member due to it being found as being a false positive.")).await.expect("Unable to dm user");
@@ -151,7 +151,7 @@ impl EventHandler for Handler {
                 embed.title("Message blocked due to matching a set regex pattern");
                 embed.field("The user who broke a regx pattern is below:", format!("<@{}>", user_id), false);
                 embed.field("Their message is the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
-                embed.footer(|f| f.text("This offense has been dismissed by a staff member"));
+                embed.footer(|f| f.text("This infraction has been dismissed by a staff member"));
                 msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
 
                 msg.delete_reaction_emoji(&ctx_clone.http, ReactionType::Unicode("🚫".to_string())).await.ok();
