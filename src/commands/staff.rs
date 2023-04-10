@@ -1,5 +1,4 @@
 use crate::managers::toml;
-use chrono::format::format;
 use serenity::{
     framework::standard::{macros::command, CommandResult},
     model::{channel::Message, prelude::UserId},
