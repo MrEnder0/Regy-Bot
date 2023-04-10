@@ -24,7 +24,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] List user punishments command
 
 # Release 5
-[ ] Api interface for web page
-[ ] Add infranction command
+[-] Api interface for web page
+[x] Add infranction command
 [ ] Remove infranction command
-[ ] List infranctions command
+[x] List infranctions command
