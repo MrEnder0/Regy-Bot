@@ -4,7 +4,7 @@ use serenity::{
     prelude::*,
 };
 
-use crate::managers::logger::*;
+use crate::utils::logger::*;
 
 #[command]
 async fn dev(ctx: &Context, msg: &Message) -> CommandResult {

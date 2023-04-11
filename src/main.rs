@@ -1,5 +1,5 @@
-mod managers;
 mod commands;
+mod utils;
 
 use serenity::{
     async_trait,
@@ -12,8 +12,9 @@ use serenity::{
 use std::path::Path;
 use regex::Regex;
 
-use crate::managers::toml::*;
-use crate::managers::logger::*;
+use crate::utils::toml::*;
+use crate::utils::logger::*;
+use crate::utils::temp_msg::*;
 use crate::commands::dev::*;
 use crate::commands::staff::*;
 use crate::commands::user::*;
@@ -70,7 +71,9 @@ impl EventHandler for Handler {
                     if let Err(why) = msg.delete(&ctx.http).await {
                         println!("Error deleting message: {:?}", why);
                     }
-                    let reply_msg = msg.channel_id.say(&ctx.http, format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id)).await.unwrap().id;
+
+                    let temp_msg_content = format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id).to_string();
+                    temp_msg(&ctx, &msg, &temp_msg_content).await.ok();
                     msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
                     let log_channel = ChannelId(get_config().log_channel);
 
@@ -95,14 +98,6 @@ impl EventHandler for Handler {
 
                     println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}\n\nThere message broke the following pattern:\n{}", msg.author.id, msg.content, phrase);
                     add_infraction(msg.author.id.into());
-
-                    let ctx_clone = ctx.clone();
-                    tokio::spawn(async move {
-                        tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
-                        if let Err(why) = msg.channel_id.delete_message(&ctx_clone.http, reply_msg).await {
-                            eprintln!("Error deleting message: {:?}", why);
-                        }
-                    });
                     return;
                 }
             }            
