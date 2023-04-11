@@ -5,7 +5,7 @@ use serenity::{
 };
 
 pub async fn temp_msg(ctx: &Context, msg: &Message, content: &str) -> CommandResult {
-    let temp_msg = msg.channel_id.say(&ctx.http, format!("{}", content)).await?;
+    let temp_msg = msg.channel_id.say(&ctx.http, content).await?;
     let ctx_clone = ctx.clone();
     let msg_clone = msg.clone();
     tokio::spawn(async move {
