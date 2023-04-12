@@ -1,37 +1,57 @@
+use poise::async_trait;
+use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::ChannelId;
+use poise::serenity_prelude::CreateEmbed;
+use poise::serenity_prelude::EventHandler;
+use poise::serenity_prelude::Message;
+use poise::serenity_prelude::Reaction;
+use poise::serenity_prelude::ReactionType;
+use poise::serenity_prelude::Ready;
+use poise::serenity_prelude::UserId;
+
+/*
+struct Data {} // User data, which is stored and accessible in all command invocations
+type Error = Box<dyn std::error::Error + Send + Sync>;
+type Context<'a> = poise::Context<'a, Data, Error>;
+
+/// Displays your or another user's account creation date
+#[poise::command(slash_command, prefix_command)]
+async fn age(
+    ctx: Context<'_>,
+    #[description = "Selected user"] user: Option<serenity::User>,
+) -> Result<(), Error> {
+    let u = user.as_ref().unwrap_or_else(|| ctx.author());
+    let response = format!("{}'s account was created at {}", u.name, u.created_at());
+    ctx.say(response).await?;
+    Ok(())
+}
+*/
+
 mod commands;
 mod utils;
 
-use serenity::{
-    async_trait,
-    framework::standard::{macros::group, StandardFramework},
-    model::{channel::Message, gateway::Ready, prelude::{ChannelId, UserId},
-    channel::{Reaction, ReactionType}},
-    builder::CreateEmbed,
-    prelude::*
-};
 use std::path::Path;
 use regex::Regex;
 
 use crate::utils::toml::*;
 use crate::utils::logger::*;
-use crate::utils::temp_msg::*;
-use crate::commands::dev::*;
-use crate::commands::staff::*;
+//use crate::commands::dev::*;
+//use crate::commands::staff::*;
 use crate::commands::user::*;
 
 struct Handler;
 
-#[group]
-#[commands(dev, staff, user)]
-struct General;
+pub struct Data {} // User data, which is stored and accessible in all command invocations
+type Error = Box<dyn std::error::Error + Send + Sync>;
+type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[async_trait]
 impl EventHandler for Handler {
-    async fn ready(&self, _: Context, ready: Ready) {
+    async fn ready(&self, _: poise::serenity_prelude::Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
     }
 
-    async fn message(&self, ctx: Context, msg: Message) {
+    async fn message(&self, ctx: poise::serenity_prelude::Context, msg: Message) {
         let content = msg.content.chars().rev().collect::<String>();
         if !content.is_empty() {
             //Ignores messages from bots
@@ -46,7 +66,7 @@ impl EventHandler for Handler {
             }
             
             //Reply to pings
-            if msg.mentions_user_id(ctx.cache.current_user_id().await) {
+            if msg.mentions_user_id(ctx.cache.current_user_id()) {
                 let ctx = ctx.clone();
                 msg.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
             }
@@ -73,7 +93,13 @@ impl EventHandler for Handler {
                     }
 
                     let temp_msg_content = format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id).to_string();
-                    temp_msg(&ctx, &msg, &temp_msg_content).await.ok();
+                    let temp_msg = msg.channel_id.say(&ctx.http, temp_msg_content).await.expect("Unable to send message");
+                    let ctx_clone = ctx.clone();
+                    std::thread::spawn(move || {
+                        std::thread::sleep(std::time::Duration::from_secs(5));
+                        let _ = temp_msg.delete(&ctx_clone.http);
+                    });
+
                     msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
                     let log_channel = ChannelId(get_config().log_channel);
 
@@ -104,7 +130,7 @@ impl EventHandler for Handler {
         }
     }
 
-    async fn reaction_add(&self, ctx: Context, reaction: Reaction) {
+    async fn reaction_add(&self, ctx: poise::serenity_prelude::Context, reaction: Reaction) {
         //Only looks in the log channel
         if reaction.channel_id != ChannelId(get_config().log_channel) {
             return;
@@ -116,13 +142,10 @@ impl EventHandler for Handler {
         }
 
         //Ignores reactions from the bot
-        if reaction.user_id.unwrap() == ctx.cache.current_user_id().await {
+        if reaction.user_id.unwrap() == ctx.cache.current_user_id() {
             return;
         }
 
-        if reaction.user_id.unwrap() == ctx.cache.current_user_id().await {
-            return;
-        }
         if reaction.emoji == ReactionType::Unicode("🚫".to_string()) {
             let ctx_clone = ctx.clone();
             let reaction_clone = reaction.clone();
@@ -167,32 +190,19 @@ async fn main() {
         gen_config();
     }
 
-    //load token from config file
-    let token = get_config().token;
+    let framework = poise::Framework::builder()
+        .options(poise::FrameworkOptions {
+            commands: vec![user()],
+            ..Default::default()
+        })
+        .token(get_config().token)
+        .intents(serenity::GatewayIntents::non_privileged())
+        .setup(|ctx, _ready, framework| {
+            Box::pin(async move {
+                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                Ok(Data {})
+            })
+    });
 
-    let framework = StandardFramework::new()
-        .configure(|c| c.prefix("<|"))
-        .group(&GENERAL_GROUP);
-
-    let mut client = Client::builder(&token)
-        .event_handler(Handler)
-        .framework(framework)
-        .await
-        .expect("Error creating client");
-
-    let data = LogData {
-        importance: "INFO".to_string(),
-        message: "Starting Regy".to_string(),
-    };
-    log_this(data);
-
-    if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
-        let data = LogData {
-            importance: "ERROR".to_string(),
-            message: format!("Client error: {:?}", why),
-        };
-        log_this(data);
-
-    }
+    framework.run().await.unwrap();
 }
