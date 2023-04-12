@@ -1,4 +1,4 @@
-use crate::{Data, utils::string_to_static_str::string_to_static_str};
+use crate::{Data, utils::s_t_ss::string_to_static_str};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;

@@ -1,3 +1,3 @@
 pub mod toml;
 pub mod logger;
-pub mod string_to_static_str;
+pub mod s_t_ss;
