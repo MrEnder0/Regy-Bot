@@ -1,31 +1,17 @@
-use poise::async_trait;
-use poise::serenity_prelude as serenity;
-use poise::serenity_prelude::ChannelId;
-use poise::serenity_prelude::CreateEmbed;
-use poise::serenity_prelude::EventHandler;
-use poise::serenity_prelude::Message;
-use poise::serenity_prelude::Reaction;
-use poise::serenity_prelude::ReactionType;
-use poise::serenity_prelude::Ready;
-use poise::serenity_prelude::UserId;
-
-/*
-struct Data {} // User data, which is stored and accessible in all command invocations
-type Error = Box<dyn std::error::Error + Send + Sync>;
-type Context<'a> = poise::Context<'a, Data, Error>;
-
-/// Displays your or another user's account creation date
-#[poise::command(slash_command, prefix_command)]
-async fn age(
-    ctx: Context<'_>,
-    #[description = "Selected user"] user: Option<serenity::User>,
-) -> Result<(), Error> {
-    let u = user.as_ref().unwrap_or_else(|| ctx.author());
-    let response = format!("{}'s account was created at {}", u.name, u.created_at());
-    ctx.say(response).await?;
-    Ok(())
-}
-*/
+use poise::{
+    async_trait,
+    serenity_prelude as serenity,
+    serenity_prelude::{
+        CreateEmbed,
+        EventHandler,
+        Message,
+        Reaction,
+        ReactionType,
+        Ready,
+        UserId,
+        ChannelId
+    },
+};
 
 mod commands;
 mod utils;
@@ -40,10 +26,7 @@ use crate::utils::logger::*;
 use crate::commands::user::*;
 
 struct Handler;
-
-pub struct Data {} // User data, which is stored and accessible in all command invocations
-type Error = Box<dyn std::error::Error + Send + Sync>;
-type Context<'a> = poise::Context<'a, Data, Error>;
+pub struct Data {}
 
 #[async_trait]
 impl EventHandler for Handler {
@@ -199,7 +182,9 @@ async fn main() {
         .intents(serenity::GatewayIntents::non_privileged())
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
+                ctx.set_activity(serenity::Activity::playing("Scanning peoples messages with regex")).await;
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+
                 Ok(Data {})
             })
     });
