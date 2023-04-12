@@ -1,5 +1,9 @@
+mod commands;
+mod utils;
+
 use poise::{
     async_trait,
+    Event,
     serenity_prelude as serenity,
     serenity_prelude::{
         CreateEmbed,
@@ -10,12 +14,8 @@ use poise::{
         Ready,
         UserId,
         ChannelId
-    },
+    }
 };
-
-mod commands;
-mod utils;
-
 use std::path::Path;
 use regex::Regex;
 
@@ -112,58 +112,6 @@ impl EventHandler for Handler {
             }            
         }
     }
-
-    async fn reaction_add(&self, ctx: poise::serenity_prelude::Context, reaction: Reaction) {
-        //Only looks in the log channel
-        if reaction.channel_id != ChannelId(get_config().log_channel) {
-            return;
-        }
-
-        //Only allow staff to use reactions
-        if !get_config().staff.contains(&reaction.user_id.unwrap().to_string()) {
-            return;
-        }
-
-        //Ignores reactions from the bot
-        if reaction.user_id.unwrap() == ctx.cache.current_user_id() {
-            return;
-        }
-
-        if reaction.emoji == ReactionType::Unicode("🚫".to_string()) {
-            let ctx_clone = ctx.clone();
-            let reaction_clone = reaction.clone();
-            tokio::spawn(async move {
-                let mut msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
-                let user_id = &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 1];
-
-                let data = LogData {
-                    importance: "INFO".to_string(),
-                    message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
-                };
-                log_this(data);
-
-                dismiss_infraction(user_id.parse::<u64>().unwrap());
-
-                let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
-                user.dm(&ctx_clone.http, |m| m.content("Your report has been dismissed by a staff member due to it being found as being a false positive.")).await.expect("Unable to dm user");
-
-                let mut embed = CreateEmbed::default();
-                embed.color(0x00FF00);
-                embed.title("Message blocked due to matching a set regex pattern");
-                embed.field("The user who broke a regx pattern is below:", format!("<@{}>", user_id), false);
-                embed.field("Their message is the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
-                embed.footer(|f| f.text("This infraction has been dismissed by a staff member"));
-                msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
-
-                msg.delete_reaction_emoji(&ctx_clone.http, ReactionType::Unicode("🚫".to_string())).await.ok();
-
-                //Delete the embed
-                /*if let Err(why) = msg.delete(&ctx_clone.http).await {
-                //    println!("Error deleting message: {:?}", why);
-                }*/
-            });
-        }
-    }
 }
 
 #[tokio::main]
@@ -176,6 +124,69 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![user()],
+            event_handler: |ctx, event, _framework, data| {
+                Box::pin(async move {
+                    match event {
+                        Event::ReactionAdd { add_reaction, .. } => {
+                            //ignore reactions from the bot
+                            if add_reaction.user_id.unwrap() == ctx.cache.current_user_id() {
+                                return Ok(());
+                            }
+
+                            //only look at reactions in the log channel
+                            if add_reaction.channel_id != ChannelId(get_config().log_channel) {
+                                return Ok(());
+                            }
+
+                            //ignore events except for staff
+                            if !get_config().staff.contains(&add_reaction.user_id.unwrap().to_string()) {
+                                return Ok(());
+                            }
+
+                            //ignore events except for the 🚫 reaction
+                            if add_reaction.emoji != ReactionType::Unicode("🚫".to_string()) {
+                                return Ok(());
+                            }
+
+                            let ctx_clone = ctx.clone();
+                            let reaction_clone = add_reaction.clone();
+                            tokio::spawn(async move {
+                                let mut msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
+                                let user_id = &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 1];
+                            
+                                let data = LogData {
+                                    importance: "INFO".to_string(),
+                                    message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
+                                };
+                                log_this(data);
+                            
+                                dismiss_infraction(user_id.parse::<u64>().unwrap());
+                            
+                                let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
+                                user.dm(&ctx_clone.http, |m| m.content("Your report has been dismissed by a staff member due to it being found as being a false positive.")).await.expect("Unable to dm user");
+                            
+                                let mut embed = CreateEmbed::default();
+                                embed.color(0x00FF00);
+                                embed.title("Message blocked due to matching a set regex pattern");
+                                embed.field("The user who broke a regx pattern is below:", format!("<@{}>", user_id), false);
+                                embed.field("Their message is the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
+                                embed.footer(|f| f.text("This infraction has been dismissed by a staff member"));
+                                msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
+                            
+                                msg.delete_reaction_emoji(&ctx_clone.http, ReactionType::Unicode("🚫".to_string())).await.ok();
+                            
+                                //Delete the embed
+                                /*if let Err(why) = msg.delete(&ctx_clone.http).await {
+                                //    println!("Error deleting message: {:?}", why);
+                                }*/
+                            });
+                        
+                        }
+                        _ => {}
+                    }
+                    Ok(())
+                })
+            },
             ..Default::default()
         })
         .token(get_config().token)
@@ -184,7 +195,6 @@ async fn main() {
             Box::pin(async move {
                 ctx.set_activity(serenity::Activity::playing("Scanning peoples messages with regex")).await;
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-
                 Ok(Data {})
             })
     });
