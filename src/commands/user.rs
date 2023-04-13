@@ -1,4 +1,4 @@
-use crate::{Data, utils::s_t_ss::string_to_static_str};
+use crate::{Data, utils::s_t_ss};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -8,7 +8,7 @@ pub async fn user(
     ctx: Context<'_>,
     #[description = "Commands for standard users; run help for more info"] command_arg: Option<String>,
 ) -> Result<(), Error> {
-    let arg = string_to_static_str(command_arg.unwrap());
+    let arg = s_t_ss::string_to_static_str(command_arg.unwrap());
     match arg {
         "none" => {
             ctx.say("You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
