@@ -22,97 +22,10 @@ use regex::Regex;
 use crate::utils::toml::*;
 use crate::utils::logger::*;
 //use crate::commands::dev::*;
-//use crate::commands::staff::*;
+use crate::commands::staff::*;
 use crate::commands::user::*;
 
-struct Handler;
 pub struct Data {}
-
-#[async_trait]
-impl EventHandler for Handler {
-    async fn ready(&self, _: poise::serenity_prelude::Context, ready: Ready) {
-        println!("{} is connected!", ready.user.name);
-    }
-
-    async fn message(&self, ctx: poise::serenity_prelude::Context, msg: Message) {
-        let content = msg.content.chars().rev().collect::<String>();
-        if !content.is_empty() {
-            //Ignores messages from bots
-            if msg.author.bot {
-                return;
-            }
-
-            //Reply to dm messages
-            if msg.guild_id.is_none() {
-                msg.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker named Gatito I cant. :upside_down: Lots of to you :heart:").await.expect("Unable to reply to dm");
-                return;
-            }
-            
-            //Reply to pings
-            if msg.mentions_user_id(ctx.cache.current_user_id()) {
-                let ctx = ctx.clone();
-                msg.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
-            }
-
-            //Ignores moderation from devs
-            if msg.author.id == 687897073047306270 || msg.author.id == 598280691066732564 {
-                return;
-            }
-
-            //Ignores moderation from staff
-            for staff in get_config().staff {
-                if msg.author.id == UserId(staff.parse::<u64>().unwrap()) {
-                    return;
-                }
-            }
-
-            let list_block_phrases = list_block_phrases();
-
-            for (_id, phrase) in list_block_phrases {
-                let re = Regex::new(&phrase).unwrap();
-                if re.is_match(&msg.content) {
-                    if let Err(why) = msg.delete(&ctx.http).await {
-                        println!("Error deleting message: {:?}", why);
-                    }
-
-                    let temp_msg_content = format!("<@{}> You are not allowed to send that due to the server setup regex rules", msg.author.id).to_string();
-                    let temp_msg = msg.channel_id.say(&ctx.http, temp_msg_content).await.expect("Unable to send message");
-                    let ctx_clone = ctx.clone();
-                    std::thread::spawn(move || {
-                        std::thread::sleep(std::time::Duration::from_secs(5));
-                        let _ = temp_msg.delete(&ctx_clone.http);
-                    });
-
-                    msg.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
-                    let log_channel = ChannelId(get_config().log_channel);
-
-                    let mut embed = CreateEmbed::default();
-                    embed.color(0xFFA500);
-                    embed.title("Message blocked due to matching a set regex pattern");
-                    embed.field("The user who broke a regx pattern is below:", format!("<@{}>", msg.author.id), false);
-                    embed.field("Their message is the following below:", format!("||{}||", msg.content), false);
-                    embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
-                    let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
-                    let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
-                    embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
-
-                    //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
-
-                    let data = LogData {
-                        importance: "INFO".to_string(),
-                        message: format!("{} has sent a message which is not allowed due to the set regex patterns", msg.author.id),
-                    };
-
-                    log_this(data);
-
-                    println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}\n\nThere message broke the following pattern:\n{}", msg.author.id, msg.content, phrase);
-                    add_infraction(msg.author.id.into());
-                    return;
-                }
-            }            
-        }
-    }
-}
 
 #[tokio::main]
 async fn main() {
@@ -123,7 +36,7 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![user()],
+            commands: vec![user(), staff()],
             event_handler: |ctx, event, _framework, data| {
                 Box::pin(async move {
                     match event {
@@ -181,6 +94,78 @@ async fn main() {
                                 }*/
                             });
                         
+                        }
+                        Event::Message { new_message } => {
+                            //ignore messages from bots
+                            if new_message.author.bot {
+                                return Ok(());
+                            }
+                            //Reply to dm messages
+                            if new_message.guild_id.is_none() {
+                                new_message.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:").await.expect("Unable to reply to dm");
+                                return Ok(());
+                            }
+                            //Reply to pings
+                            if new_message.mentions_user_id(ctx.cache.current_user_id()) {
+                                let ctx = ctx.clone();
+                                new_message.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
+                            }
+                        
+                            //Ignores moderation from devs
+                            if new_message.author.id == 687897073047306270 || new_message.author.id == 598280691066732564 {
+                                return Ok(());
+                            }
+                        
+                            //Ignores moderation from staff
+                            for staff in get_config().staff {
+                                if new_message.author.id == UserId(staff.parse::<u64>().unwrap()) {
+                                    return Ok(());
+                                }
+                            }
+                            
+                            let list_block_phrases = list_block_phrases();
+                            for (_id, phrase) in list_block_phrases {
+                                let re = Regex::new(&phrase).unwrap();
+                                if re.is_match(&new_message.content) {
+                                    if let Err(why) = new_message.delete(&ctx.http).await {
+                                        println!("Error deleting message: {:?}", why);
+                                    }
+                
+                                    let temp_msg_content = format!("<@{}> You are not allowed to send that due to the server setup regex rules", new_message.author.id).to_string();
+                                    let temp_msg = new_message.channel_id.say(&ctx.http, temp_msg_content).await.expect("Unable to send message");
+                                    let ctx_clone = ctx.clone();
+                                    std::thread::spawn(move || {
+                                        std::thread::sleep(std::time::Duration::from_secs(5));
+                                        let _ = temp_msg.delete(&ctx_clone.http);
+                                    });
+                
+                                    new_message.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
+                                    let log_channel = ChannelId(get_config().log_channel);
+                
+                                    let mut embed = CreateEmbed::default();
+                                    embed.color(0xFFA500);
+                                    embed.title("Message blocked due to matching a set regex pattern");
+                                    embed.field("The user who broke a regx pattern is below:", format!("<@{}>", new_message.author.id), false);
+                                    embed.field("Their message is the following below:", format!("||{}||", new_message.content), false);
+                                    embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
+                                    let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
+                                    let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
+                                    embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
+                
+                                    //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
+                
+                                    let data = LogData {
+                                        importance: "INFO".to_string(),
+                                        message: format!("{} has sent a message which is not allowed due to the set regex patterns", new_message.author.id),
+                                    };
+                
+                                    log_this(data);
+                
+                                    println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}\n\nThere message broke the following pattern:\n{}", new_message.author.id, new_message.content, phrase);
+                                    add_infraction(new_message.author.id.into());
+                                    return Ok(());
+                                }
+                            }      
                         }
                         _ => {}
                     }
