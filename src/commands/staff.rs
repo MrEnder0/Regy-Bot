@@ -33,7 +33,6 @@ pub async fn staff(
                             `staff remove_regex` - Remove a regex phrase from the list\n\
                             `staff list_regex` - Lists all the current blocked regex phrases\n\
                             `staff grab_pfp` - Grabs a specified user's pfp\n\
-                            `staff grab_timestamp` - Find out when a specified user's account was made \n\
                             `staff grab_banner` - Grabs a specified users banner\n\
                             `staff am_staff` - Says if you are staff",
             ).await?;
