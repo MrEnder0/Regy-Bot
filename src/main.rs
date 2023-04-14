@@ -175,7 +175,7 @@ async fn main() {
             ..Default::default()
         })
         .token(get_config().token)
-        .intents(serenity::GatewayIntents::non_privileged())
+        .intents(serenity::GatewayIntents::all())
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
                 ctx.set_activity(serenity::Activity::playing("Scanning peoples messages with regex")).await;
