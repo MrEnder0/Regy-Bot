@@ -9,7 +9,7 @@ pub async fn dev(
     #[description = "Commands for devs; run help for more info"] command_arg: Option<String>,
 ) -> Result<(), Error> {
     //Ignore message from non-devs
-    let staff = ["687897073047306270", "598280691066732564"];
+    let staff = ["687897073047306270", "598280691066732564", "275787354688585730"];
     if !staff.contains(&ctx.author().id.to_string().as_str()) {
         ctx.say("You are not staff you skid :skull:").await?;
         return Ok(());
