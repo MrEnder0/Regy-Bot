@@ -31,7 +31,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [-] My infractions command
 
 # Release 6
-[ ] Rewrite for slash commands
+[x] Rewrite for slash commands
 
 # Release 7
 [ ] Add auto detect vote/poll support
