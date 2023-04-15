@@ -28,7 +28,6 @@ pub async fn dev(
             ctx.say(
                 "The dev commands are:\n\
                             `dev help` - Shows this message\n\
-                            `dev echo` - Echoes the message\n\
                             `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
                             `dev hai` - Says hello back :3\n\
                             `dev am_dev` - Says if you are dev",
