@@ -2,16 +2,11 @@ mod commands;
 mod utils;
 
 use poise::{
-    async_trait,
     Event,
     serenity_prelude as serenity,
     serenity_prelude::{
         CreateEmbed,
-        EventHandler,
-        Message,
-        Reaction,
         ReactionType,
-        Ready,
         UserId,
         ChannelId
     }
@@ -21,7 +16,7 @@ use regex::Regex;
 
 use crate::utils::toml::*;
 use crate::utils::logger::*;
-//use crate::commands::dev::*;
+use crate::commands::dev::*;
 use crate::commands::staff::*;
 use crate::commands::user::*;
 
@@ -36,8 +31,8 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![user(), staff()],
-            event_handler: |ctx, event, _framework, data| {
+            commands: vec![user(), staff(), dev()],
+            event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
                     match event {
                         Event::ReactionAdd { add_reaction, .. } => {
