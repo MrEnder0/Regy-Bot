@@ -129,9 +129,9 @@ async fn main() {
                                     let temp_msg_content = format!("<@{}> You are not allowed to send that due to the server setup regex rules", new_message.author.id).to_string();
                                     let temp_msg = new_message.channel_id.say(&ctx.http, temp_msg_content).await.expect("Unable to send message");
                                     let ctx_clone = ctx.clone();
-                                    std::thread::spawn(move || {
+                                    tokio::spawn(async move {
                                         std::thread::sleep(std::time::Duration::from_secs(5));
-                                        let _ = temp_msg.delete(&ctx_clone.http);
+                                        temp_msg.delete(&ctx_clone.http).await.ok();
                                     });
                 
                                     new_message.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");

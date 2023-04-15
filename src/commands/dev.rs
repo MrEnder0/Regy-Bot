@@ -36,10 +36,11 @@ pub async fn dev(
         }
         "shutdown" => {
             ctx.say("Regy will down in 120 seconds...").await?;
-            let msg_author = ctx.author().id.clone();
+            let msg_author = ctx.author().id;
             tokio::spawn(async move {
                 tokio::time::sleep(tokio::time::Duration::from_secs(120)).await;
                 println!("Shutdown from dev commands sent from {}", msg_author);
+
                 let log_data = LogData {
                     importance: "INFO".to_string(),
                     message: format!("Shutdown from dev commands sent from {}", msg_author),
