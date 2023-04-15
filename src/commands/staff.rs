@@ -1,49 +1,46 @@
-use crate::utils::toml;
-use serenity::{
-    framework::standard::{macros::command, CommandResult},
-    model::{channel::Message, prelude::UserId},
-    prelude::*,
-};
+use crate::{Data, utils::{toml, s_t_ss}};
+use poise::serenity_prelude::UserId;
 use uuid::Uuid;
 
-#[command]
-async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
+type Error = Box<dyn std::error::Error + Send + Sync>;
+type Context<'a> = poise::Context<'a, Data, Error>;
+
+#[poise::command(slash_command, prefix_command)]
+pub async fn staff(
+    ctx: Context<'_>,
+    #[description = "Commands for staff members; run help for more info"] command_arg: Option<String>,
+) -> Result<(), Error> {
     //Ignore message from non-staff
     let staff = toml::get_config().staff;
-    let user_id = msg.author.id.to_string();
+    let user_id = ctx.author().id.to_string();
     if !staff.contains(&user_id) {
-        msg.reply(ctx, "You are not staff you skid :skull:").await?;
+        ctx.say("You are not staff you skid :skull:").await?;
         return Ok(());
     }
 
-    let mut args = msg.content.split(' ');
-    args.next();
-    let arg: &str = args.next().unwrap_or("none");
-    match arg {
+    let arg = s_t_ss::string_to_static_str(command_arg.unwrap());
+    let args = arg.split_whitespace().collect::<Vec<&str>>();
+    match args[0] {
         "none" => {
-            msg.reply(ctx, "You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
+            ctx.say("You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
             return Ok(());
         }
         "help" => {
-            msg.reply(
-                ctx,
+            ctx.say(
                 "The staff commands are:\n\
                             `staff help` - Shows this message\n\
                             `staff add_regex` - Add a new regex phrase to the list\n\
                             `staff remove_regex` - Remove a regex phrase from the list\n\
                             `staff list_regex` - Lists all the current blocked regex phrases\n\
                             `staff grab_pfp` - Grabs a specified user's pfp\n\
-                            `staff grab_timestamp` - Find out when a specified user's account was made \n\
                             `staff grab_banner` - Grabs a specified users banner\n\
                             `staff am_staff` - Says if you are staff",
-            )
-            .await?;
+            ).await?;
             return Ok(());
         }
         "add_regex" => {
-            let mut args = msg.content.split(' ');
-            args.next();
-            args.next();
+            let args = arg.split_whitespace().skip(1).collect::<Vec<&str>>();
+            println!("{:?}", args);
             let mut new_block_phrase = String::new();
             for arg in args {
                 new_block_phrase.push_str(arg);
@@ -53,7 +50,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             //Prevents for empty regex
             if new_block_phrase.is_empty() || new_block_phrase == " " || new_block_phrase.len() < 3
             {
-                msg.reply(ctx, "You need to specify a regex phrase to add; it cant be empty and it also cant be less than 3 characters long.").await?;
+                ctx.say("You need to specify a regex phrase to add; it cant be empty and it also cant be less than 3 characters long.").await?;
                 return Ok(());
             }
 
@@ -64,17 +61,15 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
                 "Added the regex phrase:\n||```{}```||",
                 new_block_phrase_clone
             );
-            msg.reply(ctx, status_message).await?;
+            ctx.say(status_message).await?;
             return Ok(());
         }
         "remove_regex" => {
-            let id = args.next().unwrap_or("none");
+            let id = arg.split_whitespace().nth(1).unwrap_or("none");
             if id == "none" {
-                msg.reply(
-                    ctx,
+                ctx.say(
                     "You need to specify a UUID you silly kitten :heart:",
-                )
-                .await?;
+                ).await?;
                 return Ok(());
             }
             let id = id.parse::<Uuid>().unwrap();
@@ -83,7 +78,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
                 "Removed the regex phrase with UUID: {}",
                 id
             );
-            msg.reply(ctx, status_message).await?;
+            ctx.say(status_message).await?;
             return Ok(());
         }
         "list_regex" => {
@@ -97,7 +92,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             }
 
             let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | REGEX\n{}```||", formatted_blocked_phrases);
-            let channel_id = msg.channel_id;
+            let channel_id = ctx.channel_id();
 
             if status_message.len() > 2000 {
                 channel_id.say(ctx, "The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**").await?;
@@ -119,82 +114,70 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
                     }
                 }
             } else {
-                msg.reply(ctx, status_message).await?;
+                ctx.say(status_message).await?;
             }
             return Ok(());
         }
         "add_infraction" => {
-            let user_id = args.next().unwrap_or("none");
+            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
             if user_id == "none" {
-                msg.reply(
-                    ctx,
+                ctx.say(
                     "You need to specify a user id you silly kitten :heart:",
-                )
-                .await?;
+                ).await?;
                 return Ok(());
             }
             let user_id = user_id.parse::<u64>().unwrap();
             toml::add_infraction(user_id);
-            msg.reply(ctx, "Added infraction to the specified user.").await?;
+            ctx.say("Added infraction to the specified user.").await?;
             return Ok(());
         }
         "list_infractions" => {
-            let user_id = args.next().unwrap_or("none");
+            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
             if user_id == "none" {
-                msg.reply(
-                    ctx,
+                ctx.say(
                     "You need to specify a user id you silly kitten :heart:",
-                )
-                .await?;
+                ).await?;
                 return Ok(());
             }
             let user_id = user_id.parse::<u64>().unwrap();
             let infractions = toml::list_infractions(user_id);
             let formatted_infractions = format!("Infractions for {} is:\n{}", user_id, infractions);
-            msg.reply(ctx, formatted_infractions).await?;
+            ctx.say(formatted_infractions).await?;
             return Ok(());
         }
         "grab_pfp" => {
-            let user_id = args.next().unwrap_or("none");
+            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
             if user_id == "none" {
-                msg.reply(
-                    ctx,
+                ctx.say(
                     "You need to specify a user id you silly kitten :heart:",
-                )
-                .await?;
+                ).await?;
                 return Ok(());
             }
             let user_id = user_id.parse::<u64>().unwrap();
             let user = UserId(user_id).to_user(ctx).await?;
-            msg.reply(ctx, user.face()).await?;
+            ctx.say(user.face()).await?;
             return Ok(());
         }
         "grab_banner" => {
-            let user_id = args.next().unwrap_or("none");
+            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
             if user_id == "none" {
-                msg.reply(
-                    ctx,
+                ctx.say(
                     "You need to specify a user id you silly kitten :heart:",
-                )
-                .await?;
+                ).await?;
                 return Ok(());
             }
             let user_id = user_id.parse::<u64>().unwrap();
             let user = UserId(user_id).to_user(ctx).await?;
-            msg.reply(
-                ctx,
+            ctx.say(
                 user.banner_url()
                     .unwrap_or("This user does not have a banner".to_string()),
-            )
-            .await?;
+            ).await?;
             return Ok(());
         }
         "am_staff" => {
-            msg.reply(
-                ctx,
+            ctx.say(
                 "Yes master uwu xo... Now do some moderation and stop making me do it :|",
-            )
-            .await?;
+            ).await?;
             return Ok(());
         }
         _ => {
@@ -202,7 +185,7 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
                 "Invalid argument '{}' but its ok I still care abt u :heart:",
                 arg.replace('@', "\\@")
             );
-            msg.reply(ctx, invalid_arg_message).await?;
+            ctx.say(invalid_arg_message).await?;
             return Ok(());
         }
     }

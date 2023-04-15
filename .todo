@@ -26,10 +26,15 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 5
 [-] Api interface for web page
 [x] Add infranction command
-[ ] Remove infranction command
+[-] Remove infranction command
 [x] List infranctions command
-[ ] My infractions command
+[-] My infractions command
 
 # Release 6
-[ ] Rewrite for slash commands
-[ ] Add auto detect vote support
+[x] Rewrite for slash commands
+
+# Release 7
+[ ] Add auto detect vote/poll support
+[ ] Remove infranction command
+[ ] My infractions command
+[ ] Add user report false infraction command
