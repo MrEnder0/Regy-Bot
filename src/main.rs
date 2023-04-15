@@ -35,6 +35,10 @@ async fn main() {
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
                     match event {
+                        Event::Ready { data_about_bot } => {
+                            println!("{} is connected!", data_about_bot.user.name);
+                        }
+                        
                         Event::ReactionAdd { add_reaction, .. } => {
                             //ignore reactions from the bot
                             if add_reaction.user_id.unwrap() == ctx.cache.current_user_id() {
