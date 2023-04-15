@@ -82,6 +82,7 @@ pub async fn staff(
             return Ok(());
         }
         "list_regex" => {
+            let status_msg = ctx.say("Sending regex phrases this may take a few seconds...").await?;
             let blocked_phrases = toml::list_block_phrases();
             let mut formatted_blocked_phrases = String::new();
             for (id, phrase) in blocked_phrases {
@@ -116,6 +117,10 @@ pub async fn staff(
             } else {
                 ctx.say(status_message).await?;
             }
+
+            status_msg.edit(ctx, |m| {
+                m.content("Finished sending regex phrases to the channel.")
+            }).await?;
             return Ok(());
         }
         "add_infraction" => {
