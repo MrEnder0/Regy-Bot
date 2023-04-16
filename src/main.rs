@@ -109,7 +109,14 @@ async fn main() {
                                 let ctx = ctx.clone();
                                 new_message.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
                             }
-                        
+
+                            //Poll detection
+                            let poll_re = Regex::new("\\b(?:let'?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|opinion poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
+                            if poll_re.is_match(&new_message.content) {
+                                new_message.react(&ctx.http, ReactionType::Unicode("👍".to_string())).await.ok();
+                                new_message.react(&ctx.http, ReactionType::Unicode("👎".to_string())).await.ok();
+                            }
+
                             //Ignores moderation from devs
                             if new_message.author.id == 687897073047306270 || new_message.author.id == 598280691066732564 {
                                 return Ok(());
