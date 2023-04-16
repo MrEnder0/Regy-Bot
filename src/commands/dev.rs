@@ -1,4 +1,4 @@
-use crate::{Data, utils::{logger::{LogData, log_this}, s_t_ss}};
+use crate::{Data, utils::{logger::{LogData, log_this}, type_conversions}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -15,7 +15,7 @@ pub async fn dev(
         return Ok(());
     }
 
-    let arg = s_t_ss::string_to_static_str(command_arg.unwrap());
+    let arg = type_conversions::string_to_static_str(command_arg.unwrap());
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {

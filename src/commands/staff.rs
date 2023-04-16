@@ -1,4 +1,4 @@
-use crate::{Data, utils::{toml, s_t_ss}};
+use crate::{Data, utils::{toml, type_conversions}};
 use poise::serenity_prelude::UserId;
 use uuid::Uuid;
 
@@ -18,7 +18,7 @@ pub async fn staff(
         return Ok(());
     }
 
-    let arg = s_t_ss::string_to_static_str(command_arg.unwrap());
+    let arg = type_conversions::string_to_static_str(command_arg.unwrap());
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {

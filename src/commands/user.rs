@@ -1,4 +1,4 @@
-use crate::{Data, utils::s_t_ss};
+use crate::{Data, utils::{type_conversions, toml}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -8,7 +8,7 @@ pub async fn user(
     ctx: Context<'_>,
     #[description = "Commands for standard users; run help for more info"] command_arg: Option<String>,
 ) -> Result<(), Error> {
-    let arg = s_t_ss::string_to_static_str(command_arg.unwrap());
+    let arg = type_conversions::string_to_static_str(command_arg.unwrap());
     match arg {
         "none" => {
             ctx.say("You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
@@ -20,6 +20,7 @@ pub async fn user(
                 `user why_rust` - Shows why rust is the best language\n\
                 `user info` - Tells you a full description of what Regy is\n\
                 `user what_is_regex` - Explains what regex is\n\
+                `user my_infractions` - Shows how many infractions you have\n\
                 `user am_user` - Says if you are a user...",
             ).await?;
             return Ok(());
@@ -70,6 +71,13 @@ pub async fn user(
                     In construction, a skid <@&1087534862937890896> steer is a type of compact, maneuverable loader that is used for digging, pushing, and carrying materials. The loader is mounted on four wheels or tracks, and can be operated by a single person.\n\
                     These are just a few examples of the different meanings of the term 'skid.' <@&1087534862937890896> The exact meaning of the term will depend on the context in which it is used."
                 ).await?;
+            return Ok(());
+        }
+        "my_infractions" => {
+            let user_id = type_conversions::userid_to_u64(ctx.author().id);
+            let user_infractions = toml::user_infractions_count(user_id);
+            let infractions_message = format!("You have {} infractions.", user_infractions);
+            ctx.say(infractions_message).await?;
             return Ok(());
         }
         _ => {
