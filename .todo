@@ -18,7 +18,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Report dismissing
 [x] Logging to file
 
-#Release 3
+# Release 3
 [x] Del_regex command
 [x] Punishment saving to toml
 [x] List user punishments command
