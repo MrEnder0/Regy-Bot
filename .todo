@@ -1,39 +1,39 @@
 # Future plans
 Note none of these plans are guaranteed and also there may be other changes that are not stated below.
 
-# Release 1
+# Release 0
 [x] Add_regex command
 [x] List_regex command
 [x] Auto moderation
 [x] Moderation logging to discord
 
-# Release 2
+# Release 1
 [x] Store block phrases in toml using base64 encoding
 [x] Complete restructure
 [x] Shutdown command
 
-# Release 3
+# Release 2
 [x] Use of embeds
 [x] Logging channel now config option
 [x] Report dismissing
 [x] Logging to file
 
-#Release 4
+#Release 3
 [x] Del_regex command
 [x] Punishment saving to toml
 [x] List user punishments command
 
-# Release 5
+# Release 4
 [-] Api interface for web page
 [x] Add infranction command
 [-] Remove infranction command
 [x] List infranctions command
 [-] My infractions command
 
-# Release 6
+# Release 5
 [x] Rewrite for slash commands
 
-# Release 7
+# Release 6
 [ ] Add auto detect vote/poll support
 [ ] Remove infranction command
 [x] My infractions command
