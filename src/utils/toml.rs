@@ -90,8 +90,3 @@ pub fn dismiss_infraction(id: u64) {
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
-
-pub fn user_infractions_count(id: u64) -> u32 {
-    let infractions = list_infractions(id);
-    infractions
-}

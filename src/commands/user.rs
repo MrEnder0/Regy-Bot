@@ -75,7 +75,7 @@ pub async fn user(
         }
         "my_infractions" => {
             let user_id = type_conversions::userid_to_u64(ctx.author().id);
-            let user_infractions = toml::user_infractions_count(user_id);
+            let user_infractions = toml::list_infractions(user_id);
             let infractions_message = format!("You have {} infractions.", user_infractions);
             ctx.say(infractions_message).await?;
             return Ok(());
