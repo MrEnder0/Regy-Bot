@@ -33,6 +33,7 @@ pub async fn staff(
                             `staff remove_regex` - Remove a regex phrase from the list\n\
                             `staff list_regex` - Lists all the current blocked regex phrases\n\
                             `staff add_infraction` - Adds an infraction to a user\n\
+                            `staff remove_infraction` - Removes an infraction from a user\n\
                             `staff list_infractions` - Removes an infraction from a user\n\
                             `staff grab_pfp` - Grabs a specified user's pfp\n\
                             `staff grab_banner` - Grabs a specified users banner\n\
