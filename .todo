@@ -38,7 +38,9 @@ Note none of these plans are guaranteed and also there may be other changes that
 [ ] Remove infranction command
 [x] My infractions command
 [ ] Add user report false infraction command
+[o] Fix help commands to show all commands
 
 # Release 7
 [ ] Make regy scan messages that are edited
 [ ] Make regy remove all infractions from users who get banned
+[ ] Make regy join threads on creation
