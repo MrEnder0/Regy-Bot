@@ -137,7 +137,7 @@ async fn main() {
                                         println!("Error deleting message: {:?}", why);
                                     }
                 
-                                    let temp_msg_content = format!("<@{}> You are not allowed to send that due to the server setup regex rules", new_message.author.id).to_string();
+                                    let temp_msg_content = format!("<@{}> You are not allowed to send that due to the server setup regex rules", new_message.author.id);
                                     let temp_msg = new_message.channel_id.say(&ctx.http, temp_msg_content).await.expect("Unable to send message");
                                     let ctx_clone = ctx.clone();
                                     tokio::spawn(async move {
