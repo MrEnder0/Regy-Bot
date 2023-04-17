@@ -17,8 +17,9 @@ pub async fn user(
         "help" => {
             ctx.say("The user commands are:\n\
                 `user help` - Shows this message\n\
-                `user why_rust` - Shows why rust is the best language\n\
                 `user info` - Tells you a full description of what Regy is\n\
+                `user skid` - Explains what a skid is\n\
+                `user why_rust` - Shows why rust is the best language\n\
                 `user what_is_regex` - Explains what regex is\n\
                 `user my_infractions` - Shows how many infractions you have\n\
                 `user am_user` - Says if you are a user...",
