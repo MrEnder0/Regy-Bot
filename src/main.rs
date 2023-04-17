@@ -107,7 +107,7 @@ async fn main() {
                             //Reply to pings
                             if new_message.mentions_user_id(ctx.cache.current_user_id()) {
                                 let ctx = ctx.clone();
-                                new_message.reply(ctx, "To use Regy use the prefix `<|`").await.expect("Unable to reply to ping");
+                                new_message.reply(ctx, "To use Regy please use the slash commands, ex '/user help'").await.expect("Unable to reply to ping");
                             }
 
                             //Poll detection
