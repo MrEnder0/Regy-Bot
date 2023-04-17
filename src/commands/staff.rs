@@ -138,6 +138,19 @@ pub async fn staff(
             ctx.say("Added infraction to the specified user.").await?;
             return Ok(());
         }
+        "remove_infraction" => {
+            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
+            if user_id == "none" {
+                ctx.say(
+                    "You need to specify a user id you silly kitten :heart:",
+                ).await?;
+                return Ok(());
+            }
+            let user_id = user_id.parse::<u64>().unwrap();
+            toml::dismiss_infraction(user_id);
+            ctx.say("Removed 1 infraction from the specified user.").await?;
+            return Ok(());
+        }
         "list_infractions" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
             if user_id == "none" {
