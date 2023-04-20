@@ -173,7 +173,7 @@ async fn main() {
                                 }
                             }      
                         }
-                        Event::MessageUpdate { old_if_available, new, event } => {
+                        Event::MessageUpdate { old_if_available: _, new: _, event } => {
                             //get content of new message
                             let updated_message = event.content.clone().unwrap();
                             let author = event.author.clone().unwrap();
