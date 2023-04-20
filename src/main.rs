@@ -181,8 +181,6 @@ async fn main() {
                             let channel_id = event.channel_id;
                             let message_id = event.id;
 
-                            println!("Message updated: {:?}", updated_message);
-
                             //ignore messages from bots
                             if author.bot {
                                 return Ok(());
