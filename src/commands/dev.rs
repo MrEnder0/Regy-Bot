@@ -58,6 +58,11 @@ pub async fn dev(
             ctx.say("Hai hai! 😸🐾 \n \nI am Discord kitten, nya~ 🐱🌸 \n \nI will do my best to fulfill your requests, uwu~ 😊 \n \nLet's pawty and have some kawaii fun, nya~ 🎉🎀 \n \nDon't worry, I'll try not to mispurr too many words, nya~ 😸👌").await?;
             return Ok(());
         }
+        "clean" => {
+            std::fs::remove_file("regy.log").unwrap();
+            ctx.say("Log file deleted").await?;
+            return Ok(());
+        }
         _ => {
             let invalid_arg_message = format!(
                 "Invalid argument '{}' but its ok I still care abt u :heart:",
