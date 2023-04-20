@@ -43,3 +43,8 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Make regy scan messages that are edited
 [ ] Make regy remove all infractions from users who get banned
 [ ] Make regy join threads on creation
+
+# Release 8
+[ ] Make customizable raid detector with arc values
+[ ] Make bot action limiter
+[ ] Make bot work in multiple servers in one instance
