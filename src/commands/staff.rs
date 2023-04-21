@@ -18,7 +18,7 @@ pub async fn staff(
         return Ok(());
     }
 
-    let arg = type_conversions::string_to_static_str(command_arg.unwrap());
+    let arg = type_conversions::string_to_static_str(command_arg.expect("You need to specify a command, I expect higher of you, you should know how to use this bot correctly"));
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {
