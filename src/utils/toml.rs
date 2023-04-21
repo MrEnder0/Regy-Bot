@@ -8,6 +8,7 @@ pub struct Config {
     pub token: String,
     pub staff: Vec<String>,
     pub log_channel: u64,
+    pub user_delete_on_ban: bool,
     pub block_phrases: HashMap<Uuid, String>,
     pub infractions: HashMap<String, u32>
 }
@@ -19,7 +20,7 @@ pub fn gen_config() {
         token: "token".to_string(),
         staff: vec!["000000000000000000".to_string()],
         log_channel: 000000000000000000,
-        // block_phrases: vec![general_purpose::STANDARD_NO_PAD.encode("regy test phrase")],
+        user_delete_on_ban: true,
         block_phrases: phr,
         infractions: HashMap::new()
     };
@@ -87,6 +88,13 @@ pub fn dismiss_infraction(id: u64) {
         *infractions -= 1;
     }
 
+    let toml = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", toml).unwrap();
+}
+
+pub fn delete_user(id: u64) {
+    let mut config = get_config();
+    config.infractions.remove(&id.to_string());
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
