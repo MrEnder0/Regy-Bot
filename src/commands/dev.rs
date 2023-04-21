@@ -29,6 +29,7 @@ pub async fn dev(
                 "The dev commands are:\n\
                             `dev help` - Shows this message\n\
                             `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
+                            `dev clean` - Deletes the log file and other temp files\n\
                             `dev hai` - Says hello back :3\n\
                             `dev am_dev` - Says if you are dev",
             ).await?;
@@ -59,7 +60,7 @@ pub async fn dev(
             return Ok(());
         }
         "clean" => {
-            std::fs::remove_file("regy.log").unwrap();
+            std::fs::remove_file("regy.log").expect("Unable to delete log file or file does not exist");
             ctx.say("Log file deleted").await?;
             return Ok(());
         }
