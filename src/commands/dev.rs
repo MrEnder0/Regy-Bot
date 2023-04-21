@@ -60,8 +60,14 @@ pub async fn dev(
             return Ok(());
         }
         "clean" => {
-            std::fs::remove_file("regy.log").expect("Unable to delete log file or file does not exist");
-            ctx.say("Log file deleted").await?;
+            if std::path::Path::new("regy.log").exists() {
+                if let Err(_e) = std::fs::remove_file("regy.log") {
+                    std::fs::remove_file("regy.log").expect("Unable to delete log file or file does not exist");
+                    ctx.say("Log file deleted").await?;
+                    return Ok(());
+                }
+            }
+            ctx.say("Log file does not exist").await?;
             return Ok(());
         }
         _ => {
