@@ -1,4 +1,6 @@
-use crate::{Data, utils::{logger::{LogData, log_this}, type_conversions}};
+use std::sync::atomic::Ordering;
+
+use crate::{IPM, Data, utils::{logger::{LogData, log_this}, type_conversions, toml::get_config}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -31,6 +33,7 @@ pub async fn dev(
                             `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
                             `dev clean` - Deletes the log file and other temp files\n\
                             `dev hai` - Says hello back :3\n\
+                            `dev IPM` - Shows the current server IPM\n\
                             `dev am_dev` - Says if you are dev",
             ).await?;
             return Ok(());
@@ -68,6 +71,17 @@ pub async fn dev(
                 }
             }
             ctx.say("Log file does not exist").await?;
+            return Ok(());
+        }
+        "IPM" => {
+            let ipm_msg = {
+                if IPM.load(Ordering::SeqCst) > get_config().activity_influx_max.into() {
+                    format!("IPM is: {} :warning: This is over the server IPM", IPM.load(Ordering::SeqCst))
+                } else {
+                    format!("IPM is: {}", IPM.load(Ordering::SeqCst))
+                }
+            };
+            ctx.say(ipm_msg).await?;
             return Ok(());
         }
         _ => {
