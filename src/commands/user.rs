@@ -8,7 +8,7 @@ pub async fn user(
     ctx: Context<'_>,
     #[description = "Commands for standard users; run help for more info"] command_arg: Option<String>,
 ) -> Result<(), Error> {
-    let arg = type_conversions::string_to_static_str(command_arg.expect("did not specify a command arg"));
+    let arg = type_conversions::string_to_static_str(command_arg.expect("did not specify command arg"));
     match arg {
         "none" => {
             ctx.say("You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;

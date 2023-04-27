@@ -175,7 +175,7 @@ async fn main() {
                         }
                         Event::MessageUpdate { old_if_available: _, new: _, event } => {
                             //get content of new message
-                            let updated_message = event.content.clone().unwrap();
+                            let updated_message = event.content.clone().expect("Unable to get updated message content");
                             let author = event.author.clone().unwrap();
                             let guild_id = event.guild_id;
                             let channel_id = event.channel_id;

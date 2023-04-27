@@ -15,7 +15,7 @@ pub async fn dev(
         return Ok(());
     }
 
-    let arg = type_conversions::string_to_static_str(command_arg.expect("did not specify a command arg"));
+    let arg = type_conversions::string_to_static_str(command_arg.expect("did not specify command arg"));
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {
