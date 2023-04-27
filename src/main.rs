@@ -11,7 +11,10 @@ use poise::{
         ChannelId
     }
 };
-use std::path::Path;
+use std::{
+    path::Path,
+    sync::atomic::{AtomicUsize, Ordering}
+};
 use regex::Regex;
 
 use crate::utils::toml::*;
@@ -21,6 +24,8 @@ use crate::commands::staff::*;
 use crate::commands::user::*;
 
 pub struct Data {}
+
+static IIM: AtomicUsize = AtomicUsize::new(0);
 
 #[tokio::main]
 async fn main() {
@@ -37,6 +42,20 @@ async fn main() {
                     match event {
                         Event::Ready { data_about_bot } => {
                             println!("{} is connected!", data_about_bot.user.name);
+                            /* Prints IIM for debug
+                            tokio::spawn(async move {
+                                loop {
+                                    tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+                                    println!("IIM: {}", IIM.load(Ordering::SeqCst));
+                                }
+                            });
+                            */
+                            tokio::spawn(async move {
+                                loop {
+                                    tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
+                                    IIM.store(0, std::sync::atomic::Ordering::Relaxed);
+                                }
+                            });
                         }
                         
                         Event::ReactionAdd { add_reaction, .. } => {
@@ -144,6 +163,7 @@ async fn main() {
                                         std::thread::sleep(std::time::Duration::from_secs(5));
                                         temp_msg.delete(&ctx_clone.http).await.ok();
                                     });
+                                    IIM.store(IIM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
                 
                                     new_message.author.dm(&ctx.http, |m| m.content("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
                                     let log_channel = ChannelId(get_config().log_channel);
@@ -219,6 +239,7 @@ async fn main() {
                                         std::thread::sleep(std::time::Duration::from_secs(5));
                                         temp_msg.delete(&ctx_clone.http).await.ok();
                                     });
+                                    IIM.store(IIM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
                 
                                     author.dm(&ctx.http, |m| m.content("You are not allowed to edit your message to have that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
                                     let log_channel = ChannelId(get_config().log_channel);
