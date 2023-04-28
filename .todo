@@ -44,6 +44,9 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Make regy remove all infractions from users who get banned
 
 # Release 8
-[ ] Make customizable raid detector with arc values
+[x] Make customizable raid detector with arc values
+[ ] Make bot tell you what infractions it is refering to in dms
 [ ] Make bot action limiter
+
+# Release 9
 [ ] Make bot work in multiple servers in one instance
