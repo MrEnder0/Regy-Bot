@@ -17,11 +17,8 @@ use std::{
 };
 use regex::Regex;
 
-use crate::utils::toml::*;
-use crate::utils::logger::*;
-use crate::commands::dev::*;
-use crate::commands::staff::*;
-use crate::commands::user::*;
+use crate::utils::{toml::*, logger::*};
+use crate::commands::{user::*, staff::*, dev::*};
 
 pub struct Data {}
 
