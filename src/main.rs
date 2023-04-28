@@ -297,7 +297,7 @@ async fn main() {
                             }
                         }
                         Event::GuildBanAddition { guild_id: _, banned_user } => {
-                            if get_config().user_delete_on_ban == true {
+                            if get_config().user_delete_on_ban {
                                 delete_user(banned_user.id.into());
                             }
                         }
