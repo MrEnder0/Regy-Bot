@@ -42,6 +42,7 @@ async fn main() {
                     match event {
                         Event::Ready { data_about_bot } => {
                             println!("{} is connected!", data_about_bot.user.name);
+                            let ctx_clone = ctx.clone();
                             /* Prints IPM for debug
                             tokio::spawn(async move {
                                 loop {
@@ -57,7 +58,7 @@ async fn main() {
                                     IPM.store(0, std::sync::atomic::Ordering::Relaxed);
                                 }
                             });
-                            // Checks IPM if breaking max activity influx
+                            // Checks IPM if breaking max activity influx\
                             tokio::spawn(async move {
                                 loop {
                                     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
@@ -66,8 +67,19 @@ async fn main() {
                                             importance: "INFO".to_string(),
                                             message: "Possible raid detected due to IPM influx.".to_string(),
                                         };
+
                                         log_this(data);
                                         println!("Possible raid detected due to IPM influx.");
+
+                                        let log_channel = ChannelId(get_config().log_channel);
+                                        let mut embed = CreateEmbed::default();
+                                        embed.color(0xFF413A);
+                                        embed.title("Raid Detection");
+                                        embed.field("Possible raid detected due to IPM influx.", "", false);
+                                        embed.footer(|f| f.text("False detection? Try increasing the max influx in the config.toml file"));
+                                        log_channel.send_message(&ctx_clone.http, |m| m.content("<@&1009589625230213200>")).await.expect("Unable to send message").id;
+                                        log_channel.send_message(&ctx_clone.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
+                                        IPM.store(0, Ordering::SeqCst);
                                     }
                                 }
                             });
