@@ -57,6 +57,8 @@ pub async fn dev(
             for i in 0..120 {
                 if i > 110 {
                     shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds... :warning:", 120 - i));m}).await?;
+                } else if i == 69 {
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds... :smiling_imp:", 120 - i));m}).await?;
                 } else {
                     shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds...", 120 - i));m}).await?;
                 }
