@@ -75,7 +75,7 @@ pub async fn dev(
         }
         "IPM" => {
             let ipm_msg = {
-                if IPM.load(Ordering::SeqCst) > get_config().activity_influx_max.into() {
+                if IPM.load(Ordering::SeqCst) > get_config().max_activity_influx.into() {
                     format!("IPM is: {} :warning: This is over the server IPM", IPM.load(Ordering::SeqCst))
                 } else {
                     format!("IPM is: {}", IPM.load(Ordering::SeqCst))

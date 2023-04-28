@@ -58,11 +58,11 @@ async fn main() {
                                     IPM.store(0, std::sync::atomic::Ordering::Relaxed);
                                 }
                             });
-                            // Checks IPM if breaking max activity influx\
+                            // Checks IPM if breaking max activity influx
                             tokio::spawn(async move {
                                 loop {
                                     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-                                    if IPM.load(Ordering::SeqCst) > get_config().activity_influx_max.into() {
+                                    if IPM.load(Ordering::SeqCst) > get_config().max_activity_influx.into() {
                                         let data = LogData {
                                             importance: "INFO".to_string(),
                                             message: "Possible raid detected due to IPM influx.".to_string(),
