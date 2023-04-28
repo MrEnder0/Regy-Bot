@@ -73,8 +73,8 @@ async fn main() {
 
                                         let log_channel = ChannelId(get_config().log_channel);
                                         let mut embed = CreateEmbed::default();
-                                        embed.color(0xFF413A);
-                                        embed.title("Raid Detection");
+                                        embed.color(0x8B0000);
+                                        embed.title(":warning: Raid Detection");
                                         embed.field("Possible raid detected due to IPM influx.", "", false);
                                         embed.footer(|f| f.text("False detection? Try increasing the max influx in the config.toml file"));
                                         log_channel.send_message(&ctx_clone.http, |m| m.content("<@&1009589625230213200>")).await.expect("Unable to send message").id;
@@ -124,7 +124,7 @@ async fn main() {
                                 user.dm(&ctx_clone.http, |m| m.content("Your report has been dismissed by a staff member due to it being found as being a false positive.")).await.expect("Unable to dm user");
                             
                                 let mut embed = CreateEmbed::default();
-                                embed.color(0x00FF00);
+                                embed.color(0x556B2F);
                                 embed.title("Message blocked due to matching a set regex pattern");
                                 embed.field("The user who broke a regx pattern is below:", format!("<@{}>", user_id), false);
                                 embed.field("Their message is the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
