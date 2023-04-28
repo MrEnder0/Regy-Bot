@@ -10,7 +10,6 @@ pub struct Config {
     pub log_channel: u64,
     pub user_delete_on_ban: bool,
     pub activity_influx_max: u16,
-    pub activity_influx_message: String,
     pub block_phrases: HashMap<Uuid, String>,
     pub infractions: HashMap<String, u32>
 }
@@ -24,7 +23,6 @@ pub fn gen_config() {
         log_channel: 000000000000000000,
         user_delete_on_ban: true,
         activity_influx_max: 10,
-        activity_influx_message: "@Member Of Staff A abnormal surge of activity has been detected we recommend having a look in the user channels to make sure everything is ok.".to_string(),
         block_phrases: phr,
         infractions: HashMap::new()
     };
