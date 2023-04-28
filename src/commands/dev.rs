@@ -39,10 +39,9 @@ pub async fn dev(
             return Ok(());
         }
         "shutdown" => {
-            ctx.say("Regy will down in 120 seconds...").await?;
+            let shutdown_msg = ctx.say("Regy will down in 120 seconds...").await?;
             let msg_author = ctx.author().id;
             tokio::spawn(async move {
-                tokio::time::sleep(tokio::time::Duration::from_secs(120)).await;
                 println!("Shutdown from dev commands sent from {}", msg_author);
 
                 let log_data = LogData {
@@ -50,8 +49,19 @@ pub async fn dev(
                     message: format!("Shutdown from dev commands sent from {}", msg_author),
                 };
                 log_this(log_data);
+
+                tokio::time::sleep(tokio::time::Duration::from_secs(121)).await;
                 std::process::exit(0);
             });
+
+            for i in 0..120 {
+                if i > 110 {
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds... :warning:", 120 - i));m}).await?;
+                } else {
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds...", 120 - i));m}).await?;
+                }
+                tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+            }
             return Ok(());
         }
         "am_dev" => {
