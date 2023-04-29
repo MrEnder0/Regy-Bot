@@ -5,5 +5,5 @@ pub fn string_to_static_str(s: String) -> &'static str {
 }
 
 pub fn userid_to_u64(userid: UserId) -> u64 {
-    return userid.to_string().replace("<@!", "").replace('>', "").parse::<u64>().unwrap();
+    userid.to_string().replace("<@!", "").replace('>', "").parse::<u64>().unwrap()
 }
