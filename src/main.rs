@@ -267,8 +267,12 @@ async fn main() {
                                         temp_msg.delete(&ctx_clone.http).await.ok();
                                     });
                                     IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+
+                                    let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\
+                                                                The message which has been blocked is below:\n\
+                                                                ||{}||", updated_message);
                 
-                                    author.dm(&ctx.http, |m| m.content("You are not allowed to edit your message to have that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.")).await.expect("Unable to dm user");
+                                    author.dm(&ctx.http, |m| m.content(dm_msg)).await.expect("Unable to dm user");
                                     let log_channel = ChannelId(get_config().log_channel);
                 
                                     let mut embed = CreateEmbed::default();
