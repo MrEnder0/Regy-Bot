@@ -316,14 +316,15 @@ async fn main() {
         .intents(serenity::GatewayIntents::all())
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
-                //get amount of servers bot is in
-                let mut guild_count = 0;
-                for _guild in ctx.cache.guilds() {
-                    guild_count += 1;
-                }
-
-                let activity_msg = format!("Scanning channels with powerful regex in {} servers", guild_count);
-                ctx.set_activity(serenity::Activity::playing(activity_msg)).await;
+                let ctx_clone = ctx.clone();
+                tokio::spawn(async move {
+                    loop {
+                        std::thread::sleep(std::time::Duration::from_secs(60));
+                        let guild_count = ctx_clone.cache.guilds().len();
+                        let activity_msg = format!("Scanning channels with powerful regex in {} servers", guild_count);
+                        ctx_clone.set_activity(serenity::Activity::playing(activity_msg)).await;
+                    }
+                });
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })
