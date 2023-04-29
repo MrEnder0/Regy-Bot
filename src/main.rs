@@ -74,8 +74,7 @@ async fn main() {
                                         embed.title(":warning: Raid Detection");
                                         embed.field("Possible raid detected due to IPM influx.", "", false);
                                         embed.footer(|f| f.text("False detection? Try increasing the max influx in the config.toml file"));
-                                        log_channel.send_message(&ctx_clone.http, |m| m.content("<@&1009589625230213200>")).await.expect("Unable to send message").id;
-                                        log_channel.send_message(&ctx_clone.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
+                                        log_channel.send_message(&ctx_clone.http, |m| m.content("<@&1009589625230213200>").set_embed(embed)).await.expect("Unable to send embed").id;
                                         IPM.store(0, Ordering::SeqCst);
                                     }
                                 }
