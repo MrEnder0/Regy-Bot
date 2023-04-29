@@ -56,11 +56,11 @@ pub async fn dev(
 
             for i in 0..120 {
                 if i > 110 {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds... :warning:", 120 - i));m}).await?;
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :warning:", 120 - i));m}).await?;
                 } else if 120-i == 69 {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds... :smiling_imp:", 120 - i));m}).await?;
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :smiling_imp:", 120 - i));m}).await?;
                 } else {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will down in {} seconds...", 120 - i));m}).await?;
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds...", 120 - i));m}).await?;
                 }
                 tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
             }
