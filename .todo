@@ -46,7 +46,6 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 8
 [x] Make customizable raid detector (IPM)
 [o] Make bot tell you what infractions it is refering to in dms
-[ ] Make bot action limiter (APM)
 
 # Release 9
 [ ] Make bot work in multiple servers in one instance
