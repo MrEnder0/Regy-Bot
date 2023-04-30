@@ -7,7 +7,7 @@ pub fn increment_apm() {
 }
 
 pub fn apm_lock() {
-    if APM.load(Ordering::SeqCst) >= 50 {
+    while APM.load(Ordering::SeqCst) >= 50 {
         std::thread::sleep(std::time::Duration::from_millis(1));
     }
 }
