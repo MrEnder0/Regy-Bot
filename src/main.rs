@@ -17,13 +17,12 @@ use std::{
 };
 use regex::Regex;
 
-use crate::utils::{toml::*, logger::*, apm::*};
+use crate::utils::{toml::*, logger::*};
 use crate::commands::{user::*, staff::*, dev::*};
 
 pub struct Data {}
 
 static IPM: AtomicUsize = AtomicUsize::new(0);
-static APM: AtomicUsize = AtomicUsize::new(0);
 
 #[tokio::main]
 async fn main() {
@@ -40,8 +39,7 @@ async fn main() {
                     match event {
                         Event::Ready { data_about_bot } => {
                             println!("{} is connected!", data_about_bot.user.name);
-                            init_apm_clock();
-
+                            let ctx_clone = ctx.clone();
                             /* Prints IPM for debug
                             tokio::spawn(async move {
                                 loop {
@@ -58,7 +56,6 @@ async fn main() {
                                 }
                             });
                             // Checks IPM if breaking max activity influx
-                            let ctx_clone = ctx.clone();
                             tokio::spawn(async move {
                                 loop {
                                     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
@@ -328,7 +325,6 @@ async fn main() {
                         ctx_clone.set_activity(serenity::Activity::playing(activity_msg)).await;
                     }
                 });
-
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })
