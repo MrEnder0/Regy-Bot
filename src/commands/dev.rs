@@ -39,32 +39,27 @@ pub async fn dev(
             return Ok(());
         }
         "shutdown" => {
-            let shutdown_msg = ctx.say("Regy will down in 120 seconds...").await?;
+            let shutdown_msg = ctx.say("Regy will down in 90 seconds...").await?;
             let msg_author = ctx.author().id;
-            tokio::spawn(async move {
-                println!("Shutdown from dev commands sent from {}", msg_author);
+            println!("Shutdown from dev commands sent from {}", msg_author);
 
-                let log_data = LogData {
-                    importance: "INFO".to_string(),
-                    message: format!("Shutdown from dev commands sent from {}", msg_author),
-                };
-                log_this(log_data);
+            let log_data = LogData {
+                importance: "INFO".to_string(),
+                message: format!("Shutdown from dev commands sent from {}", msg_author),
+            };
+            log_this(log_data);
 
-                tokio::time::sleep(tokio::time::Duration::from_secs(121)).await;
-                std::process::exit(0);
-            });
-
-            for i in 0..120 {
-                if i > 110 {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :warning:", 120 - i));m}).await?;
-                } else if 120-i == 69 {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :smiling_imp:", 120 - i));m}).await?;
+            for i in 0..90 {
+                if i > 80 {
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :warning:", 90 - i));m}).await?;
+                } else if 90-i == 69 {
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :smiling_imp:", 90 - i));m}).await?;
                 } else {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds...", 120 - i));m}).await?;
+                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds...", 90 - i));m}).await?;
                 }
                 tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
             }
-            return Ok(());
+            std::process::exit(0);
         }
         "am_dev" => {
             ctx.say("Yes master uwu xo").await?;
