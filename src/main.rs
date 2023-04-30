@@ -117,7 +117,11 @@ async fn main() {
                                 dismiss_infraction(user_id.parse::<u64>().unwrap());
                             
                                 let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
-                                user.dm(&ctx_clone.http, |m| m.content("Your report has been dismissed by a staff member due to it being found as being a false positive.")).await.expect("Unable to dm user");
+                                let blocked_content = &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2];
+                                let dm_msg = format!("Your report has been dismissed by a staff member due to it being found as being a false positive.\n\n\
+                                                            The message that was blocked is below:\n\
+                                                            ||{}||", blocked_content);
+                                user.dm(&ctx_clone.http, |m| m.content(dm_msg)).await.expect("Unable to dm user");
                             
                                 let mut embed = CreateEmbed::default();
                                 embed.color(0x556B2F);
@@ -188,7 +192,7 @@ async fn main() {
                                     });
                                     IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
                                     
-                                    let dm_msg = format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\
+                                    let dm_msg = format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
                                                                 The message which has been blocked is below:\n\
                                                                 ||{}||", new_message.content);
 
@@ -268,7 +272,7 @@ async fn main() {
                                     });
                                     IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
-                                    let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\
+                                    let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
                                                                 The message which has been blocked is below:\n\
                                                                 ||{}||", updated_message);
                 
