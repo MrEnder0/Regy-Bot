@@ -2,14 +2,19 @@ use std::sync::atomic::Ordering;
 
 use crate::APM;
 
-pub fn update_apm() {
+pub fn increment_apm() {
     APM.store(APM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 }
 
-pub fn check_apm_lock() {
+pub fn apm_lock() {
     if APM.load(Ordering::SeqCst) >= 50 {
         std::thread::sleep(std::time::Duration::from_millis(1));
     }
+}
+
+pub fn try_apm_lock() {
+    apm_lock();
+    increment_apm();
 }
 
 pub fn init_apm_clock() {
