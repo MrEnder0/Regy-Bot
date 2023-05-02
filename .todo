@@ -48,4 +48,9 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Make bot tell you what infractions it is referring to in dms
 
 # Release 9
+[x] Make bot work with automod to detect more infractions
+[ ] Create infraction user limit warning messages
+[ ] Use a db for non universal config
+
+# Release 10
 [ ] Make bot work in multiple servers in one instance
