@@ -1,3 +1,5 @@
+<img src=".github/assets/regy_banner.png">
+
 # Regy-Bot
 Seamless automation using regex moderation.
 
