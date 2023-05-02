@@ -24,7 +24,7 @@ pub async fn dev(
             ctx.say(
                 "You need to specify an dev command you silly uwu kitten :heart:",
             ).await?;
-            return Ok(());
+            Ok(())
         }
         "help" => {
             ctx.say(
@@ -36,7 +36,7 @@ pub async fn dev(
                             `dev IPM` - Shows the current server IPM\n\
                             `dev am_dev` - Says if you are dev",
             ).await?;
-            return Ok(());
+            Ok(())
         }
         "shutdown" => {
             let shutdown_msg = ctx.say("Regy will down in 90 seconds...").await?;
@@ -63,11 +63,11 @@ pub async fn dev(
         }
         "am_dev" => {
             ctx.say("Yes master uwu xo").await?;
-            return Ok(());
+            Ok(())
         }
         "hai" => {
             ctx.say("Hai hai! 😸🐾 \n \nI am Discord kitten, nya~ 🐱🌸 \n \nI will do my best to fulfill your requests, uwu~ 😊 \n \nLet's pawty and have some kawaii fun, nya~ 🎉🎀 \n \nDon't worry, I'll try not to mispurr too many words, nya~ 😸👌").await?;
-            return Ok(());
+            Ok(())
         }
         "clean" => {
             if std::path::Path::new("regy.log").exists() {
@@ -78,7 +78,7 @@ pub async fn dev(
                 }
             }
             ctx.say("Log file does not exist").await?;
-            return Ok(());
+            Ok(())
         }
         "IPM" => {
             let ipm_msg = {
@@ -89,7 +89,7 @@ pub async fn dev(
                 }
             };
             ctx.say(ipm_msg).await?;
-            return Ok(());
+            Ok(())
         }
         _ => {
             let invalid_arg_message = format!(
@@ -97,7 +97,7 @@ pub async fn dev(
                 arg.replace('@', "\\@")
             );
             ctx.say(invalid_arg_message).await?;
-            return Ok(());
+            Ok(())
         }
     }
 }

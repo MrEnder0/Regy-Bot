@@ -23,7 +23,7 @@ pub async fn staff(
     match args[0] {
         "none" => {
             ctx.say("You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
-            return Ok(());
+            Ok(())
         }
         "help" => {
             ctx.say(
@@ -39,7 +39,7 @@ pub async fn staff(
                             `staff grab_banner` - Grabs a specified users banner\n\
                             `staff am_staff` - Says if you are staff",
             ).await?;
-            return Ok(());
+            Ok(())
         }
         "add_regex" => {
             let args = arg.split_whitespace().skip(1).collect::<Vec<&str>>();
@@ -65,7 +65,7 @@ pub async fn staff(
                 new_block_phrase_clone
             );
             ctx.say(status_message).await?;
-            return Ok(());
+            Ok(())
         }
         "remove_regex" => {
             let id = arg.split_whitespace().nth(1).unwrap_or("none");
@@ -82,7 +82,7 @@ pub async fn staff(
                 id
             );
             ctx.say(status_message).await?;
-            return Ok(());
+            Ok(())
         }
         "list_regex" => {
             let status_msg = ctx.say("Sending regex phrases this may take a few seconds...").await?;
@@ -124,7 +124,7 @@ pub async fn staff(
             status_msg.edit(ctx, |m| {
                 m.content("Finished sending regex phrases to the channel.")
             }).await?;
-            return Ok(());
+            Ok(())
         }
         "add_infraction" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
@@ -137,7 +137,7 @@ pub async fn staff(
             let user_id = user_id.parse::<u64>().unwrap();
             toml::add_infraction(user_id);
             ctx.say("Added infraction to the specified user.").await?;
-            return Ok(());
+            Ok(())
         }
         "remove_infraction" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
@@ -150,7 +150,7 @@ pub async fn staff(
             let user_id = user_id.parse::<u64>().unwrap();
             toml::dismiss_infraction(user_id);
             ctx.say("Removed 1 infraction from the specified user.").await?;
-            return Ok(());
+            Ok(())
         }
         "list_infractions" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
@@ -164,7 +164,7 @@ pub async fn staff(
             let infractions = toml::list_infractions(user_id);
             let formatted_infractions = format!("Infractions for {} is:\n{}", user_id, infractions);
             ctx.say(formatted_infractions).await?;
-            return Ok(());
+            Ok(())
         }
         "grab_pfp" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
@@ -177,7 +177,7 @@ pub async fn staff(
             let user_id = user_id.parse::<u64>().unwrap();
             let user = UserId(user_id).to_user(ctx).await?;
             ctx.say(user.face()).await?;
-            return Ok(());
+            Ok(())
         }
         "grab_banner" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
@@ -193,13 +193,13 @@ pub async fn staff(
                 user.banner_url()
                     .unwrap_or("This user does not have a banner".to_string()),
             ).await?;
-            return Ok(());
+            Ok(())
         }
         "am_staff" => {
             ctx.say(
                 "Yes master uwu xo... Now do some moderation and stop making me do it :|",
             ).await?;
-            return Ok(());
+            Ok(())
         }
         _ => {
             let invalid_arg_message = format!(
@@ -207,7 +207,7 @@ pub async fn staff(
                 arg.replace('@', "\\@")
             );
             ctx.say(invalid_arg_message).await?;
-            return Ok(());
+            Ok(())
         }
     }
 }
