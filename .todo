@@ -49,6 +49,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 9
 [x] Make bot work with automod to detect more infractions
+[x] Rewrite event system to be more clean and contained
 [ ] Create infraction user limit warning messages
 [ ] Use a db for non universal config
 
