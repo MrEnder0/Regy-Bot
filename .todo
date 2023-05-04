@@ -54,7 +54,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Make help command show required args
 [ ] Allow shutdown config option
 [ ] Create infraction user limit warning messages
-[ ] Use a db for non universal config
 
 # Release 10
+[ ] Use a db for non universal config
 [ ] Make bot work in multiple servers in one instance
