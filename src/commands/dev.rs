@@ -1,5 +1,5 @@
 use std::sync::atomic::Ordering;
-
+use poise::reply::CreateReply;
 use crate::{IPM, Data, utils::{logger::{LogData, log_this}, type_conversions, toml::get_config}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -89,6 +89,12 @@ pub async fn dev(
                 }
             };
             ctx.say(ipm_msg).await?;
+            Ok(())
+        }
+        "echo" => {
+            let channel_id = ctx.channel_id();
+            let echo_msg = args[1..].join(" ");
+            channel_id.say(ctx, echo_msg).await?;
             Ok(())
         }
         _ => {
