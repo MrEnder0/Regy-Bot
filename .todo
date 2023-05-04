@@ -52,6 +52,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Rewrite event system to be more clean and contained
 [x] Readd the beloved echo command
 [x] Make help command show required args
+[ ] Allow shutdown config option
 [ ] Create infraction user limit warning messages
 [ ] Use a db for non universal config
 
