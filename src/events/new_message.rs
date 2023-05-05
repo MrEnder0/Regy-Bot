@@ -87,7 +87,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
             let data = LogData {
                 importance: "INFO".to_string(),
-                message: format!("{} has sent a message which is not allowed due to the set regex patterns", new_message.author.id),
+                message: format!("{} Has sent a message which is not allowed due to the set regex patterns", new_message.author.id),
             };
 
             log_this(data);

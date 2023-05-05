@@ -80,7 +80,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
             let data = LogData {
                 importance: "INFO".to_string(),
-                message: format!("{} has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
+                message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
             };
 
             log_this(data);
