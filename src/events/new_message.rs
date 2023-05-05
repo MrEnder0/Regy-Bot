@@ -40,14 +40,19 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     if new_message.author.id == 687897073047306270 || new_message.author.id == 598280691066732564 {
         return;
     }
-                        
+
     //Ignores moderation from staff
-    for staff in get_config().staff {
-        if new_message.author.id == UserId(staff.parse::<u64>().unwrap()) {
+    for user in get_config().moderators {
+        if new_message.author.id == UserId(user.parse::<u64>().unwrap()) {
             return;
         }
     }
-                            
+    for user in get_config().admins {
+        if new_message.author.id == UserId(user.parse::<u64>().unwrap()) {
+            return;
+        }
+    }
+
     let list_block_phrases = list_block_phrases();
     for (_id, phrase) in list_block_phrases {
         let re = Regex::new(&phrase).unwrap();

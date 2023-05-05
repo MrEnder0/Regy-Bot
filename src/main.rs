@@ -13,7 +13,7 @@ use std::{
 
 use crate::events::{ready::*, reaction_add::*, new_message::*, update_message::*, automod_execution::*, guild_ban::*};
 use crate::utils::toml::*;
-use crate::commands::{user::*, staff::*, dev::*};
+use crate::commands::{user::*, moderator::*, admin::*, dev::*};
 
 pub struct Data {}
 
@@ -28,7 +28,7 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![user(), staff(), dev()],
+            commands: vec![user(), moderator(), admin(), dev()],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
                     match event {

@@ -35,8 +35,13 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     }
 
     //Ignores moderation from staff
-    for staff in get_config().staff {
-        if author.id == UserId(staff.parse::<u64>().unwrap()) {
+    for user in get_config().moderators {
+        if author.id == UserId(user.parse::<u64>().unwrap()) {
+            return;
+        }
+    }
+    for user in get_config().admins {
+        if author.id == UserId(user.parse::<u64>().unwrap()) {
             return;
         }
     }

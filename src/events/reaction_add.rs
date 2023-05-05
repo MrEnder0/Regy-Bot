@@ -13,22 +13,22 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     if add_reaction.user_id.unwrap() == ctx.cache.current_user_id() {
         return;
     }
-    
+
     //only look at reactions in the log channel
     if add_reaction.channel_id != ChannelId(get_config().log_channel) {
         return;
     }
-    
+
     //ignore events except for staff
-    if !get_config().staff.contains(&add_reaction.user_id.unwrap().to_string()) {
+    if !get_config().moderators.contains(&add_reaction.user_id.unwrap().to_string()) || !get_config().admins.contains(&add_reaction.user_id.unwrap().to_string()) {
         return;
     }
-    
+
     //ignore events except for the 🚫 reaction
     if add_reaction.emoji != ReactionType::Unicode("🚫".to_string()) {
         return;
     }
-    
+
     let ctx_clone = ctx.clone();
     let reaction_clone = add_reaction.clone();
     tokio::spawn(async move {
