@@ -6,7 +6,7 @@ use poise::{
     }
 };
 
-use crate::utils::{toml::*, type_conversions::*};
+use crate::utils::{toml::*, type_conversions::*, log_on_error::LogExpect};
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
     //If action is BlockMessage
@@ -22,8 +22,8 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                                 ||{}||", message);
 
     let user = UserId(userid_to_u64(user));
-    let user = user.to_user(&ctx.http).await.expect("Unable to get user");
-    user.dm(&ctx.http, |m| m.content(dm_msg)).await.expect("Unable to dm user");
+    let user = user.to_user(&ctx.http).await.log_expect("Unable to get user");
+    user.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect("Unable to dm user");
     let log_channel = ChannelId(get_config().log_channel);
 
     let mut embed = CreateEmbed::default();
@@ -33,7 +33,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     embed.field("Their message is the following below:", format!("||{}||", message), false);
     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
     embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
-    let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
+    let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
     let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 }

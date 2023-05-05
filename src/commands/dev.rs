@@ -1,6 +1,6 @@
 use std::sync::atomic::Ordering;
 
-use crate::{IPM, Data, utils::{logger::*, type_conversions, toml::get_config}};
+use crate::{IPM, Data, utils::{logger::*, type_conversions, toml::get_config, log_on_error::LogExpect}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -17,7 +17,7 @@ pub async fn dev(
         return Ok(());
     }
 
-    let arg = type_conversions::string_to_static_str(command_arg.expect("did not specify command arg"));
+    let arg = type_conversions::string_to_static_str(command_arg.log_expect("did not specify command arg"));
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {
@@ -73,7 +73,7 @@ pub async fn dev(
         "clean" => {
             if std::path::Path::new("regy.log").exists() {
                 if let Err(_e) = std::fs::remove_file("regy.log") {
-                    std::fs::remove_file("regy.log").expect("Unable to delete log file or file does not exist");
+                    std::fs::remove_file("regy.log").log_expect("Unable to delete log file or file does not exist");
                     ctx.say("Log file deleted").await?;
                     return Ok(());
                 }
@@ -84,7 +84,7 @@ pub async fn dev(
         "upload_logs" => {
             if std::path::Path::new("regy.log").exists() {
                 //CURRENT Channel 
-                let log_file = std::fs::read_to_string("regy.log").expect("Unable to read log file");
+                let log_file = std::fs::read_to_string("regy.log").log_expect("Unable to read log file");
                 let log_file = log_file.as_bytes();
                 ctx.channel_id().send_files(ctx, vec![(log_file, "regy.log")], |m| m.content("Log file")).await?;
                 ctx.say("Log file uploaded").await?;

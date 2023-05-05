@@ -1,4 +1,4 @@
-use crate::{Data, utils::{type_conversions, toml}};
+use crate::{Data, utils::{type_conversions, toml, log_on_error::LogExpect}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -8,8 +8,9 @@ pub async fn user(
     ctx: Context<'_>,
     #[description = "Commands for standard users; run help for more info"] command_arg: Option<String>,
 ) -> Result<(), Error> {
-    let arg = type_conversions::string_to_static_str(command_arg.expect("did not specify command arg"));
-    match arg {
+    let arg = type_conversions::string_to_static_str(command_arg.log_expect("did not specify command arg"));
+    let args = arg.split_whitespace().collect::<Vec<&str>>();
+    match args[0] {
         "none" => {
             ctx.say("You need to specify a command, I expect higher of you, you should know how to use this bot correctly").await?;
             Ok(())

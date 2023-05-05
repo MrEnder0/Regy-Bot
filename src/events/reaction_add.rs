@@ -6,7 +6,7 @@ use poise::{
     }
 };
 
-use crate::utils::{toml::*, logger::*};
+use crate::utils::{toml::*, logger::*, log_on_error::LogExpect};
 
 pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity::Reaction) {
     //ignore reactions from the bot
@@ -48,7 +48,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         let dm_msg = format!("Your report has been dismissed by a staff member due to it being found as being a false positive.\n\n\
                                     The message that was blocked is below:\n\
                                     ||{}||", blocked_content);
-        user.dm(&ctx_clone.http, |m| m.content(dm_msg)).await.expect("Unable to dm user");
+        user.dm(&ctx_clone.http, |m| m.content(dm_msg)).await.log_expect("Unable to dm user");
     
         let mut embed = CreateEmbed::default();
         embed.color(0x556B2F);

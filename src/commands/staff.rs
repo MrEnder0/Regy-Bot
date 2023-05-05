@@ -1,6 +1,7 @@
-use crate::{Data, utils::{toml, type_conversions}};
 use poise::serenity_prelude::UserId;
 use uuid::Uuid;
+
+use crate::{Data, utils::{toml, type_conversions, log_on_error::LogExpect}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -18,7 +19,7 @@ pub async fn staff(
         return Ok(());
     }
 
-    let arg = type_conversions::string_to_static_str(command_arg.expect("did not specify command arg"));
+    let arg = type_conversions::string_to_static_str(command_arg.log_expect("did not specify command arg"));
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {

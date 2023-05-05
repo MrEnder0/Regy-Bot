@@ -8,11 +8,11 @@ use poise::{
 use std::sync::atomic::Ordering;
 use regex::Regex;
 
-use crate::{utils::{toml::*, logger::*}, IPM};
+use crate::{utils::{toml::*, logger::*, log_on_error::LogExpect}, IPM};
 
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
     //get content of new message
-    let updated_message = event.content.clone().expect("Unable to get updated message content");
+    let updated_message = event.content.clone().log_expect("Unable to get updated message content");
     let author = event.author.clone().unwrap();
     let guild_id = event.guild_id;
     let channel_id = event.channel_id;
@@ -25,7 +25,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     //Reply to dm messages
     if guild_id.is_none() {
-        channel_id.send_message(&ctx.http, |m| m.content("I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:")).await.expect("Unable to send message");
+        channel_id.send_message(&ctx.http, |m| m.content("I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:")).await.log_expect("Unable to send message");
         return;
     }
 
@@ -50,7 +50,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             }
 
             let temp_msg_content = format!("<@{}> You are not allowed to edit your message to have that due to the server setup regex rules", author.id);
-            let temp_msg = channel_id.send_message(&ctx.http, |m| m.content(temp_msg_content)).await.expect("Unable to send message");
+            let temp_msg = channel_id.send_message(&ctx.http, |m| m.content(temp_msg_content)).await.log_expect("Unable to send message");
             let ctx_clone = ctx.clone();
             tokio::spawn(async move {
                 std::thread::sleep(std::time::Duration::from_secs(5));
@@ -62,7 +62,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                                         The message which has been blocked is below:\n\
                                         ||{}||", updated_message);
 
-            author.dm(&ctx.http, |m| m.content(dm_msg)).await.expect("Unable to dm user");
+            author.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect("Unable to dm user");
             let log_channel = ChannelId(get_config().log_channel);
 
             let mut embed = CreateEmbed::default();
@@ -72,7 +72,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             embed.field("Their message is the following below:", format!("||{}||", updated_message), false);
             embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
             embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
-            let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
+            let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
             let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
             embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
