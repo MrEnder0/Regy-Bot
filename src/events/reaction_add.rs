@@ -52,9 +52,10 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     
         let mut embed = CreateEmbed::default();
         embed.color(0x556B2F);
-        embed.title("Message blocked due to matching a set regex pattern");
+        embed.title("Message was blocked due to matching a set regex pattern");
         embed.field("The user who broke a regx pattern is below:", format!("<@{}>", user_id), false);
-        embed.field("Their message is the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
+        embed.field("Their message was the following below:", format!("||{}||", &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2]), false);
+        embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png");
         embed.footer(|f| f.text("This infraction has been dismissed by a staff member"));
         msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
     

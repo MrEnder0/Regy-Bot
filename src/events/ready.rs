@@ -46,6 +46,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                 embed.color(0x8B0000);
                 embed.title(":warning: Raid Detection");
                 embed.field("Possible raid detected due to IPM influx.", "", false);
+                embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/denied.png");
                 embed.footer(|f| f.text("False detection? Try increasing the max influx in the config.toml file"));
                 log_channel.send_message(&ctx_clone.http, |m| m.content("<@&1009589625230213200>").set_embed(embed)).await.expect("Unable to send embed").id;
                 IPM.store(0, Ordering::SeqCst);

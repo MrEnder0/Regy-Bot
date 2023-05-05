@@ -70,6 +70,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             embed.title("Message blocked due to matching a set regex pattern");
             embed.field("The user who broke a regx pattern is below:", format!("<@{}>", author.id), false);
             embed.field("Their message is the following below:", format!("||{}||", updated_message), false);
+            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
             embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
             let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
             let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();

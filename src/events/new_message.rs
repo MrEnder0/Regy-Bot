@@ -78,6 +78,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             embed.field("The user who broke a regx pattern is below:", format!("<@{}>", new_message.author.id), false);
             embed.field("Their message is the following below:", format!("||{}||", new_message.content), false);
             embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
+            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
             let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.expect("Unable to send embed").id;
             let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
             embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
