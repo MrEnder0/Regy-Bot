@@ -1,5 +1,7 @@
 use std::sync::atomic::Ordering;
 
+use poise::serenity_prelude::CreateEmbed;
+
 use crate::{IPM, Data, utils::{logger::*, type_conversions, toml::get_config, log_on_error::LogExpect}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -41,26 +43,32 @@ pub async fn dev(
             Ok(())
         }
         "shutdown" => {
-            let shutdown_msg = ctx.say("Regy will down in 90 seconds...").await?;
             let msg_author = ctx.author().id;
             println!("Shutdown from dev commands sent from {}", msg_author);
 
-            let log_data = LogData {
+            log_this(LogData {
                 importance: "INFO".to_string(),
                 message: format!("Shutdown from dev commands sent from {}", msg_author),
-            };
-            log_this(log_data);
+            });
+
+            ctx.say("Initialized shutdown countdown for 90 seconds").await?;
 
             for i in 0..90 {
+                let mut embed = CreateEmbed::default();
+                embed.color(0x565e6e);
+                embed.title("Regy Shutdown");
                 if i > 80 {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :warning:", 90 - i));m}).await?;
-                } else if 90-i == 69 {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds... :smiling_imp:", 90 - i));m}).await?;
+                    embed.description(format!(":warning: Regy will be shutdown in the following seconds: {}", 90-i));
                 } else {
-                    shutdown_msg.edit(ctx, |m| {m.content(format!("Regy will shut down in {} seconds...", 90 - i));m}).await?;
+                    embed.description(format!("Regy will be shutdown in the following seconds: {}", 90-i));
                 }
+                embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/shutdown.png");
+                embed.footer(|f| f.text("This force shutdown was sent from a dev"));
+                let embed_message = ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send shutdown embed").id;
                 tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+                ctx.channel_id().delete_message(&ctx, embed_message).await.ok();
             }
+            ctx.say("Countdown finished, shutting down...").await?;
             std::process::exit(0);
         }
         "am_dev" => {
