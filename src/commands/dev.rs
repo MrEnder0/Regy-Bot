@@ -1,6 +1,6 @@
 use std::sync::atomic::Ordering;
 
-use crate::{IPM, Data, utils::{logger::{LogData, log_this}, type_conversions, toml::get_config}};
+use crate::{IPM, Data, utils::{logger::*, type_conversions, toml::get_config}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -77,6 +77,18 @@ pub async fn dev(
                     ctx.say("Log file deleted").await?;
                     return Ok(());
                 }
+            }
+            ctx.say("Log file does not exist").await?;
+            Ok(())
+        }
+        "upload_logs" => {
+            if std::path::Path::new("regy.log").exists() {
+                //CURRENT Channel 
+                let log_file = std::fs::read_to_string("regy.log").expect("Unable to read log file");
+                let log_file = log_file.as_bytes();
+                ctx.channel_id().send_files(ctx, vec![(log_file, "regy.log")], |m| m.content("Log file")).await?;
+                ctx.say("Log file uploaded").await?;
+                return Ok(());
             }
             ctx.say("Log file does not exist").await?;
             Ok(())
