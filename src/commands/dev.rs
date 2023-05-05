@@ -32,6 +32,7 @@ pub async fn dev(
                             `dev help` - Shows this message\n\
                             `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
                             `dev clean` - Deletes the log file and other temp files\n\
+                            `dev upload_logs` - Uploads the log file to the current channel\n\
                             `dev echo <message>` - Says the message back\n\
                             `dev hai` - Says hello back :3\n\
                             `dev IPM` - Shows the current server IPM\n\
