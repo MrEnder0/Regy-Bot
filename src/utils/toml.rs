@@ -13,6 +13,7 @@ pub struct Config {
     pub log_channel: u64,
     pub user_delete_on_ban: bool,
     pub max_activity_influx: u16,
+    pub allow_shutdown: bool,
     pub block_phrases: HashMap<Uuid, String>,
     pub infractions: HashMap<String, u32>
 }
@@ -27,6 +28,7 @@ pub fn gen_config() {
         log_channel: 000000000000000000,
         user_delete_on_ban: true,
         max_activity_influx: 10,
+        allow_shutdown: true,
         block_phrases: phr,
         infractions: HashMap::new()
     };

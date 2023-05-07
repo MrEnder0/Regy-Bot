@@ -43,6 +43,11 @@ pub async fn dev(
             Ok(())
         }
         "shutdown" => {
+            if !get_config().allow_shutdown {
+                ctx.say("Remote shutdown is not enabled on host.").await?;
+                return Ok(());
+            }
+
             let msg_author = ctx.author().id;
             println!("Shutdown from dev commands sent from {}", msg_author);
 
