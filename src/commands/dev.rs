@@ -97,11 +97,10 @@ pub async fn dev(
         }
         "upload_logs" => {
             if std::path::Path::new("regy.log").exists() {
-                //CURRENT Channel 
+                ctx.say("Uploading log file, this may take a few seconds...").await?;
                 let log_file = std::fs::read_to_string("regy.log").log_expect("Unable to read log file");
                 let log_file = log_file.as_bytes();
-                ctx.channel_id().send_files(ctx, vec![(log_file, "regy.log")], |m| m.content("Log file")).await?;
-                ctx.say("Log file uploaded").await?;
+                ctx.channel_id().send_files(ctx, vec![(log_file, "regy.log")], |m| m.content("Log file:")).await?;
                 return Ok(());
             }
             ctx.say("Log file does not exist").await?;
