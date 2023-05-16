@@ -14,7 +14,7 @@ pub async fn admin(
     let staff = toml::get_config().admins;
     let user_id = ctx.author().id.to_string();
     if !staff.contains(&user_id) {
-        ctx.say("You are a admin you skid :skull:").await?;
+        ctx.say("You are not a admin you skid :skull:").await?;
         return Ok(());
     }
 
