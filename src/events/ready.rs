@@ -32,7 +32,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     tokio::spawn(async move {
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-            if IPM.load(Ordering::SeqCst) > get_config().max_activity_influx.into() {
+            if IPM.load(Ordering::SeqCst) >= get_config().max_activity_influx.into() {
                 let data = LogData {
                     importance: "INFO".to_string(),
                     message: "Possible raid detected due to IPM influx.".to_string(),
