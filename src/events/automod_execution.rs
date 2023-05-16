@@ -28,9 +28,9 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
 
     let mut embed = CreateEmbed::default();
     embed.color(0xFFA500);
-    embed.title("Message blocked due to matching a set automod pattern");
-    embed.field("The user who broke a automod pattern is below:", format!("{}", user), false);
-    embed.field("Their message is the following below:", format!("||{}||", message), false);
+    embed.title("Message blocked due to matching a set auto-mod pattern");
+    embed.field("The user who broke a auto-mod pattern is below:", format!("{}", user), false);
+    embed.field("The detected content is below:", format!("||{}||", message), false);
     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
     embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
     let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
