@@ -29,17 +29,16 @@ pub async fn dev(
             Ok(())
         }
         "help" => {
-            ctx.say(
-                "The dev commands are:\n\
-                            `dev help` - Shows this message\n\
-                            `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
-                            `dev clean` - Deletes the log file and other temp files\n\
-                            `dev upload_logs` - Uploads the log file to the current channel\n\
-                            `dev echo <message>` - Says the message back\n\
-                            `dev hai` - Says hello back :3\n\
-                            `dev IPM` - Shows the current server IPM\n\
-                            `dev am_dev` - Says if you are dev",
-            ).await?;
+            ctx.say("The dev commands are:\n\
+                     `dev help` - Shows this message\n\
+                     `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
+                     `dev clean` - Deletes the log file and other temp files\n\
+                     `dev upload_logs` - Uploads the log file to the current channel\n\
+                     `dev echo <message>` - Says the message back\n\
+                     `dev hai` - Says hello back :3\n\
+                     `dev IPM` - Shows the current server IPM\n\
+                     `dev am_dev` - Says if you are dev",
+            ).await.log_expect("Unable to send message");
             Ok(())
         }
         "shutdown" => {
@@ -56,7 +55,7 @@ pub async fn dev(
                 message: format!("Shutdown from dev commands sent from {}", msg_author),
             });
 
-            ctx.say("Initialized shutdown countdown for 90 seconds").await?;
+            ctx.say("Initialized shutdown countdown for 90 seconds").await.log_expect("Unable to send message");
 
             for i in 0..90 {
                 let mut embed = CreateEmbed::default();
@@ -88,22 +87,22 @@ pub async fn dev(
             if std::path::Path::new("regy.log").exists() {
                 if let Err(_e) = std::fs::remove_file("regy.log") {
                     std::fs::remove_file("regy.log").log_expect("Unable to delete log file or file does not exist");
-                    ctx.say("Log file deleted").await?;
+                    ctx.say("Log file deleted").await.log_expect("Unable to send message");
                     return Ok(());
                 }
             }
-            ctx.say("Log file does not exist").await?;
+            ctx.say("Log file does not exist").await.log_expect("Unable to send message");
             Ok(())
         }
         "upload_logs" => {
             if std::path::Path::new("regy.log").exists() {
-                ctx.say("Uploading log file, this may take a few seconds...").await?;
+                ctx.say("Uploading log file, this may take a few seconds...").await.log_expect("Unable to send message");
                 let log_file = std::fs::read_to_string("regy.log").log_expect("Unable to read log file");
                 let log_file = log_file.as_bytes();
-                ctx.channel_id().send_files(ctx, vec![(log_file, "regy.log")], |m| m.content("Log file:")).await?;
+                ctx.channel_id().send_files(ctx, vec![(log_file, "regy.log")], |m| m.content("Log file:")).await.log_expect("Unable to upload log file");
                 return Ok(());
             }
-            ctx.say("Log file does not exist").await?;
+            ctx.say("Log file does not exist").await.log_expect("Unable to send message");
             Ok(())
         }
         "IPM" => {
@@ -114,7 +113,7 @@ pub async fn dev(
                     format!("IPM is: {}", IPM.load(Ordering::SeqCst))
                 }
             };
-            ctx.say(ipm_msg).await?;
+            ctx.say(ipm_msg).await.log_expect("Unable to send message");
             Ok(())
         }
         "echo" => {
@@ -128,7 +127,7 @@ pub async fn dev(
                 "Invalid argument '{}' but its ok I still care abt u :heart:",
                 arg.replace('@', "\\@")
             );
-            ctx.say(invalid_arg_message).await?;
+            ctx.say(invalid_arg_message).await.log_expect("Unable to send message");
             Ok(())
         }
     }

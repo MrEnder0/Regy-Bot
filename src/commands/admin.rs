@@ -26,14 +26,13 @@ pub async fn admin(
             Ok(())
         }
         "help" => {
-            ctx.say(
-                "The staff commands are:\n\
-                            `staff help` - Shows this message\n\
-                            `staff add_regex <phrase>` - Add a new regex phrase to the list\n\
-                            `staff remove_regex <id>` - Remove a regex phrase from the list\n\
-                            `staff list_regex` - Lists all the current blocked regex phrases\n\
-                            `staff am_admin` - Says if you are a admin",
-            ).await?;
+            ctx.say("The staff commands are:\n\
+                    `staff help` - Shows this message\n\
+                    `staff add_regex <phrase>` - Add a new regex phrase to the list\n\
+                    `staff remove_regex <id>` - Remove a regex phrase from the list\n\
+                    `staff list_regex` - Lists all the current blocked regex phrases\n\
+                    `staff am_admin` - Says if you are a admin",
+            ).await.log_expect("Unable to send message");
             Ok(())
         }
         "add_regex" => {
@@ -48,7 +47,7 @@ pub async fn admin(
             //Prevents for empty regex
             if new_block_phrase.is_empty() || new_block_phrase == " " || new_block_phrase.len() < 3
             {
-                ctx.say("You need to specify a regex phrase to add; it cant be empty and it also cant be less than 3 characters long.").await?;
+                ctx.say("You need to specify a regex phrase to add; it cant be empty and it also cant be less than 3 characters long.").await.log_expect("Unable to send message");
                 return Ok(());
             }
 
@@ -59,15 +58,13 @@ pub async fn admin(
                 "Added the regex phrase:\n||```{}```||",
                 new_block_phrase_clone
             );
-            ctx.say(status_message).await?;
+            ctx.say(status_message).await.log_expect("Unable to send message");
             Ok(())
         }
         "remove_regex" => {
             let id = arg.split_whitespace().nth(1).unwrap_or("none");
             if id == "none" {
-                ctx.say(
-                    "You need to specify a target UUID.",
-                ).await?;
+                ctx.say("You need to specify a target UUID.").await.log_expect("Unable to send message");
                 return Ok(());
             }
             let id = id.parse::<Uuid>().unwrap();
@@ -75,11 +72,11 @@ pub async fn admin(
             let status_message = format!(
                 "Removed the regex phrase with UUID: {}", id
             );
-            ctx.say(status_message).await?;
+            ctx.say(status_message).await.log_expect("Unable to send message");
             Ok(())
         }
         "list_regex" => {
-            let status_msg = ctx.say("Sending regex phrases this may take a few seconds...").await?;
+            let status_msg = ctx.say("Sending regex phrases this may take a few seconds...").await.log_expect("Unable to send message");
             let blocked_phrases = toml::list_block_phrases();
             let mut formatted_blocked_phrases = String::new();
             for (id, phrase) in blocked_phrases {
@@ -105,25 +102,23 @@ pub async fn admin(
                     line_count += 1;
                     if line_count == 5 {
                         let message_part = format!("```{}```", split_status_message);
-                        channel_id.say(ctx, message_part).await?;
+                        channel_id.say(ctx, message_part).await.log_expect("Unable to send message");
                         split_status_message = String::new();
                         line_count = 0;
                         tokio::time::sleep(std::time::Duration::from_millis(40)).await;
                     }
                 }
             } else {
-                ctx.say(status_message).await?;
+                ctx.say(status_message).await.log_expect("Unable to send message");
             }
 
             status_msg.edit(ctx, |m| {
                 m.content("Finished sending regex phrases to the channel.")
-            }).await?;
+            }).await.log_expect("Unable to edit message");
             Ok(())
         }
         "am_admin" => {
-            ctx.say(
-                "Yes, now do some admin thingies and stop making me do it. :|",
-            ).await?;
+            ctx.say("Yes, now do some admin thingies and stop making me do it. :|").await.log_expect("Unable to send message");
             Ok(())
         }
         _ => {
@@ -131,7 +126,7 @@ pub async fn admin(
                 "Invalid argument '{}'",
                 arg.replace('@', "\\@")
             );
-            ctx.say(invalid_arg_message).await?;
+            ctx.say(invalid_arg_message).await.log_expect("Unable to send message");
             Ok(())
         }
     }
