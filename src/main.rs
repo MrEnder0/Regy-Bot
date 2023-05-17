@@ -72,8 +72,8 @@ async fn main() {
                     loop {
                         std::thread::sleep(std::time::Duration::from_secs(60));
                         let guild_count = ctx_clone.cache.guilds().len();
-                        let activity_msg = format!("Scanning channels with powerful regex in {} servers", guild_count);
-                        ctx_clone.set_activity(serenity::Activity::playing(activity_msg)).await;
+                        let activity_msg = format!("Channels with powerful regex in {} servers", guild_count);
+                        ctx_clone.set_activity(serenity::Activity::watching(&activity_msg)).await;
                     }
                 });
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
