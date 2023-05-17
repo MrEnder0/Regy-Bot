@@ -12,9 +12,18 @@ name: rust-clippy analyze
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - 'src/**'
+      - 'Cargo.toml'
+      - '.github/workflows/rust-clippy.yml'
+
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ "master" ]
+    paths:
+      - 'src/**'
+      - 'Cargo.toml'
+      - '.github/workflows/rust-clippy.yml'
+
   schedule:
     - cron: '41 18 * * 6'
 
