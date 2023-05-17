@@ -6,7 +6,7 @@ on:
     paths:
       - 'src/**'
       - 'Cargo.toml'
-      - '.github/workflows/rust-clippy.yml'
+      - '.github/workflows/auto-build.yml'
 
   pull_request:
     branches: [ "master" ]
