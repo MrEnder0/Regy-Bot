@@ -6,6 +6,7 @@ use std::{
 
 fn main() {
     //Wait for Regy to fully shutdown
+    println!("[Update Helper INFO] Waiting for Regy to fully shutdown.");
     std::thread::sleep(Duration::from_secs(3));
 
     let regy_bin = "regy_bot.exe";
