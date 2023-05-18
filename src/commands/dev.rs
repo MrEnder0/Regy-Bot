@@ -127,7 +127,7 @@ pub async fn dev(
             embed.color(0x565e6e);
             embed.title("Regy Update");
             embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/update.png");
-            embed.description("Update has been initialized, bot will shutdown if update is successful.");
+            embed.description("A local update has been initialized.");
             embed.footer(|f| f.text("If the update fails you will be notified automatically."));
             ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send update embed").id;
 
@@ -156,8 +156,8 @@ pub async fn dev(
                     let mut embed = CreateEmbed::default();
                     embed.color(0x565e6e);
                     embed.title("Regy Update");
-                    embed.description("Update has been successful, bot will shutdown.");
-                    embed.footer(|f| f.text("Regy will now shutdown to finish the update"));
+                    embed.description("Update has been successful, bot will restart.");
+                    embed.footer(|f| f.text("Regy will now restart to finish the update"));
                     ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send successful update embed").id;
                     std::process::Command::new("regy_bot_update_helper.exe").spawn().log_expect("Unable to run update helper");
                     std::process::exit(0);
