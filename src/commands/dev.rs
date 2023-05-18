@@ -1,8 +1,7 @@
+use poise::serenity_prelude::CreateEmbed;
 use std::sync::atomic::Ordering;
 
-use poise::serenity_prelude::CreateEmbed;
-
-use crate::{IPM, Data, utils::{logger::*, type_conversions, toml::get_config, log_on_error::LogExpect}};
+use crate::{IPM, Data, utils::{logger::*, type_conversions, toml::get_config, log_on_error::LogExpect, updater::local_update}};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -30,14 +29,15 @@ pub async fn dev(
         }
         "help" => {
             ctx.say("The dev commands are:\n\
-                     `dev help` - Shows this message\n\
-                     `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
-                     `dev clean` - Deletes the log file and other temp files\n\
-                     `dev upload_logs` - Uploads the log file to the current channel\n\
-                     `dev echo <message>` - Says the message back\n\
-                     `dev hai` - Says hello back :3\n\
-                     `dev IPM` - Shows the current server IPM\n\
-                     `dev am_dev` - Says if you are dev",
+                    `dev help` - Shows this message\n\
+                    `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
+                    `dev clean` - Deletes the log file and other temp files\n\
+                    `dev upload_logs` - Uploads the log file to the current channel\n\
+                    `dev echo <message>` - Says the message back\n\
+                    `dev hai` - Says hello back :3\n\
+                    `dev IPM` - Shows the current server IPM\n\
+                    `dev local_update` - Updates the bot from a local file\n\
+                    `dev am_dev` - Says if you are dev",
             ).await.log_expect("Unable to send message");
             Ok(())
         }
@@ -120,6 +120,25 @@ pub async fn dev(
             let channel_id = ctx.channel_id();
             let echo_msg = args[1..].join(" ");
             channel_id.say(ctx, echo_msg).await?;
+            Ok(())
+        }
+        "local_update" => {
+            let mut embed = CreateEmbed::default();
+            embed.color(0x565e6e);
+            embed.title("Regy Update");
+            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/update.png");
+            embed.description("Update has been initialized, bot will shutdown if update is successful.");
+            embed.footer(|f| f.text("If the update fails you will be notified automatically."));
+            ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send update embed").id;
+
+            local_update("regy_update.exe");
+            
+            let mut embed = CreateEmbed::default();
+            embed.color(0x565e6e);
+            embed.title("Regy Update");
+            embed.description("Update has failed, bot will return to normal operation.");
+            embed.footer(|f| f.text("Tip: Make sure you put the update file in the right directory"));
+            ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send failed update embed").id;
             Ok(())
         }
         _ => {
