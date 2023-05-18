@@ -8,7 +8,7 @@ pub fn local_update(new_bin: &str) -> i8 {
         return 0;
     }
 
-    if !Path::new("updated").exists() {
+    if Path::new("updated").exists() {
         return -1;
     }
 
