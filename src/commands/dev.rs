@@ -166,9 +166,9 @@ pub async fn dev(
                     let mut embed = CreateEmbed::default();
                     embed.color(0x565e6e);
                     embed.title("Regy Update");
-                    embed.description("Update has finished with a unknown outcome, bot will return to normal operation and ignore the update.");
-                    embed.footer(|f| f.text("Tip: The update may have finished properly we just wont restart automatically"));
-                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send unknown update embed").id;
+                    embed.description("Update has finished with an unknown outcome, bot will return to normal operation and ignore the update.");
+                    embed.footer(|f| f.text("Tip: Try running the update helper"));
+                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send unknown update status embed").id;
                     Ok(())
                 }
 
