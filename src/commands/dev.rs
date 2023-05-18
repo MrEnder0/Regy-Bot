@@ -131,15 +131,48 @@ pub async fn dev(
             embed.footer(|f| f.text("If the update fails you will be notified automatically."));
             ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send update embed").id;
 
-            local_update("regy_update.exe");
-            
-            let mut embed = CreateEmbed::default();
-            embed.color(0x565e6e);
-            embed.title("Regy Update");
-            embed.description("Update has failed, bot will return to normal operation.");
-            embed.footer(|f| f.text("Tip: Make sure you put the update file in the right directory"));
-            ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send failed update embed").id;
-            Ok(())
+            let update = local_update("regy_update.exe");
+
+            match update {
+                0 => {
+                    let mut embed = CreateEmbed::default();
+                    embed.color(0x565e6e);
+                    embed.title("Regy Update");
+                    embed.description("Update has failed, bot will return to normal operation.");
+                    embed.footer(|f| f.text("Tip: Make sure you put the update file in the right directory"));
+                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send failed update embed").id;
+                    Ok(())
+                },
+                1 => {
+                    let mut embed = CreateEmbed::default();
+                    embed.color(0x565e6e);
+                    embed.title("Regy Update");
+                    embed.description("Update has been successful, but a update helper was not found, please restart the bot manually.");
+                    embed.footer(|f| f.text("Closing and reopening Regy will finish the update"));
+                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send partial update embed").id;
+                    Ok(())
+                },
+                2 => {
+                    let mut embed = CreateEmbed::default();
+                    embed.color(0x565e6e);
+                    embed.title("Regy Update");
+                    embed.description("Update has been successful, bot will shutdown.");
+                    embed.footer(|f| f.text("Regy will now shutdown to finish the update"));
+                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send successful update embed").id;
+                    std::process::Command::new("regy_bot_update_helper.exe").spawn().log_expect("Unable to run update helper");
+                    std::process::exit(0);
+                },
+                _ => {
+                    let mut embed = CreateEmbed::default();
+                    embed.color(0x565e6e);
+                    embed.title("Regy Update");
+                    embed.description("Update has finished with a unknown outcome, bot will return to normal operation and ignore the update.");
+                    embed.footer(|f| f.text("Tip: The update may have finished properly we just wont restart automatically"));
+                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send unknown update embed").id;
+                    Ok(())
+                }
+
+            }
         }
         _ => {
             let invalid_arg_message = format!(
