@@ -9,7 +9,6 @@ use poise::{
 use crate::utils::{toml::*, logger::*, log_on_error::LogExpect};
 
 pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity::Reaction) {
-    println!("0");
     //ignore reactions from the bot
     if add_reaction.user_id.unwrap() == ctx.cache.current_user_id() {
         return;
@@ -29,8 +28,6 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     if add_reaction.emoji != ReactionType::Unicode("🚫".to_string()) {
         return;
     }
-
-    println!("1");
 
     let ctx_clone = ctx.clone();
     let reaction_clone = add_reaction.clone();
