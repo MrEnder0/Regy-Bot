@@ -23,9 +23,7 @@ fn main() {
 
     println!("[Update Helper INFO] Regy has finished updating restarting Regy.");
     std::fs::remove_file("updated").expect("Failed to remove updated file");
-    std::thread::spawn(|| {
-        Command::new("regy_bot.exe").spawn().expect("Failed to start regy_bot.exe");
-    });
+    Command::new("regy_bot.exe").spawn().expect("Failed to start regy_bot.exe");
 
     println!("[Update Helper INFO] Update helper has finished, closing update helper.");
     std::process::exit(0);
