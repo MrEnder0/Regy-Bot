@@ -20,5 +20,5 @@ pub fn local_update(new_bin: &str) -> i8 {
         return 1;
     }
 
-    return 2;
+    2
 }
