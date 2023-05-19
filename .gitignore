@@ -1,7 +1,4 @@
 /target
-devs
-staff
-regex
-runID
 config.toml
 *.log
+*.exe
