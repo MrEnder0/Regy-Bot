@@ -1,19 +1,19 @@
-mod events;
 mod commands;
+mod events;
 mod utils;
 
 use poise::{
-    Event,
     serenity_prelude::{self as serenity},
+    Event,
 };
-use std::{
-    path::Path,
-    sync::atomic::AtomicUsize
-};
+use std::{path::Path, sync::atomic::AtomicUsize};
 
-use crate::events::{ready::*, reaction_add::*, new_message::*, update_message::*, automod_execution::*, guild_ban::*};
+use crate::commands::{admin::admin::*, dev::dev::*, moderator::moderator::*, user::user::*};
+use crate::events::{
+    automod_execution::*, guild_ban::*, new_message::*, reaction_add::*, ready::*,
+    update_message::*,
+};
 use crate::utils::toml::*;
-use crate::commands::{user::user::*, moderator::moderator::*, admin::admin::*, dev::dev::*};
 
 pub struct Data {}
 
@@ -36,7 +36,7 @@ async fn main() {
                             ready_event(data_about_bot, ctx).await;
                             return Ok(());
                         }
-                        
+
                         Event::ReactionAdd { add_reaction, .. } => {
                             reaction_add_event(ctx, add_reaction).await;
                             return Ok(());
@@ -46,14 +46,21 @@ async fn main() {
                             new_message_event(ctx, new_message).await;
                             return Ok(());
                         }
-                        Event::MessageUpdate { old_if_available: _, new: _, event } => {
+                        Event::MessageUpdate {
+                            old_if_available: _,
+                            new: _,
+                            event,
+                        } => {
                             update_message_event(ctx, event).await;
                             return Ok(());
                         }
                         Event::AutoModerationActionExecution { execution } => {
                             automod_execution_event(ctx, execution).await;
                         }
-                        Event::GuildBanAddition { guild_id: _, banned_user } => {
+                        Event::GuildBanAddition {
+                            guild_id: _,
+                            banned_user,
+                        } => {
                             guild_ban_event(banned_user).await;
                         }
                         _ => {}
@@ -72,14 +79,17 @@ async fn main() {
                     loop {
                         std::thread::sleep(std::time::Duration::from_secs(60));
                         let guild_count = ctx_clone.cache.guilds().len();
-                        let activity_msg = format!("Channels with powerful regex in {} servers", guild_count);
-                        ctx_clone.set_activity(serenity::Activity::watching(&activity_msg)).await;
+                        let activity_msg =
+                            format!("Channels with powerful regex in {} servers", guild_count);
+                        ctx_clone
+                            .set_activity(serenity::Activity::watching(&activity_msg))
+                            .await;
                     }
                 });
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })
-    });
+        });
 
     framework.run().await.unwrap();
 }

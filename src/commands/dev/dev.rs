@@ -1,7 +1,13 @@
 use poise::serenity_prelude::CreateEmbed;
 use std::sync::atomic::Ordering;
 
-use crate::{IPM, Data, utils::{logger::*, type_conversions, toml::get_config, log_on_error::LogExpect, updater::local_update}};
+use crate::{
+    utils::{
+        log_on_error::LogExpect, logger::*, toml::get_config, type_conversions,
+        updater::local_update,
+    },
+    Data, IPM,
+};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -12,23 +18,29 @@ pub async fn dev(
     #[description = "Commands for devs; run help for more info"] command_arg: Option<String>,
 ) -> Result<(), Error> {
     //Ignore message from non-devs
-    let dev = ["687897073047306270", "598280691066732564", "275787354688585730"];
+    let dev = [
+        "687897073047306270",
+        "598280691066732564",
+        "275787354688585730",
+    ];
     if !dev.contains(&ctx.author().id.to_string().as_str()) {
         ctx.say("You are not dev you skid :skull:").await?;
         return Ok(());
     }
 
-    let arg = type_conversions::string_to_static_str(command_arg.log_expect("did not specify command arg"));
+    let arg = type_conversions::string_to_static_str(
+        command_arg.log_expect("did not specify command arg"),
+    );
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {
-            ctx.say(
-                "You need to specify an dev command you silly uwu kitten :heart:",
-            ).await?;
+            ctx.say("You need to specify an dev command you silly uwu kitten :heart:")
+                .await?;
             Ok(())
         }
         "help" => {
-            ctx.say("The dev commands are:\n\
+            ctx.say(
+                "The dev commands are:\n\
                     `dev help` - Shows this message\n\
                     `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
                     `dev clean` - Deletes the log file and other temp files\n\
@@ -38,7 +50,9 @@ pub async fn dev(
                     `dev IPM` - Shows the current server IPM\n\
                     `dev local_update` - Updates the bot from a local file\n\
                     `dev am_dev` - Says if you are dev",
-            ).await.log_expect("Unable to send message");
+            )
+            .await
+            .log_expect("Unable to send message");
             Ok(())
         }
         "shutdown" => {
@@ -55,22 +69,38 @@ pub async fn dev(
                 message: format!("Shutdown from dev commands sent from {}", msg_author),
             });
 
-            ctx.say("Initialized shutdown countdown for 90 seconds").await.log_expect("Unable to send message");
+            ctx.say("Initialized shutdown countdown for 90 seconds")
+                .await
+                .log_expect("Unable to send message");
 
             for i in 0..90 {
                 let mut embed = CreateEmbed::default();
                 embed.color(0x565e6e);
                 embed.title("Regy Shutdown");
                 if i > 80 {
-                    embed.description(format!(":warning: Regy will be shutdown in the following seconds: {}", 90-i));
+                    embed.description(format!(
+                        ":warning: Regy will be shutdown in the following seconds: {}",
+                        90 - i
+                    ));
                 } else {
-                    embed.description(format!("Regy will be shutdown in the following seconds: {}", 90-i));
+                    embed.description(format!(
+                        "Regy will be shutdown in the following seconds: {}",
+                        90 - i
+                    ));
                 }
                 embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/shutdown.png");
                 embed.footer(|f| f.text("This force shutdown was sent from a dev"));
-                let embed_message = ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send shutdown embed").id;
+                let embed_message = ctx
+                    .channel_id()
+                    .send_message(&ctx, |m| m.set_embed(embed))
+                    .await
+                    .log_expect("Unable to send shutdown embed")
+                    .id;
                 tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-                ctx.channel_id().delete_message(&ctx, embed_message).await.ok();
+                ctx.channel_id()
+                    .delete_message(&ctx, embed_message)
+                    .await
+                    .ok();
             }
             ctx.say("Countdown finished, shutting down...").await?;
             std::process::exit(0);
@@ -86,29 +116,47 @@ pub async fn dev(
         "clean" => {
             if std::path::Path::new("regy.log").exists() {
                 if let Err(_e) = std::fs::remove_file("regy.log") {
-                    std::fs::remove_file("regy.log").log_expect("Unable to delete log file or file does not exist");
-                    ctx.say("Log file deleted").await.log_expect("Unable to send message");
+                    std::fs::remove_file("regy.log")
+                        .log_expect("Unable to delete log file or file does not exist");
+                    ctx.say("Log file deleted")
+                        .await
+                        .log_expect("Unable to send message");
                     return Ok(());
                 }
             }
-            ctx.say("Log file does not exist").await.log_expect("Unable to send message");
+            ctx.say("Log file does not exist")
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
         "upload_logs" => {
             if std::path::Path::new("regy.log").exists() {
-                ctx.say("Uploading log file, this may take a few seconds...").await.log_expect("Unable to send message");
-                let log_file = std::fs::read_to_string("regy.log").log_expect("Unable to read log file");
+                ctx.say("Uploading log file, this may take a few seconds...")
+                    .await
+                    .log_expect("Unable to send message");
+                let log_file =
+                    std::fs::read_to_string("regy.log").log_expect("Unable to read log file");
                 let log_file = log_file.as_bytes();
-                ctx.channel_id().send_files(ctx, vec![(log_file, "regy.log")], |m| m.content("Log file:")).await.log_expect("Unable to upload log file");
+                ctx.channel_id()
+                    .send_files(ctx, vec![(log_file, "regy.log")], |m| {
+                        m.content("Log file:")
+                    })
+                    .await
+                    .log_expect("Unable to upload log file");
                 return Ok(());
             }
-            ctx.say("Log file does not exist").await.log_expect("Unable to send message");
+            ctx.say("Log file does not exist")
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
         "IPM" => {
             let ipm_msg = {
                 if IPM.load(Ordering::SeqCst) > get_config().max_activity_influx.into() {
-                    format!("IPM is: {} :warning: This is over the server IPM", IPM.load(Ordering::SeqCst))
+                    format!(
+                        "IPM is: {} :warning: This is over the server IPM",
+                        IPM.load(Ordering::SeqCst)
+                    )
                 } else {
                     format!("IPM is: {}", IPM.load(Ordering::SeqCst))
                 }
@@ -129,7 +177,11 @@ pub async fn dev(
             embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/update.png");
             embed.description("A local update has been initialized.");
             embed.footer(|f| f.text("If the update fails you will be notified automatically."));
-            ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send update embed").id;
+            ctx.channel_id()
+                .send_message(&ctx, |m| m.set_embed(embed))
+                .await
+                .log_expect("Unable to send update embed")
+                .id;
 
             let update = local_update("regy_update.exe");
 
@@ -139,39 +191,58 @@ pub async fn dev(
                     embed.color(0x565e6e);
                     embed.title("Regy Update");
                     embed.description("Update has failed, bot will return to normal operation.");
-                    embed.footer(|f| f.text("Tip: Make sure you put the update file in the right directory"));
-                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send failed update embed").id;
+                    embed.footer(|f| {
+                        f.text("Tip: Make sure you put the update file in the right directory")
+                    });
+                    ctx.channel_id()
+                        .send_message(&ctx, |m| m.set_embed(embed))
+                        .await
+                        .log_expect("Unable to send failed update embed")
+                        .id;
                     Ok(())
-                },
+                }
                 1 => {
                     let mut embed = CreateEmbed::default();
                     embed.color(0x565e6e);
                     embed.title("Regy Update");
                     embed.description("Update has been successful, but a update helper was not found, please restart the bot manually.");
                     embed.footer(|f| f.text("Closing and reopening Regy will finish the update"));
-                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send partial update embed").id;
+                    ctx.channel_id()
+                        .send_message(&ctx, |m| m.set_embed(embed))
+                        .await
+                        .log_expect("Unable to send partial update embed")
+                        .id;
                     Ok(())
-                },
+                }
                 2 => {
                     let mut embed = CreateEmbed::default();
                     embed.color(0x565e6e);
                     embed.title("Regy Update");
                     embed.description("Update has been successful, bot will restart.");
                     embed.footer(|f| f.text("Regy will now restart to finish the update"));
-                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send successful update embed").id;
-                    std::process::Command::new("regy_bot_update_helper.exe").spawn().log_expect("Unable to run update helper");
+                    ctx.channel_id()
+                        .send_message(&ctx, |m| m.set_embed(embed))
+                        .await
+                        .log_expect("Unable to send successful update embed")
+                        .id;
+                    std::process::Command::new("regy_bot_update_helper.exe")
+                        .spawn()
+                        .log_expect("Unable to run update helper");
                     std::process::exit(0);
-                },
+                }
                 _ => {
                     let mut embed = CreateEmbed::default();
                     embed.color(0x565e6e);
                     embed.title("Regy Update");
                     embed.description("Update has finished with an unknown outcome, bot will return to normal operation and ignore the update.");
                     embed.footer(|f| f.text("Tip: Try running the update helper"));
-                    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect("Unable to send unknown update status embed").id;
+                    ctx.channel_id()
+                        .send_message(&ctx, |m| m.set_embed(embed))
+                        .await
+                        .log_expect("Unable to send unknown update status embed")
+                        .id;
                     Ok(())
                 }
-
             }
         }
         _ => {
@@ -179,7 +250,9 @@ pub async fn dev(
                 "Invalid argument '{}' but its ok I still care abt u :heart:",
                 arg.replace('@', "\\@")
             );
-            ctx.say(invalid_arg_message).await.log_expect("Unable to send message");
+            ctx.say(invalid_arg_message)
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
     }

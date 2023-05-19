@@ -1,5 +1,5 @@
-use std::path::Path;
 use self_replace;
+use std::path::Path;
 
 use crate::utils::log_on_error::LogExpect;
 

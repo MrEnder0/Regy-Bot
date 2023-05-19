@@ -1,4 +1,7 @@
-use crate::{Data, utils::{type_conversions, toml, log_on_error::LogExpect}};
+use crate::{
+    utils::{log_on_error::LogExpect, toml, type_conversions},
+    Data,
+};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -6,9 +9,13 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 #[poise::command(slash_command, prefix_command)]
 pub async fn user(
     ctx: Context<'_>,
-    #[description = "Commands for standard users; run help for more info"] command_arg: Option<String>,
+    #[description = "Commands for standard users; run help for more info"] command_arg: Option<
+        String,
+    >,
 ) -> Result<(), Error> {
-    let arg = type_conversions::string_to_static_str(command_arg.log_expect("did not specify command arg"));
+    let arg = type_conversions::string_to_static_str(
+        command_arg.log_expect("did not specify command arg"),
+    );
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {
@@ -16,7 +23,8 @@ pub async fn user(
             Ok(())
         }
         "help" => {
-            ctx.say("The user commands are:\n\
+            ctx.say(
+                "The user commands are:\n\
                     `user help` - Shows this message\n\
                     `user info` - Tells you a full description of what Regy is\n\
                     `user skid` - Explains what a skid is\n\
@@ -24,7 +32,9 @@ pub async fn user(
                     `user what_is_regex` - Explains what regex is\n\
                     `user my_infractions` - Shows how many infractions you have\n\
                     `user am_user` - Says if you are a user...",
-            ).await.log_expect("Unable to send message");
+            )
+            .await
+            .log_expect("Unable to send message");
             Ok(())
         }
         "am_user" => match ctx.author().id.as_u64() {
@@ -33,7 +43,9 @@ pub async fn user(
                 Ok(())
             }
             598280691066732564 => {
-                ctx.say("1984 - 1 = 1984-1").await.log_expect("Unable to send message");
+                ctx.say("1984 - 1 = 1984-1")
+                    .await
+                    .log_expect("Unable to send message");
                 Ok(())
             }
             275787354688585730 => {
@@ -45,7 +57,9 @@ pub async fn user(
                 Ok(())
             }
             _ => {
-                ctx.say("You're a user, but you're also a skid :skull:").await.log_expect("Unable to send message");
+                ctx.say("You're a user, but you're also a skid :skull:")
+                    .await
+                    .log_expect("Unable to send message");
                 Ok(())
             }
         },
@@ -75,13 +89,19 @@ pub async fn user(
             let user_id = type_conversions::userid_to_u64(ctx.author().id);
             let user_infractions = toml::list_infractions(user_id);
             let infractions_message = format!("You have {} infractions.", user_infractions);
-            ctx.say(infractions_message).await.log_expect("Unable to send message");
+            ctx.say(infractions_message)
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
         _ => {
             let invalid_arg_message = format!(
-                "Invalid argument '{}' but its ok I still care abt u :heart:",arg.replace('@', "\\@"));
-            ctx.say(invalid_arg_message).await.log_expect("Unable to send message");
+                "Invalid argument '{}' but its ok I still care abt u :heart:",
+                arg.replace('@', "\\@")
+            );
+            ctx.say(invalid_arg_message)
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
     }
