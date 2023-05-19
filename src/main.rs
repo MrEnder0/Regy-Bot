@@ -13,7 +13,7 @@ use std::{
 
 use crate::events::{ready::*, reaction_add::*, new_message::*, update_message::*, automod_execution::*, guild_ban::*};
 use crate::utils::toml::*;
-use crate::commands::{user::*, moderator::*, admin::*, dev::*};
+use crate::commands::{user::user::*, moderator::moderator::*, admin::admin::*, dev::dev::*};
 
 pub struct Data {}
 
