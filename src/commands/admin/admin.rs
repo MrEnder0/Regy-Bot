@@ -1,6 +1,9 @@
 use uuid::Uuid;
 
-use crate::{Data, utils::{toml, type_conversions, log_on_error::LogExpect}};
+use crate::{
+    utils::{log_on_error::LogExpect, toml, type_conversions},
+    Data,
+};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -18,7 +21,9 @@ pub async fn admin(
         return Ok(());
     }
 
-    let arg = type_conversions::string_to_static_str(command_arg.log_expect("did not specify command arg"));
+    let arg = type_conversions::string_to_static_str(
+        command_arg.log_expect("did not specify command arg"),
+    );
     let args = arg.split_whitespace().collect::<Vec<&str>>();
     match args[0] {
         "none" => {
@@ -26,13 +31,16 @@ pub async fn admin(
             Ok(())
         }
         "help" => {
-            ctx.say("The staff commands are:\n\
+            ctx.say(
+                "The staff commands are:\n\
                     `staff help` - Shows this message\n\
                     `staff add_regex <phrase>` - Add a new regex phrase to the list\n\
                     `staff remove_regex <id>` - Remove a regex phrase from the list\n\
                     `staff list_regex` - Lists all the current blocked regex phrases\n\
                     `staff am_admin` - Says if you are a admin",
-            ).await.log_expect("Unable to send message");
+            )
+            .await
+            .log_expect("Unable to send message");
             Ok(())
         }
         "add_regex" => {
@@ -58,25 +66,32 @@ pub async fn admin(
                 "Added the regex phrase:\n||```{}```||",
                 new_block_phrase_clone
             );
-            ctx.say(status_message).await.log_expect("Unable to send message");
+            ctx.say(status_message)
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
         "remove_regex" => {
             let id = arg.split_whitespace().nth(1).unwrap_or("none");
             if id == "none" {
-                ctx.say("You need to specify a target UUID.").await.log_expect("Unable to send message");
+                ctx.say("You need to specify a target UUID.")
+                    .await
+                    .log_expect("Unable to send message");
                 return Ok(());
             }
             let id = id.parse::<Uuid>().unwrap();
             toml::remove_block_phrase(id);
-            let status_message = format!(
-                "Removed the regex phrase with UUID: {}", id
-            );
-            ctx.say(status_message).await.log_expect("Unable to send message");
+            let status_message = format!("Removed the regex phrase with UUID: {}", id);
+            ctx.say(status_message)
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
         "list_regex" => {
-            let status_msg = ctx.say("Sending regex phrases this may take a few seconds...").await.log_expect("Unable to send message");
+            let status_msg = ctx
+                .say("Sending regex phrases this may take a few seconds...")
+                .await
+                .log_expect("Unable to send message");
             let blocked_phrases = toml::list_block_phrases();
             let mut formatted_blocked_phrases = String::new();
             for (id, phrase) in blocked_phrases {
@@ -102,31 +117,40 @@ pub async fn admin(
                     line_count += 1;
                     if line_count == 5 {
                         let message_part = format!("```{}```", split_status_message);
-                        channel_id.say(ctx, message_part).await.log_expect("Unable to send message");
+                        channel_id
+                            .say(ctx, message_part)
+                            .await
+                            .log_expect("Unable to send message");
                         split_status_message = String::new();
                         line_count = 0;
                         tokio::time::sleep(std::time::Duration::from_millis(40)).await;
                     }
                 }
             } else {
-                ctx.say(status_message).await.log_expect("Unable to send message");
+                ctx.say(status_message)
+                    .await
+                    .log_expect("Unable to send message");
             }
 
-            status_msg.edit(ctx, |m| {
-                m.content("Finished sending regex phrases to the channel.")
-            }).await.log_expect("Unable to edit message");
+            status_msg
+                .edit(ctx, |m| {
+                    m.content("Finished sending regex phrases to the channel.")
+                })
+                .await
+                .log_expect("Unable to edit message");
             Ok(())
         }
         "am_admin" => {
-            ctx.say("Yes, now do some admin thingies and stop making me do it. :|").await.log_expect("Unable to send message");
+            ctx.say("Yes, now do some admin thingies and stop making me do it. :|")
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
         _ => {
-            let invalid_arg_message = format!(
-                "Invalid argument '{}'",
-                arg.replace('@', "\\@")
-            );
-            ctx.say(invalid_arg_message).await.log_expect("Unable to send message");
+            let invalid_arg_message = format!("Invalid argument '{}'", arg.replace('@', "\\@"));
+            ctx.say(invalid_arg_message)
+                .await
+                .log_expect("Unable to send message");
             Ok(())
         }
     }
