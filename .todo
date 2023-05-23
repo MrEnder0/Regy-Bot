@@ -62,6 +62,8 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Allow shutdown config option
 
 # Release 11
+[x] Rewrite logging system
+[x] Rewrite permission system
 [o] Rewrite command system for each command to be its own command
 
 # Release 12
