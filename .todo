@@ -58,10 +58,13 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Log expect trait for error handling being logged to file
 [x] Upload logs command for devs
 [x] Split staff into admin and modderater 
-[ ] Create infraction user limit warning messages
 [x] Update system with restarter
 [x] Allow shutdown config option
 
 # Release 11
+[o] Rewrite command system for each command to be its own command
+
+# Release 12
+[ ] Create infraction user limit warning messages
 [ ] Use a db for non universal config
 [ ] Make bot work in multiple servers in one instance
