@@ -6,12 +6,12 @@ use std::{
     path::Path
 };
 
-use crate::utils::logger::{LogExpect, LogData, log_this};
+use crate::utils::logger::*;
 
 fn main() {
     //Wait for Regy to fully shutdown
     let data = LogData {
-        importance: utils::logger::LogImportance::Info,
+        importance: LogImportance::Info,
         message: "[Update Helper] Waiting for Regy to fully shutdown.".to_string(),
     };
     log_this(data);
@@ -22,7 +22,7 @@ fn main() {
 
     if !Path::new(regy_bin).exists() {
         let data = LogData {
-            importance: utils::logger::LogImportance::Error,
+            importance: LogImportance::Error,
             message: "[Update Helper] Regy binary does not exist, shutting down.".to_string(),
         };
         println!("[Update Helper ERROR] Regy binary does not exist, shutting down.");
@@ -31,7 +31,7 @@ fn main() {
 
     if !Path::new("updated").exists() {
         let data = LogData {
-            importance: utils::logger::LogImportance::Warning,
+            importance: LogImportance::Warning,
             message: "[Update Helper] Regy is not in update state, shutting down.".to_string(),
         };
         log_this(data);
@@ -41,7 +41,7 @@ fn main() {
 
     println!("[Update Helper INFO] Regy has finished updating restarting Regy.");
     let data = LogData {
-        importance: utils::logger::LogImportance::Info,
+        importance: LogImportance::Info,
         message: "[Update Helper] Regy has finished updating restarting Regy.".to_string(),
     };
     log_this(data);
@@ -50,7 +50,7 @@ fn main() {
 
     println!("[Update Helper INFO] Update helper has finished, closing update helper.");
     let data = LogData {
-        importance: utils::logger::LogImportance::Info,
+        importance: LogImportance::Info,
         message: "[Update Helper] Update helper has finished, closing update helper.".to_string(),
     };
     log_this(data);
