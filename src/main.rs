@@ -6,7 +6,10 @@ use poise::{
     serenity_prelude::{self as serenity},
     Event,
 };
-use std::{path::Path, sync::atomic::AtomicUsize};
+use std::{
+    path::Path,
+    sync::atomic::AtomicUsize
+};
 
 use crate::commands::{admin::admin::*, dev::dev::*, moderator::moderator::*, user::user::*};
 use crate::events::*;
@@ -81,7 +84,7 @@ async fn main() {
                         std::thread::sleep(std::time::Duration::from_secs(60));
                         let guild_count = ctx_clone.cache.guilds().len();
                         let activity_msg =
-                            format!("Channels with powerful regex in {} servers", guild_count);
+                            format!("over with powerful regex in {} servers.", guild_count);
                         ctx_clone
                             .set_activity(serenity::Activity::watching(&activity_msg))
                             .await;
