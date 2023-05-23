@@ -9,10 +9,7 @@ use poise::{
 use std::{path::Path, sync::atomic::AtomicUsize};
 
 use crate::commands::{admin::admin::*, dev::dev::*, moderator::moderator::*, user::user::*};
-use crate::events::{
-    automod_execution::*, guild_ban::*, new_message::*, reaction_add::*, ready::*,
-    update_message::*,
-};
+use crate::events::*;
 use crate::utils::toml::*;
 
 pub struct Data {}
@@ -33,36 +30,40 @@ async fn main() {
                 Box::pin(async move {
                     match event {
                         Event::Ready { data_about_bot } => {
-                            ready_event(data_about_bot, ctx).await;
+                            ready::ready_event(data_about_bot, ctx).await;
                             return Ok(());
                         }
 
                         Event::ReactionAdd { add_reaction, .. } => {
-                            reaction_add_event(ctx, add_reaction).await;
+                            reaction_add::reaction_add_event(ctx, add_reaction).await;
                             return Ok(());
                         }
 
                         Event::Message { new_message } => {
-                            new_message_event(ctx, new_message).await;
+                            new_message::new_message_event(ctx, new_message).await;
                             return Ok(());
                         }
+
                         Event::MessageUpdate {
                             old_if_available: _,
                             new: _,
                             event,
                         } => {
-                            update_message_event(ctx, event).await;
+                            update_message::update_message_event(ctx, event).await;
                             return Ok(());
                         }
+
                         Event::AutoModerationActionExecution { execution } => {
-                            automod_execution_event(ctx, execution).await;
+                            automod_execution::automod_execution_event(ctx, execution).await;
                         }
+
                         Event::GuildBanAddition {
                             guild_id: _,
                             banned_user,
                         } => {
-                            guild_ban_event(banned_user).await;
+                            guild_ban::guild_ban_event(banned_user).await;
                         }
+
                         _ => {}
                     }
                     Ok(())
