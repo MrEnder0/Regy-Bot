@@ -6,7 +6,7 @@ use poise::{
     }
 };
 
-use crate::utils::{toml::*, type_conversions::*, log_on_error::LogExpect};
+use crate::utils::{toml::*, type_conversions::*, logger::LogExpect};
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
     //If action is BlockMessage

@@ -1,5 +1,5 @@
 use crate::{
-    utils::{log_on_error::LogExpect, toml, type_conversions},
+    utils::{logger::LogExpect, toml, type_conversions},
     Data,
 };
 

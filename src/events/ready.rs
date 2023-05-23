@@ -7,7 +7,7 @@ use poise::{
 };
 use std::sync::atomic::Ordering;
 
-use crate::utils::{toml::*, logger::*, log_on_error::LogExpect};
+use crate::utils::{toml::*, logger::*};
 use crate::IPM;
 
 pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
@@ -34,7 +34,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
             if IPM.load(Ordering::SeqCst) >= get_config().max_activity_influx.into() {
                 let data = LogData {
-                    importance: "INFO".to_string(),
+                    importance: LogImportance::Info,
                     message: "Possible raid detected due to IPM influx.".to_string(),
                 };
 

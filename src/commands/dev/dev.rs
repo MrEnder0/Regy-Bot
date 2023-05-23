@@ -3,7 +3,9 @@ use std::sync::atomic::Ordering;
 
 use crate::{
     utils::{
-        log_on_error::LogExpect, logger::*, toml::get_config, type_conversions,
+        logger::*,
+        toml::get_config,
+        type_conversions,
         updater::local_update,
     },
     Data, IPM,
@@ -65,7 +67,7 @@ pub async fn dev(
             println!("Shutdown from dev commands sent from {}", msg_author);
 
             log_this(LogData {
-                importance: "INFO".to_string(),
+                importance: LogImportance::Info,
                 message: format!("Shutdown from dev commands sent from {}", msg_author),
             });
 

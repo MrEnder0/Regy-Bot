@@ -2,7 +2,7 @@ use poise::{
     serenity_prelude as serenity,
 };
 
-use crate::utils::{toml, log_on_error::LogExpect};
+use crate::utils::toml;
 
 pub enum PermissionLevel {
     Moderator,

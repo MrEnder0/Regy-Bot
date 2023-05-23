@@ -8,7 +8,7 @@ use poise::{
 use regex::Regex;
 use std::sync::atomic::Ordering;
 
-use crate::utils::{toml::*, logger::*, log_on_error::LogExpect};
+use crate::utils::{toml::*, logger::*};
 use crate::IPM;
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
@@ -91,7 +91,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
 
             let data = LogData {
-                importance: "INFO".to_string(),
+                importance: LogImportance::Info,
                 message: format!("{} Has sent a message which is not allowed due to the set regex patterns", new_message.author.id),
             };
 
