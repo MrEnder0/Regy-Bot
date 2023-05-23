@@ -115,14 +115,12 @@ pub async fn dev(
         }
         "clean" => {
             if std::path::Path::new("regy.log").exists() {
-                if let Err(_e) = std::fs::remove_file("regy.log") {
-                    std::fs::remove_file("regy.log")
-                        .log_expect("Unable to delete log file or file does not exist");
-                    ctx.say("Log file deleted")
-                        .await
-                        .log_expect("Unable to send message");
-                    return Ok(());
-                }
+                std::fs::remove_file("regy.log")
+                    .log_expect("Unable to delete log file or file does not exist");
+                ctx.say("Log file deleted")
+                    .await
+                    .log_expect("Unable to send message");
+                return Ok(());
             }
             ctx.say("Log file does not exist")
                 .await
