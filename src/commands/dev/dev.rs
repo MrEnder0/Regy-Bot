@@ -199,19 +199,33 @@ pub async fn dev(
                         .await
                         .log_expect("Unable to send failed update embed")
                         .id;
+
+                    let data = LogData {
+                        importance: LogImportance::Error,
+                        message: "Update has failed, bot will return to normal operation.".to_string(),
+                    };
+                    log_this(data);
+
                     Ok(())
                 }
                 1 => {
                     let mut embed = CreateEmbed::default();
                     embed.color(0x565e6e);
                     embed.title("Regy Update");
-                    embed.description("Update has been successful, but a update helper was not found, please restart the bot manually.");
+                    embed.description("Update has been successful, but a update helper was not found, please restart the bot manually to finish the update.");
                     embed.footer(|f| f.text("Closing and reopening Regy will finish the update"));
                     ctx.channel_id()
                         .send_message(&ctx, |m| m.set_embed(embed))
                         .await
                         .log_expect("Unable to send partial update embed")
                         .id;
+
+                    let data = LogData {
+                        importance: LogImportance::Info,
+                        message: "Update has been successful, but a update helper was not found, please restart the bot manually to finish the update.".to_string(),
+                    };
+                    log_this(data)
+
                     Ok(())
                 }
                 2 => {
@@ -225,6 +239,13 @@ pub async fn dev(
                         .await
                         .log_expect("Unable to send successful update embed")
                         .id;
+
+                    let data = LogData {
+                        importance: LogImportance::Info,
+                        message: "Update has been successful, bot will restart.".to_string(),
+                    };
+                    log_this(data);
+
                     std::process::Command::new("regy_bot_update_helper.exe")
                         .spawn()
                         .log_expect("Unable to run update helper");
@@ -241,6 +262,13 @@ pub async fn dev(
                         .await
                         .log_expect("Unable to send unknown update status embed")
                         .id;
+
+                    let data = LogData {
+                        importance: LogImportance::Warning,
+                        message: "Update has finished with an unknown outcome, bot will return to normal operation and ignore the update.".to_string(),
+                    };
+                    log_this(data);
+
                     Ok(())
                 }
             }
