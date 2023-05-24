@@ -224,7 +224,7 @@ pub async fn dev(
                         importance: LogImportance::Info,
                         message: "Update has been successful, but a update helper was not found, please restart the bot manually to finish the update.".to_string(),
                     };
-                    log_this(data)
+                    log_this(data);
 
                     Ok(())
                 }
