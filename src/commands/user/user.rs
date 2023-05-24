@@ -52,8 +52,8 @@ pub async fn user(
                 ctx.say("Hello mr endercass, there is a lot to be done, that is without saying you are very helpful in the creation of me.").await.log_expect("Unable to send message");
                 Ok(())
             }
-            658553113208422442 => {
-                ctx.say("I love you so much. You mean so much to me. You make me happy which I almost never ever feel. You complete me. I truly care about you and want to stay strong together forever. <3").await.log_expect("Unable to send message");
+            864590161022025759 => {
+                ctx.say("I love you so much. You mean so much to me. You make me happy. You complete me. <3").await.log_expect("Unable to send message");
                 Ok(())
             }
             _ => {
