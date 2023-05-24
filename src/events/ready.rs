@@ -12,6 +12,13 @@ use crate::IPM;
 
 pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     println!("{} is connected!", data_about_bot.user.name);
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} has started and connected to discord.", data_about_bot.user.name),
+    };
+    log_this(data);
+
     let ctx_clone = ctx.clone();
     /* Prints IPM for debug
     tokio::spawn(async move {
