@@ -9,9 +9,9 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(slash_command, prefix_command)]
-pub async fn permissions(
+pub async fn permission_level(
     ctx: Context<'_>,
-    #[description = "Checks users permissions"] user: Option<serenity::User>,
+    #[description = "Check users permissions"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
     let userid = user.as_ref().unwrap().id.to_string();
 
