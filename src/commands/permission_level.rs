@@ -1,6 +1,7 @@
 use poise::serenity_prelude as serenity;
 
 use crate::{
+    utils::logger::LogExpect,
     utils::perm_check::*,
     Data,
 };
@@ -24,9 +25,11 @@ pub async fn permission_level(
 
     //reply with the users highest unlocked permission level
     ctx.say(format!(
-        "The highest permission level {} has unlocked is {}",
+        "The highest permission **{}** has is **{}**",
         user.unwrap().name, perm
-    )).await?;
+    ))
+    .await
+    .log_expect("Unable to send message");
 
     Ok(())
 }
