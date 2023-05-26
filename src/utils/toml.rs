@@ -39,7 +39,7 @@ pub fn gen_config() {
 
 pub fn get_config() -> Config {
     let toml = std::fs::read_to_string("config.toml").unwrap();
-    let config: Config = toml::from_str(&toml).log_expect("Invalid config please fix any issues in it or delete it to generate a new one.");
+    let config: Config = toml::from_str(&toml).unwrap();
     config
 }
 
