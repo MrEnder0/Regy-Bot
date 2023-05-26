@@ -3,8 +3,6 @@ use serde::{Serialize, Deserialize};
 use std::{collections::HashMap};
 use uuid::Uuid;
 
-use crate::utils::logger::LogExpect;
-
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub token: String,

@@ -15,11 +15,13 @@ use crate::commands::{
     dev::dev::*,
     admin::admin::*,
     moderator::moderator::*,
-    user::user::*,
     help::*,
     permission_level::*,
     why_rust::*,
-    about::*
+    about::*,
+    what_is_regex::*,
+    skid::*,
+    my_infractions::*,
 };
 use crate::events::*;
 use crate::utils::toml::*;
@@ -38,14 +40,16 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![
-                user(),
                 moderator(),
                 admin(),
                 dev(),
                 help(),
                 permission_level(),
                 why_rust(),
-                about()
+                about(),
+                what_is_regex(),
+                skid(),
+                my_infractions(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
