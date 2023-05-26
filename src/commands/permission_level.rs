@@ -12,7 +12,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 #[poise::command(slash_command, prefix_command)]
 pub async fn permission_level(
     ctx: Context<'_>,
-    #[description = "Check users permissions"] user: Option<serenity::User>,
+    #[description = "Target User"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
     let userid = user.as_ref().unwrap().id.to_string();
 

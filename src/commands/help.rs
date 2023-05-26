@@ -9,7 +9,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 #[poise::command(slash_command, prefix_command)]
 pub async fn help(
     ctx: Context<'_>,
-    #[description = "Check available commands"] role: String,
+    #[description = "Target Permission"] role: String,
 ) -> Result<(), Error> {
     let arg = role.as_str();
 
