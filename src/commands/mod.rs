@@ -5,3 +5,5 @@ pub mod dev;
 
 pub mod help;
 pub mod permission_level;
+pub mod why_rust;
+pub mod about;
