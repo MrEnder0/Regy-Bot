@@ -9,12 +9,12 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(slash_command, prefix_command)]
+#[poise::command(context_menu_command = "Permission Level", slash_command)]
 pub async fn permission_level(
     ctx: Context<'_>,
-    #[description = "Target User"] user: Option<serenity::User>,
+    #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
-    let userid = user.as_ref().unwrap().id.to_string();
+    let userid = user.clone().id.to_string();
 
     let perm = match highest_unlocked_perm(userid.parse::<u64>().unwrap()).await {
         PermissionLevel::User => "User",
@@ -26,7 +26,8 @@ pub async fn permission_level(
     //reply with the users highest unlocked permission level
     ctx.say(format!(
         "The highest permission **{}** has is **{}**",
-        user.unwrap().name, perm
+        user.clone().name,
+        perm
     ))
     .await
     .log_expect("Unable to send message");
