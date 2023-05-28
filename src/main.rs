@@ -41,6 +41,7 @@ async fn main() {
                 infractions::my_infractions::my_infractions(),
                 infractions::add_infraction::add_infraction(),
                 infractions::dismiss_infraction::dismiss_infraction(),
+                infractions::list_infractions::list_infractions(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {

@@ -35,37 +35,6 @@ pub async fn moderator(
             ctx.say("You need to specify a command.").await?;
             Ok(())
         }
-        "remove_infraction" => {
-            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
-            if user_id == "none" {
-                ctx.say("You need to specify a user id.")
-                    .await
-                    .log_expect("Unable to send message");
-                return Ok(());
-            }
-            let user_id = user_id.parse::<u64>().unwrap();
-            toml::dismiss_infraction(user_id);
-            ctx.say("Removed 1 infraction from the specified user.")
-                .await
-                .log_expect("Unable to send message");
-            Ok(())
-        }
-        "list_infractions" => {
-            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
-            if user_id == "none" {
-                ctx.say("You need to specify a user id.")
-                    .await
-                    .log_expect("Unable to send message");
-                return Ok(());
-            }
-            let user_id = user_id.parse::<u64>().unwrap();
-            let infractions = toml::list_infractions(user_id);
-            let formatted_infractions = format!("Infractions for {} is:\n{}", user_id, infractions);
-            ctx.say(formatted_infractions)
-                .await
-                .log_expect("Unable to send message");
-            Ok(())
-        }
         "grab_pfp" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
             if user_id == "none" {
@@ -97,12 +66,6 @@ pub async fn moderator(
             )
             .await
             .log_expect("Unable to send message");
-            Ok(())
-        }
-        "am_mod" => {
-            ctx.say("Yes, now do some moderation and stop making me do it. :|")
-                .await
-                .log_expect("Unable to send message");
             Ok(())
         }
         _ => {
