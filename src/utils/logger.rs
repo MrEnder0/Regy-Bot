@@ -9,6 +9,7 @@ pub enum LogImportance {
     Error,
     Warning,
     Info,
+    #[allow(dead_code)]
     Debug
 }
 
