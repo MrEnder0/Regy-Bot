@@ -25,6 +25,7 @@ fn main() {
             importance: LogImportance::Error,
             message: "[Update Helper] Regy binary does not exist, shutting down.".to_string(),
         };
+        log_this(data);
         println!("[Update Helper ERROR] Regy binary does not exist, shutting down.");
         return;
     }
