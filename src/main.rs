@@ -39,6 +39,8 @@ async fn main() {
                 info::what_is_regex::what_is_regex(),
                 info::skid::skid(),
                 infractions::my_infractions::my_infractions(),
+                infractions::add_infraction::add_infraction(),
+                infractions::dismiss_infraction::dismiss_infraction(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {

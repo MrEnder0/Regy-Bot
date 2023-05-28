@@ -140,12 +140,6 @@ pub async fn admin(
                 .log_expect("Unable to edit message");
             Ok(())
         }
-        "am_admin" => {
-            ctx.say("Yes, now do some admin thingies and stop making me do it. :|")
-                .await
-                .log_expect("Unable to send message");
-            Ok(())
-        }
         _ => {
             let invalid_arg_message = format!("Invalid argument '{}'", arg.replace('@', "\\@"));
             ctx.say(invalid_arg_message)

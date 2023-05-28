@@ -35,36 +35,6 @@ pub async fn moderator(
             ctx.say("You need to specify a command.").await?;
             Ok(())
         }
-        "help" => {
-            ctx.say(
-                "The staff commands are:\n\
-                    `staff help` - Shows this message\n\
-                    `staff add_infraction <user>` - Adds an infraction to a user\n\
-                    `staff remove_infraction <user>` - Removes an infraction from a user\n\
-                    `staff list_infractions <user>` - Lists the infractions of a user\n\
-                    `staff grab_pfp <user>` - Grabs a specified user's pfp\n\
-                    `staff grab_banner <user>` - Grabs a specified users banner\n\
-                    `staff am_mod` - Says if you are a mod",
-            )
-            .await
-            .log_expect("Unable to send message");
-            Ok(())
-        }
-        "add_infraction" => {
-            let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
-            if user_id == "none" {
-                ctx.say("You need to specify a user id.")
-                    .await
-                    .log_expect("Unable to send message");
-                return Ok(());
-            }
-            let user_id = user_id.parse::<u64>().unwrap();
-            toml::add_infraction(user_id);
-            ctx.say("Added infraction to the specified user.")
-                .await
-                .log_expect("Unable to send message");
-            Ok(())
-        }
         "remove_infraction" => {
             let user_id = arg.split_whitespace().nth(1).unwrap_or("none");
             if user_id == "none" {

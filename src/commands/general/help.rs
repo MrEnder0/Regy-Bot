@@ -7,75 +7,87 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[derive(Debug, poise::ChoiceParameter)]
-pub enum RoleChoice {
-    #[name = "User commands help"]
-    User,
-    #[name = "Moderator commands help"]
-    Moderator,
-    #[name = "Admin commands help"]
-    Admin,
+pub enum HelpChoice {
+    #[name = "General commands help"]
+    General,
+    #[name = "Information commands help"]
+    Information,
+    #[name = "Infraction commands help"]
+    Infraction,
+    #[name = "Regex commands help"]
+    Regex,
+    #[name = "Moderation commands help"]
+    Moderation,
     #[name = "Developer commands help"]
     Developer,
+
 }
 
 #[poise::command(slash_command, prefix_command, user_cooldown = 30)]
 pub async fn help(
     ctx: Context<'_>,
-    #[description = "Target Permission"] role: RoleChoice,
+    #[description = "Target Permission"] choice: HelpChoice,
 ) -> Result<(), Error> {
-    match role {
-        RoleChoice::User => {
+    match choice {
+        HelpChoice::General => {
             ctx.say(
-                "The user commands are:\n\
-                `/help` - Shows this message\n\
+                "The general commands are:\n\
+                `/help <choice>` - Shows help on a given subset of commands\n\
+                `/permission_level <user> - Shows the specified user's permission level",
+            )
+            .await
+            .log_expect("Unable to send message");
+        },
+        HelpChoice::Information => {
+            ctx.say(
+                "The information commands are:\n\
                 `/info` - Tells you a full description of what Regy is\n\
                 `/skid` - Explains what a skid is\n\
                 `/why_rust` - Shows why rust is the best language\n\
                 `/what_is_regex` - Explains what regex is\n\
-                `/my_infractions` - Shows how many infractions you have\n\
-                `/am_user` - Says if you are a user...",
+                `/my_infractions` - Shows how many infractions you have",
             )
             .await
             .log_expect("Unable to send message");
         },
-        RoleChoice::Moderator => {
+        HelpChoice::Infraction => {
             ctx.say(
-                "The staff commands are:\n\
-                `staff help` - Shows this message\n\
-                `staff add_infraction <user>` - Adds an infraction to a user\n\
-                `staff remove_infraction <user>` - Removes an infraction from a user\n\
-                `staff list_infractions <user>` - Lists the infractions of a user\n\
-                `staff grab_pfp <user>` - Grabs a specified user's pfp\n\
-                `staff grab_banner <user>` - Grabs a specified users banner\n\
-                `staff am_mod` - Says if you are a mod",
+                "The infraction commands are:\n\
+                `/add_infraction <user>` - Adds an infraction to the specified user\n\
+                `/dismiss_infraction <user>` - Removes an infraction from the specified user\n\
+                `/list_infractions <user>` - Lists the infractions of the specified user",
             )
             .await
             .log_expect("Unable to send message");
         },
-        RoleChoice::Admin => {
+        HelpChoice::Regex => {
             ctx.say(
-                "The staff commands are:\n\
-                `staff help` - Shows this message\n\
-                `staff add_regex <phrase>` - Add a new regex phrase to the list\n\
-                `staff remove_regex <id>` - Remove a regex phrase from the list\n\
-                `staff list_regex` - Lists all the current blocked regex phrases\n\
-                `staff am_admin` - Says if you are a admin",
+                "The regex commands are:\n\
+                `/add_regex <phrase>` - Adds a new regex phrase to the list\n\
+                `/remove_regex <id>` - Removes the specified regex phrase from the list\n\
+                `/list_regex` - Lists all the current blocked regex phrases",
             )
             .await
             .log_expect("Unable to send message");
         },
-        RoleChoice::Developer => {
+        HelpChoice::Moderation => {
+            ctx.say(
+                "The moderation commands are:\n\
+                `/grab_pfp <user>` - Grabs the profile picture of the specified user\n\
+                `/grab_banner <user>` - Grabs the user banner of the specified user",
+            )
+            .await
+            .log_expect("Unable to send message");
+        },
+        HelpChoice::Developer => {
             ctx.say(
                 "The dev commands are:\n\
-                `dev help` - Shows this message\n\
-                `dev shutdown` - Shuts down the bot after a 120 second countdown\n\
-                `dev clean` - Deletes the log file and other temp files\n\
-                `dev upload_logs` - Uploads the log file to the current channel\n\
-                `dev echo <message>` - Says the message back\n\
-                `dev hai` - Says hello back :3\n\
-                `dev IPM` - Shows the current server IPM\n\
-                `dev local_update` - Updates the bot from a local file\n\
-                `dev am_dev` - Says if you are dev",
+                `/shutdown` - Shuts down the bot after a 120 second countdown\n\
+                `/clean` - Deletes the log file and other temp files\n\
+                `/upload_logs` - Uploads the log file to the current channel\n\
+                `/echo <message>` - Says the message back\n\
+                `/IPM` - Shows the current server IPM\n\
+                `/local_update` - Updates the bot from a local file",
             )
             .await
             .log_expect("Unable to send message");
@@ -84,10 +96,13 @@ pub async fn help(
         _ => {
             ctx.say(
                 "Unknown permission level, the available permission levels are:\n\
-                `User`\n\
-                `Moderator`\n\
-                `Admin`\n\
-                `Developer`",
+                `General` - General commands\n\
+                `Information` - Information commands\n\
+                `Infraction` - Infraction commands\n\
+                `Regex` - Regex commands\n\
+                `Moderation` - Moderation commands\n\
+                `Developer` - Developer commands",
+
             )
             .await
             .log_expect("Unable to send message");
