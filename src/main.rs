@@ -31,7 +31,6 @@ async fn main() {
             commands: vec![
                 dev::dev::dev(),
                 admin::admin::admin(),
-                moderator::moderator::moderator(),
                 general::help::help(),
                 general::permission_level::permission_level(),
                 info::about::about(),
@@ -42,6 +41,8 @@ async fn main() {
                 infractions::add_infraction::add_infraction(),
                 infractions::dismiss_infraction::dismiss_infraction(),
                 infractions::list_infractions::list_infractions(),
+                moderation::grab_pfp::grab_pfp(),
+                moderation::grab_banner::grab_banner(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
