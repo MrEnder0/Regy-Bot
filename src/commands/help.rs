@@ -80,6 +80,7 @@ pub async fn help(
             .await
             .log_expect("Unable to send message");
         },
+        #[allow(unreachable_patterns)]
         _ => {
             ctx.say(
                 "Unknown permission level, the available permission levels are:\n\
