@@ -6,7 +6,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command)]
+#[poise::command(prefix_command, slash_command, user_cooldown = 60)]
 pub async fn skid(ctx: Context<'_>) -> Result<(), Error> {
     ctx.say(
         "The term 'skid' <@&1087534862937890896> can have different meanings depending on the context in which it is used. Here are a few possible definitions:\n\
