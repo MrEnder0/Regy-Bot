@@ -11,18 +11,7 @@ use std::{
     sync::atomic::AtomicUsize
 };
 
-use crate::commands::{
-    dev::dev::*,
-    admin::admin::*,
-    moderator::moderator::*,
-    help::*,
-    permission_level::*,
-    why_rust::*,
-    about::*,
-    what_is_regex::*,
-    skid::*,
-    my_infractions::*,
-};
+use crate::commands::*;
 use crate::events::*;
 use crate::utils::toml::*;
 
@@ -40,16 +29,16 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![
-                moderator(),
-                admin(),
-                dev(),
-                help(),
-                permission_level(),
-                why_rust(),
-                about(),
-                what_is_regex(),
-                skid(),
-                my_infractions(),
+                dev::dev::dev(),
+                admin::admin::admin(),
+                moderator::moderator::moderator(),
+                general::help::help(),
+                general::permission_level::permission_level(),
+                info::about::about(),
+                info::why_rust::why_rust(),
+                info::what_is_regex::what_is_regex(),
+                info::skid::skid(),
+                infractions::my_infractions::my_infractions(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
