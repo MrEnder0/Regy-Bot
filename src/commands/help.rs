@@ -6,15 +6,25 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(slash_command, prefix_command)]
+#[derive(Debug, poise::ChoiceParameter)]
+pub enum RoleChoice {
+    #[name = "User commands help"]
+    User,
+    #[name = "Moderator commands help"]
+    Moderator,
+    #[name = "Admin commands help"]
+    Admin,
+    #[name = "Developer commands help"]
+    Developer,
+}
+
+#[poise::command(slash_command, prefix_command, user_cooldown = 30)]
 pub async fn help(
     ctx: Context<'_>,
-    #[description = "Target Permission"] role: String,
+    #[description = "Target Permission"] role: RoleChoice,
 ) -> Result<(), Error> {
-    let arg = role.as_str();
-
-    match arg {
-        "user" => {
+    match role {
+        RoleChoice::User => {
             ctx.say(
                 "The user commands are:\n\
                 `user help` - Shows this message\n\
@@ -28,7 +38,7 @@ pub async fn help(
             .await
             .log_expect("Unable to send message");
         },
-        "moderator" => {
+        RoleChoice::Moderator => {
             ctx.say(
                 "The staff commands are:\n\
                 `staff help` - Shows this message\n\
@@ -42,7 +52,7 @@ pub async fn help(
             .await
             .log_expect("Unable to send message");
         },
-        "admin" => {
+        RoleChoice::Admin => {
             ctx.say(
                 "The staff commands are:\n\
                 `staff help` - Shows this message\n\
@@ -54,7 +64,7 @@ pub async fn help(
             .await
             .log_expect("Unable to send message");
         },
-        "developer" => {
+        RoleChoice::Developer => {
             ctx.say(
                 "The dev commands are:\n\
                 `dev help` - Shows this message\n\
@@ -72,11 +82,11 @@ pub async fn help(
         },
         _ => {
             ctx.say(
-                "Invalid permission level, the available permission levels are:\n\
-                `user`\n\
-                `moderator`\n\
-                `admin`\n\
-                `developer`",
+                "Unknown permission level, the available permission levels are:\n\
+                `User`\n\
+                `Moderator`\n\
+                `Admin`\n\
+                `Developer`",
             )
             .await
             .log_expect("Unable to send message");
