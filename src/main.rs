@@ -43,7 +43,8 @@ async fn main() {
                 infractions::list_infractions::list_infractions(),
                 moderation::grab_pfp::grab_pfp(),
                 moderation::grab_banner::grab_banner(),
-                moderation::admin_test::admin_test(),
+
+                general::server_setup::server_setup(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {

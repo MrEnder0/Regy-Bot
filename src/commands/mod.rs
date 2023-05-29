@@ -6,3 +6,5 @@ pub mod info;
 
 pub mod infractions;
 pub mod moderation;
+
+pub mod regex;
