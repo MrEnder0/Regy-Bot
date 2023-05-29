@@ -30,19 +30,6 @@ pub async fn admin(
             ctx.say("You need to specify a command.").await?;
             Ok(())
         }
-        "help" => {
-            ctx.say(
-                "The staff commands are:\n\
-                    `staff help` - Shows this message\n\
-                    `staff add_regex <phrase>` - Add a new regex phrase to the list\n\
-                    `staff remove_regex <id>` - Remove a regex phrase from the list\n\
-                    `staff list_regex` - Lists all the current blocked regex phrases\n\
-                    `staff am_admin` - Says if you are a admin",
-            )
-            .await
-            .log_expect("Unable to send message");
-            Ok(())
-        }
         "add_regex" => {
             let args = arg.split_whitespace().skip(1).collect::<Vec<&str>>();
             println!("{:?}", args);
