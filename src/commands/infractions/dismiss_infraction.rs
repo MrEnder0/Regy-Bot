@@ -1,7 +1,7 @@
 use poise::serenity_prelude as serenity;
 
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Moderator},
+    utils::perm_check::{has_perm, PermissionLevel::Staff},
     utils::type_conversions::userid_to_u64,
     utils::logger::LogExpect,
     utils::toml,
@@ -16,7 +16,7 @@ pub async fn dismiss_infraction(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
-    if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Moderator).await {
+    if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Staff).await {
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect("Unable to send message");

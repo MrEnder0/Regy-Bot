@@ -14,12 +14,12 @@ pub async fn admin(
     #[description = "Commands for admins; run help for more info"] command_arg: Option<String>,
 ) -> Result<(), Error> {
     //Ignore message from non-staff
-    let staff = toml::get_config().admins;
-    let user_id = ctx.author().id.to_string();
-    if !staff.contains(&user_id) {
-        ctx.say("You are not a admin you skid :skull:").await?;
-        return Ok(());
-    }
+    //let staff = toml::get_config().admins;
+    //let user_id = ctx.author().id.to_string();
+    //if !staff.contains(&user_id) {
+    //    ctx.say("You are not a admin you skid :skull:").await?;
+    //    return Ok(());
+    //}
 
     let arg = type_conversions::string_to_static_str(
         command_arg.log_expect("did not specify command arg"),

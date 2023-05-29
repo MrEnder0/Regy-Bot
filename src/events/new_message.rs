@@ -42,12 +42,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     //Ignores moderation from staff
-    for user in get_config().moderators {
-        if new_message.author.id == UserId(user.parse::<u64>().unwrap()) {
-            return;
-        }
-    }
-    for user in get_config().admins {
+    for user in get_config().staff {
         if new_message.author.id == UserId(user.parse::<u64>().unwrap()) {
             return;
         }

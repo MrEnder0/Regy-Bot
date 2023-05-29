@@ -6,8 +6,7 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub token: String,
-    pub moderators: Vec<String>,
-    pub admins: Vec<String>,
+    pub staff: Vec<String>,
     pub log_channel: u64,
     pub user_delete_on_ban: bool,
     pub max_activity_influx: u16,
@@ -21,8 +20,7 @@ pub fn gen_config() {
     phr.insert(Uuid::new_v4(), general_purpose::STANDARD_NO_PAD.encode("regy test phrase"));
     let config = Config {
         token: "token".to_string(),
-        moderators: vec!["000000000000000000".to_string()],
-        admins: vec!["000000000000000000".to_string()],
+        staff: vec!["000000000000000000".to_string()],
         log_channel: 000000000000000000,
         user_delete_on_ban: true,
         max_activity_influx: 10,

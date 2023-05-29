@@ -18,8 +18,7 @@ pub async fn permission_level(
 
     let perm = match highest_unlocked_perm(userid.parse::<u64>().unwrap()).await {
         PermissionLevel::User => "User",
-        PermissionLevel::Moderator => "Moderator",
-        PermissionLevel::Admin => "Admin",
+        PermissionLevel::Staff => "Staff",
         PermissionLevel::Developer => "Developer",
     };
 

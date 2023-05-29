@@ -20,7 +20,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     }
 
     //ignore events except for staff
-    if !get_config().admins.contains(&add_reaction.user_id.unwrap().to_string()) && !get_config().moderators.contains(&add_reaction.user_id.unwrap().to_string()) {
+    if !get_config().staff.contains(&add_reaction.user_id.unwrap().to_string()) {
         return;
     }
 
