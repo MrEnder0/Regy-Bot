@@ -11,7 +11,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 5)]
+#[poise::command(context_menu_command = "Dismiss Infraction", slash_command, user_cooldown = 5)]
 pub async fn dismiss_infraction(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,
