@@ -30,7 +30,6 @@ async fn main() {
         .options(poise::FrameworkOptions {
             commands: vec![
                 dev::dev::dev(),
-                admin::admin::admin(),
                 general::help::help(),
                 general::permission_level::permission_level(),
                 info::about::about(),
@@ -43,6 +42,9 @@ async fn main() {
                 infractions::list_infractions::list_infractions(),
                 moderation::grab_pfp::grab_pfp(),
                 moderation::grab_banner::grab_banner(),
+                regex::add_regex::add_regex(),
+                regex::remove_regex::remove_regex(),
+                regex::list_regex::list_regex(),
 
                 //general::server_setup::server_setup(),
             ],
