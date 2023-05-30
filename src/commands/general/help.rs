@@ -23,7 +23,7 @@ pub enum HelpChoice {
 
 }
 
-#[poise::command(slash_command, prefix_command, user_cooldown = 30)]
+#[poise::command(slash_command, prefix_command, user_cooldown = 25, ephemeral = true)]
 pub async fn help(
     ctx: Context<'_>,
     #[description = "Target Permission"] choice: HelpChoice,
