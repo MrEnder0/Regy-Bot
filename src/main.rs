@@ -46,7 +46,7 @@ async fn main() {
                 regex::remove_regex::remove_regex(),
                 regex::list_regex::list_regex(),
 
-                //general::server_setup::server_setup(),
+                //management::config_server::config_server(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
