@@ -2,9 +2,11 @@ use poise::serenity_prelude as serenity;
 
 use crate::{
     utils::perm_check::{has_perm, PermissionLevel::Staff},
-    utils::type_conversions::userid_to_u64,
-    utils::logger::LogExpect,
-    utils::toml,
+    utils::{
+        type_conversions::userid_to_u64,
+        logger::LogExpect,
+        toml
+    },
     Data,
 };
 
