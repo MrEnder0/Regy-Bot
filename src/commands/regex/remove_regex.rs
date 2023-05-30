@@ -9,7 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 10, required_permissions = "ADMINISTRATOR", ephemeral = true)]
+#[poise::command(prefix_command, slash_command, user_cooldown = 10, required_permissions = "ADMINISTRATOR")]
 pub async fn remove_regex(
     ctx: Context<'_>,
     #[description = "Regex id"] id: String
