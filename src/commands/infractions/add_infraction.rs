@@ -31,5 +31,13 @@ pub async fn add_infraction(
     ))
     .await
     .log_expect("Unable to send message");
+
+    user.dm(ctx, |m| {
+        m.content(format!(
+            "You have received an infraction from {}",
+            ctx.author().name
+        ))
+    }).await.log_expect("Unable to dm user");
+
     Ok(())
 }
