@@ -12,12 +12,14 @@ pub enum HelpChoice {
     General,
     #[name = "Information commands help"]
     Information,
-    #[name = "Infraction commands help"]
-    Infraction,
-    #[name = "Regex commands help"]
-    Regex,
     #[name = "Moderation commands help"]
     Moderation,
+    #[name = "Infraction commands help"]
+    Infraction,
+    #[name = "Management commands help"]
+    Management,
+    #[name = "Regex commands help"]
+    Regex,
     #[name = "Developer commands help"]
     Developer,
 
@@ -44,28 +46,7 @@ pub async fn help(
                 `/info` - Tells you a full description of what Regy is\n\
                 `/skid` - Explains what a skid is\n\
                 `/why_rust` - Shows why rust is the best language\n\
-                `/what_is_regex` - Explains what regex is\n\
-                `/my_infractions` - Shows how many infractions you have",
-            )
-            .await
-            .log_expect("Unable to send message");
-        },
-        HelpChoice::Infraction => {
-            ctx.say(
-                "The infraction commands are:\n\
-                `/add_infraction <user>` - Adds an infraction to the specified user\n\
-                `/dismiss_infraction <user>` - Removes an infraction from the specified user\n\
-                `/list_infractions <user>` - Lists the infractions of the specified user",
-            )
-            .await
-            .log_expect("Unable to send message");
-        },
-        HelpChoice::Regex => {
-            ctx.say(
-                "The regex commands are:\n\
-                `/add_regex <phrase>` - Adds a new regex phrase to the list\n\
-                `/remove_regex <id>` - Removes the specified regex phrase from the list\n\
-                `/list_regex` - Lists all the current blocked regex phrases",
+                `/what_is_regex` - Explains what regex is",
             )
             .await
             .log_expect("Unable to send message");
@@ -75,6 +56,38 @@ pub async fn help(
                 "The moderation commands are:\n\
                 `/grab_pfp <user>` - Grabs the profile picture of the specified user\n\
                 `/grab_banner <user>` - Grabs the user banner of the specified user",
+            )
+            .await
+            .log_expect("Unable to send message");
+        },
+        HelpChoice::Infraction => {
+            ctx.say(
+                "The infraction commands are:\n\
+                `/add_infraction <user>` - Adds an infraction to the specified user\n\
+                `/dismiss_infraction <user>` - Removes an infraction from the specified user\n\
+                `/list_infractions <user>` - Lists the infractions of the specified user\n\
+                `/my_infractions` - Shows how many infractions you have",
+            )
+            .await
+            .log_expect("Unable to send message");
+        },
+        HelpChoice::Management => {
+            ctx.say(
+                "The management commands are:\n\
+                `/add_staff <user>` - Adds the specified user to the staff list\n\
+                `/remove_staff <user>` - Removes the specified user from the staff list\n\
+                `/list_staff` - Lists all the current staff members\n\
+                `/config_server` - (BETA) Configures the current server",
+            )
+            .await
+            .log_expect("Unable to send message");
+        }
+        HelpChoice::Regex => {
+            ctx.say(
+                "The regex commands are:\n\
+                `/add_regex <phrase>` - Adds a new regex phrase to the list\n\
+                `/remove_regex <id>` - Removes the specified regex phrase from the list\n\
+                `/list_regex` - Lists all the current blocked regex phrases",
             )
             .await
             .log_expect("Unable to send message");
@@ -98,9 +111,10 @@ pub async fn help(
                 "Unknown permission level, the available permission levels are:\n\
                 `General` - General commands\n\
                 `Information` - Information commands\n\
-                `Infraction` - Infraction commands\n\
-                `Regex` - Regex commands\n\
                 `Moderation` - Moderation commands\n\
+                `Infraction` - Infraction commands\n\
+                `Management` - Management commands\n\
+                `Regex` - Regex commands\n\
                 `Developer` - Developer commands",
 
             )
