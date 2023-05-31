@@ -28,7 +28,7 @@ pub async fn dismiss_infraction(
     let userid = user.clone().id;
     toml::dismiss_infraction(userid_to_u64(userid));
     ctx.say(format!(
-        "Added an infraction to {}",
+        "Dismissed a infraction from {}",
         user.clone().name
     ))
     .await
