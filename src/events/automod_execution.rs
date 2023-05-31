@@ -2,11 +2,13 @@ use poise::{
     serenity_prelude as serenity,
     serenity_prelude::{
         CreateEmbed,
-        ChannelId, ReactionType, UserId, ActionExecution
+        ChannelId,
+        ReactionType,
+        ActionExecution
     }
 };
 
-use crate::utils::{toml::*, type_conversions::*, logger::LogExpect};
+use crate::utils::{toml::*, logger::LogExpect};
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
     //If action is BlockMessage
@@ -21,7 +23,6 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                                 The message which has been blocked is below:\n\
                                 ||{}||", message);
 
-    let user = UserId(userid_to_u64(user));
     let user = user.to_user(&ctx.http).await.log_expect("Unable to get user");
     user.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect("Unable to dm user");
     let log_channel = ChannelId(get_config().log_channel);
