@@ -45,7 +45,9 @@ async fn main() {
                 regex::add_regex::add_regex(),
                 regex::remove_regex::remove_regex(),
                 regex::list_regex::list_regex(),
-
+                management::add_staff::add_staff(),
+                management::remove_staff::remove_staff(),
+                management::list_staff::list_staff(),
                 //management::config_server::config_server(),
             ],
             event_handler: |ctx, event, _framework, _data| {

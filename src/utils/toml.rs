@@ -75,12 +75,6 @@ pub fn add_infraction(id: u64) {
     std::fs::write("config.toml", toml).unwrap();
 }
 
-pub fn list_infractions(id: u64) -> u32 {
-    let mut config = get_config();
-    let infractions = config.infractions.entry(id.to_string()).or_insert(0);
-    *infractions
-}
-
 pub fn dismiss_infraction(id: u64) {
     let mut config = get_config();
     let infractions = config.infractions.entry(id.to_string()).or_insert(1);
@@ -96,9 +90,56 @@ pub fn dismiss_infraction(id: u64) {
     std::fs::write("config.toml", toml).unwrap();
 }
 
+pub fn list_infractions(id: u64) -> u32 {
+    let mut config = get_config();
+    let infractions = config.infractions.entry(id.to_string()).or_insert(0);
+    *infractions
+}
+
+pub fn add_staff(id: u64) -> bool {
+    let mut config = get_config();
+
+    if config.staff.contains(&id.to_string()) {
+        return false;
+    } else {
+        config.staff.push(id.to_string());
+        let toml = toml::to_string(&config).unwrap();
+        std::fs::write("config.toml", toml).unwrap();
+        return true;
+    }
+}
+
+pub fn remove_staff(id: u64) -> bool {
+    let mut config = get_config();
+
+    if config.staff.contains(&id.to_string()) {
+        config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
+        let toml = toml::to_string(&config).unwrap();
+        std::fs::write("config.toml", toml).unwrap();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+pub fn list_staff() -> Vec<u64> {
+    let config = get_config();
+    let mut staff: Vec<u64> = Vec::new();
+    for id in config.staff {
+        staff.push(id.parse::<u64>().unwrap());
+    }
+    staff
+}
+
 pub fn delete_user(id: u64) {
     let mut config = get_config();
     config.infractions.remove(&id.to_string());
+
+    //Removes from staff list if they are on it
+    if config.staff.iter().position(|x| *x == id.to_string()).is_some() {
+        config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
+    }
+
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
