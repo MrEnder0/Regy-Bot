@@ -35,7 +35,7 @@ pub async fn help(
             ctx.say(
                 "The general commands are:\n\
                 `/help <choice>` - Shows help on a given subset of commands\n\
-                `/permission_level <user> - Shows the specified user's permission level",
+                `/permission_level <user>` - Shows the specified user's permission level",
             )
             .await
             .log_expect("Unable to send message");
