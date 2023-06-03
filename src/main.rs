@@ -49,6 +49,11 @@ async fn main() {
                 management::remove_staff::remove_staff(),
                 management::list_staff::list_staff(),
                 //management::config_server::config_server(),
+
+                dev::upload_logs::upload_logs(),
+                dev::clean_logs::clean_logs(),
+                dev::get_ipm::get_ipm(),
+                dev::reset_ipm::reset_ipm(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
