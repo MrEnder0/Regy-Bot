@@ -96,10 +96,11 @@ pub async fn help(
             ctx.say(
                 "The dev commands are:\n\
                 `/shutdown` - Shuts down the bot after a 120 second countdown\n\
-                `/clean` - Deletes the log file and other temp files\n\
+                `/clean_logs` - Deletes the log file\n\
                 `/upload_logs` - Uploads the log file to the current channel\n\
-                `/echo <message>` - Says the message back\n\
-                `/IPM` - Shows the current server IPM\n\
+                `/echo <echo_msg>` - Says the message back as the bot\n\
+                `/get_ipm` - Shows the current server IPM\n\
+                `/reset_ipm` - Resets the IPM for the current server\n\
                 `/local_update` - Updates the bot from a local file",
             )
             .await
