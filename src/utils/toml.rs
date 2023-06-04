@@ -116,9 +116,9 @@ pub fn remove_staff(id: u64) -> bool {
         config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
         let toml = toml::to_string(&config).unwrap();
         std::fs::write("config.toml", toml).unwrap();
-        return true;
+        true
     } else {
-        return false;
+        false
     }
 }
 

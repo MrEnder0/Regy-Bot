@@ -15,7 +15,8 @@ pub async fn clean_logs(
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect("Unable to send message");
-        return Ok(());
+
+        Ok(())
     }
 
     if std::path::Path::new("regy.log").exists() {
@@ -25,7 +26,7 @@ pub async fn clean_logs(
             .await
             .log_expect("Unable to send message");
 
-        return Ok(());
+        Ok(())
     } else {
         let data = LogData {
             importance: LogImportance::Error,
@@ -37,6 +38,6 @@ pub async fn clean_logs(
             .await
             .log_expect("Unable to send message");
 
-        return Ok(());
+        Ok(())
     }
 }
