@@ -872,7 +872,7 @@ checksum = "436b050e76ed2903236f032a59761c1eb99e1b0aead2c257922771dab1fc8c78"
 
 [[package]]
 name = "regy_bot"
-version = "1.10.8"
+version = "1.11.0"
 dependencies = [
  "base64 0.21.2",
  "chrono",
