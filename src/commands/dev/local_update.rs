@@ -1,6 +1,11 @@
+use poise::serenity_prelude::CreateEmbed;
+
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Developer},
-    utils::logger::LogExpect,
+    utils::{
+        perm_check::{has_perm, PermissionLevel::Developer}, logger::{log_this, LogImportance, LogData},
+        updater::local_update,
+        logger::LogExpect
+    },
     Data
 };
 
@@ -8,7 +13,7 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(slash_command, ephemeral = true)]
-pub async fn local_update(
+pub async fn update(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
     if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {

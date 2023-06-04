@@ -55,7 +55,7 @@ async fn main() {
                 dev::reset_ipm::reset_ipm(),
                 dev::echo::echo(),
                 dev::shutdown::shutdown(),
-                dev::local_update::local_update(),
+                dev::local_update::update(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
