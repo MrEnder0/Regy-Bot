@@ -29,7 +29,6 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![
-                dev::dev::dev(),
                 general::help::help(),
                 general::permission_level::permission_level(),
                 info::about::about(),
@@ -54,6 +53,9 @@ async fn main() {
                 dev::clean_logs::clean_logs(),
                 dev::get_ipm::get_ipm(),
                 dev::reset_ipm::reset_ipm(),
+                dev::echo::echo(),
+                dev::shutdown::shutdown(),
+                dev::local_update::local_update(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
