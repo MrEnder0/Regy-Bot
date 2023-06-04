@@ -16,7 +16,7 @@ pub async fn clean_logs(
             .await
             .log_expect("Unable to send message");
 
-        Ok(())
+        return Ok(())
     }
 
     if std::path::Path::new("regy.log").exists() {
