@@ -1,7 +1,4 @@
-use poise::serenity_prelude::{self as serenity, UserId};
-
 use crate::{
-    utils::type_conversions::userid_to_u64,
     utils::logger::LogExpect,
     utils::toml,
     Data,
