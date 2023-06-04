@@ -3,13 +3,10 @@ use serde::{Serialize, Deserialize};
 use std::{collections::HashMap};
 use uuid::Uuid;
 
-use crate::utils::log_on_error::LogExpect;
-
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub token: String,
-    pub moderators: Vec<String>,
-    pub admins: Vec<String>,
+    pub staff: Vec<String>,
     pub log_channel: u64,
     pub user_delete_on_ban: bool,
     pub max_activity_influx: u16,
@@ -23,8 +20,7 @@ pub fn gen_config() {
     phr.insert(Uuid::new_v4(), general_purpose::STANDARD_NO_PAD.encode("regy test phrase"));
     let config = Config {
         token: "token".to_string(),
-        moderators: vec!["000000000000000000".to_string()],
-        admins: vec!["000000000000000000".to_string()],
+        staff: vec!["000000000000000000".to_string()],
         log_channel: 000000000000000000,
         user_delete_on_ban: true,
         max_activity_influx: 10,
@@ -39,7 +35,7 @@ pub fn gen_config() {
 
 pub fn get_config() -> Config {
     let toml = std::fs::read_to_string("config.toml").unwrap();
-    let config: Config = toml::from_str(&toml).log_expect("Invalid config please fix any issues in it or delete it to generate a new one.");
+    let config: Config = toml::from_str(&toml).unwrap();
     config
 }
 
@@ -79,12 +75,6 @@ pub fn add_infraction(id: u64) {
     std::fs::write("config.toml", toml).unwrap();
 }
 
-pub fn list_infractions(id: u64) -> u32 {
-    let mut config = get_config();
-    let infractions = config.infractions.entry(id.to_string()).or_insert(0);
-    *infractions
-}
-
 pub fn dismiss_infraction(id: u64) {
     let mut config = get_config();
     let infractions = config.infractions.entry(id.to_string()).or_insert(1);
@@ -100,9 +90,56 @@ pub fn dismiss_infraction(id: u64) {
     std::fs::write("config.toml", toml).unwrap();
 }
 
+pub fn list_infractions(id: u64) -> u32 {
+    let mut config = get_config();
+    let infractions = config.infractions.entry(id.to_string()).or_insert(0);
+    *infractions
+}
+
+pub fn add_staff(id: u64) -> bool {
+    let mut config = get_config();
+
+    if config.staff.contains(&id.to_string()) {
+        return false;
+    } else {
+        config.staff.push(id.to_string());
+        let toml = toml::to_string(&config).unwrap();
+        std::fs::write("config.toml", toml).unwrap();
+        return true;
+    }
+}
+
+pub fn remove_staff(id: u64) -> bool {
+    let mut config = get_config();
+
+    if config.staff.contains(&id.to_string()) {
+        config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
+        let toml = toml::to_string(&config).unwrap();
+        std::fs::write("config.toml", toml).unwrap();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+pub fn list_staff() -> Vec<u64> {
+    let config = get_config();
+    let mut staff: Vec<u64> = Vec::new();
+    for id in config.staff {
+        staff.push(id.parse::<u64>().unwrap());
+    }
+    staff
+}
+
 pub fn delete_user(id: u64) {
     let mut config = get_config();
     config.infractions.remove(&id.to_string());
+
+    //Removes from staff list if they are on it
+    if config.staff.iter().position(|x| *x == id.to_string()).is_some() {
+        config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
+    }
+
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }

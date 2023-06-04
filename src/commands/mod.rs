@@ -1,4 +1,13 @@
-pub mod user;
-pub mod moderator;
-pub mod admin;
 pub mod dev;
+
+//User
+pub mod general;
+pub mod info;
+
+//Staff
+pub mod infractions;
+pub mod moderation;
+
+//Administrator
+pub mod regex;
+pub mod management;

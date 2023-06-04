@@ -7,11 +7,18 @@ use poise::{
 };
 use std::sync::atomic::Ordering;
 
-use crate::utils::{toml::*, logger::*, log_on_error::LogExpect};
+use crate::utils::{toml::*, logger::*};
 use crate::IPM;
 
 pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     println!("{} is connected!", data_about_bot.user.name);
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} has started and connected to discord.", data_about_bot.user.name),
+    };
+    log_this(data);
+
     let ctx_clone = ctx.clone();
     /* Prints IPM for debug
     tokio::spawn(async move {
@@ -34,7 +41,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
             if IPM.load(Ordering::SeqCst) >= get_config().max_activity_influx.into() {
                 let data = LogData {
-                    importance: "INFO".to_string(),
+                    importance: LogImportance::Info,
                     message: "Possible raid detected due to IPM influx.".to_string(),
                 };
 

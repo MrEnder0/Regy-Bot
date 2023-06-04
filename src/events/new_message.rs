@@ -8,7 +8,7 @@ use poise::{
 use regex::Regex;
 use std::sync::atomic::Ordering;
 
-use crate::utils::{toml::*, logger::*, log_on_error::LogExpect};
+use crate::utils::{toml::*, logger::*};
 use crate::IPM;
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
@@ -26,7 +26,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     //Reply to pings
     if new_message.mentions_user_id(ctx.cache.current_user_id()) {
         let ctx = ctx.clone();
-        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/user help'").await.log_expect("Unable to reply to ping");
+        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/help'").await.log_expect("Unable to reply to ping");
     }
 
     //Poll detection
@@ -42,12 +42,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     //Ignores moderation from staff
-    for user in get_config().moderators {
-        if new_message.author.id == UserId(user.parse::<u64>().unwrap()) {
-            return;
-        }
-    }
-    for user in get_config().admins {
+    for user in get_config().staff {
         if new_message.author.id == UserId(user.parse::<u64>().unwrap()) {
             return;
         }
@@ -91,7 +86,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
 
             let data = LogData {
-                importance: "INFO".to_string(),
+                importance: LogImportance::Info,
                 message: format!("{} Has sent a message which is not allowed due to the set regex patterns", new_message.author.id),
             };
 

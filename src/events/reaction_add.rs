@@ -6,7 +6,7 @@ use poise::{
     }
 };
 
-use crate::utils::{toml::*, logger::*, log_on_error::LogExpect};
+use crate::utils::{toml::*, logger::*};
 
 pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity::Reaction) {
     //ignore reactions from the bot
@@ -20,7 +20,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     }
 
     //ignore events except for staff
-    if !get_config().moderators.contains(&add_reaction.user_id.unwrap().to_string()) || !get_config().admins.contains(&add_reaction.user_id.unwrap().to_string()) {
+    if !get_config().staff.contains(&add_reaction.user_id.unwrap().to_string()) {
         return;
     }
 
@@ -36,7 +36,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         let user_id = &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 1];
     
         let data = LogData {
-            importance: "INFO".to_string(),
+            importance: LogImportance::Info,
             message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
         };
         log_this(data);
