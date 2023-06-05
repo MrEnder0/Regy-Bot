@@ -7,8 +7,9 @@ use poise::{
         ActionExecution
     }
 };
+use std::sync::atomic::Ordering;
 
-use crate::utils::{toml::*, logger::LogExpect};
+use crate::{utils::{toml::*, logger::*}, IPM};
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
     //If action is BlockMessage
@@ -18,6 +19,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
 
     let user = execution.user_id;
     let message = execution.matched_content.clone().unwrap();
+    IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
     let dm_msg = format!("You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
                                 The message which has been blocked is below:\n\
@@ -38,6 +40,18 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
+    let user_infractions = list_infractions(user.id.into());
+    if user_infractions % 10 == 0 {
+        let mut embed = CreateEmbed::default();
+        embed.color(0x8B0000);
+        embed.title(":warning: High infraction count");
+        embed.field("The user with the high infractions warning is below:", format!("<@{}>", user.id), false);
+        embed.field("The amount of infractions they have is below:", format!("{}", user_infractions), false);
+        embed.footer(|f| f.text("This message will appear for users with high infraction counts"));
+        embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+        log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
+    }
+
     let data = LogData {
         importance: LogImportance::Info,
         message: format!("{} Has sent a message which breaks an auto-mod rule.", user),
@@ -45,7 +59,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
 
     log_this(data);
 
-    println!("{} sent a message which breaks an auto-mod rule, the blocked content is below:\n{}");
-    add_infraction(author.id.into());
+    println!("{} sent a message which breaks an auto-mod rule, the blocked content is below:\n{}", user, message);
+    add_infraction(user.id.into());
     return;
 }
