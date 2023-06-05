@@ -76,7 +76,17 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
             embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
-            //log_channel.say(&ctx.http, format!("<@{}> sent a message that matched a regex pattern, their message is the following below:\n||```{}```||", msg.author.id, msg.content.replace('`', "\\`"))).await.unwrap();
+            let user_infractions = list_infractions(author.id.into());
+            if user_infractions % 10 == 0 {
+                let mut embed = CreateEmbed::default();
+                embed.color(0x8B0000);
+                embed.title(":warning: High infraction count");
+                embed.field("The user with the high infractions warning is below:", format!("<@{}>", author.id), false);
+                embed.field("The amount of infractions they have is below:", format!("{}", user_infractions), false);
+                embed.footer(|f| f.text("This message will appear for users with high infraction counts"));
+                embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+                log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
+            }
 
             let data = LogData {
                 importance: LogImportance::Info,
