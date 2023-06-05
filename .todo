@@ -67,6 +67,6 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Rewrite command system for each command to be its own command
 
 # Release 12
-[ ] Create infraction user limit warning messages
+[x] Create infraction user limit warning messages
 [ ] Use a db for non universal config
 [ ] Make bot work in multiple servers in one instance
