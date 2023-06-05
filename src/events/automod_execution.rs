@@ -37,4 +37,15 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
     let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} Has sent a message which breaks an auto-mod rule.", user),
+    };
+
+    log_this(data);
+
+    println!("{} sent a message which breaks an auto-mod rule, the blocked content is below:\n{}");
+    add_infraction(author.id.into());
+    return;
 }
