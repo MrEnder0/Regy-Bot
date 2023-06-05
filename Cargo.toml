@@ -7,7 +7,7 @@ edition = "2021"
 [dependencies]
 poise = "0.5.5"
 tokio = { version = "1.28.2", features = ["full"] }
-regex = "1.8.3"
+regex = "1.8.4"
 serde = { version = "1.0.163", features = ["derive"] }
 toml = "0.7.4"
 base64 = "0.21.2"
