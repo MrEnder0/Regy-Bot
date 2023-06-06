@@ -68,5 +68,5 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 12
 [x] Create infraction user limit warning messages
-[ ] Use a db for non universal config
-[ ] Make bot work in multiple servers in one instance
+[ ] Make config file per server basis
+[ ] Make terminal have colored output
