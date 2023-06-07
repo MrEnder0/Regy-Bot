@@ -61,5 +61,4 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
 
     println!("{} sent a message which breaks an auto-mod rule, the blocked content is below:\n{}", user, message);
     add_infraction(user.id.into());
-    return;
 }
