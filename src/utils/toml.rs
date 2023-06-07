@@ -28,7 +28,7 @@ pub fn gen_config() {
         block_phrases: phr,
         infractions: HashMap::new()
     };
-    //write to file
+    //Write base config to file
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 }
@@ -79,7 +79,7 @@ pub fn dismiss_infraction(id: u64) {
     let mut config = get_config();
     let infractions = config.infractions.entry(id.to_string()).or_insert(1);
     if *infractions == 0 {
-        return;
+        return
     } else if *infractions == 1{
         *infractions = 0;
     } else {
