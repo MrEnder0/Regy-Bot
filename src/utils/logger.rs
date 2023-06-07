@@ -29,11 +29,26 @@ pub fn log_this(data: LogData) {
         .open("regy.log");
 
     match data.importance {
-        LogImportance::Error => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[ERROR]".fg::<Black>().bg::<Red>(), data.message).as_bytes()).unwrap(),
-        LogImportance::Warning => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[WARNING]".fg::<Black>().bg::<Yellow>(), data.message).as_bytes()).unwrap(),
-        LogImportance::Info => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[INFO]".fg::<Black>().bg::<Blue>(), data.message).as_bytes()).unwrap(),
-        LogImportance::Debug => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[DEBUG]".fg::<Black>().bg::<Gray>(), data.message).as_bytes()).unwrap(),
-        _ => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[UNKNOWN]".fg::<Black>().bg::<White>(), data.message).as_bytes()).unwrap()
+        LogImportance::Error => {
+            file.unwrap().write_all(format!("{} [ERROR] {}\n", formatted_time, data.message).as_bytes()).unwrap();
+            println!("{} {} {}", formatted_time, "[ERROR]".fg::<Black>().bg::<Red>(), data.message);
+        },
+        LogImportance::Warning => {
+            file.unwrap().write_all(format!("{} [WARNING] {}\n", formatted_time, data.message).as_bytes()).unwrap();
+            println!("{} {} {}", formatted_time, "[WARNING]".fg::<Black>().bg::<Yellow>(), data.message);
+        },
+        LogImportance::Info => {
+            file.unwrap().write_all(format!("{} [INFO] {}\n", formatted_time, data.message).as_bytes()).unwrap();
+            println!("{} {} {}", formatted_time, "[INFO]".fg::<Black>().bg::<LightGray>(), data.message);
+        }
+        LogImportance::Debug => {
+            file.unwrap().write_all(format!("{} [DEBUG] {}\n", formatted_time, data.message).as_bytes()).unwrap();
+            println!("{} {} {}", formatted_time, "[DEBUG]".fg::<Black>().bg::<LightBlue>(), data.message);
+        }
+        _ => {
+            file.unwrap().write_all(format!("{} [UNKNOWN] {}\n", formatted_time, data.message).as_bytes()).unwrap();
+            println!("{} {} {}", formatted_time, "[UNKNOWN]".fg::<Black>().bg::<Magenta>(), data.message);
+        }
     }
 }
 
