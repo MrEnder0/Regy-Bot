@@ -100,12 +100,12 @@ pub fn add_staff(id: u64) -> bool {
     let mut config = get_config();
 
     if config.staff.contains(&id.to_string()) {
-        return false;
+        false
     } else {
         config.staff.push(id.to_string());
         let toml = toml::to_string(&config).unwrap();
         std::fs::write("config.toml", toml).unwrap();
-        return true;
+        true
     }
 }
 
@@ -136,7 +136,7 @@ pub fn delete_user(id: u64) {
     config.infractions.remove(&id.to_string());
 
     //Removes from staff list if they are on it
-    if config.staff.iter().position(|x| *x == id.to_string()).is_some() {
+    if config.staff.iter().any(|x| *x == id.to_string()) {
         config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
     }
 
