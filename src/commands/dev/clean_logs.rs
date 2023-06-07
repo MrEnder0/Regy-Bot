@@ -1,6 +1,8 @@
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Developer},
-    utils::logger::{LogExpect, LogData, LogImportance, log_this},
+    utils::{
+        perm_check::{has_perm, PermissionLevel::Developer},
+        logger::{LogExpect, LogData, LogImportance, log_this}
+    },
     Data
 };
 
@@ -14,17 +16,17 @@ pub async fn clean_logs(
     if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
         ctx.say("You do not have permission to use this command.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
 
         return Ok(())
     }
 
     if std::path::Path::new("regy.log").exists() {
         std::fs::remove_file("regy.log")
-            .log_expect("Unable to delete log filet");
+            .log_expect(LogImportance::Warning, "Unable to delete log filet");
         ctx.say("Log file deleted")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
 
         Ok(())
     } else {
@@ -36,7 +38,7 @@ pub async fn clean_logs(
 
         ctx.say("Log file does not exist")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
 
         Ok(())
     }

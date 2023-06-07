@@ -25,8 +25,8 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                                 The message which has been blocked is below:\n\
                                 ||{}||", message);
 
-    let user = user.to_user(&ctx.http).await.log_expect("Unable to get user");
-    user.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect("Unable to dm user");
+    let user = user.to_user(&ctx.http).await.log_expect(LogImportance::Warning, "Unable to get user");
+    user.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect(LogImportance::Warning, "Unable to dm user");
     let log_channel = ChannelId(get_config().log_channel);
 
     let mut embed = CreateEmbed::default();
@@ -36,7 +36,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     embed.field("The detected content is below:", format!("||{}||", message), false);
     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
     embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
-    let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
+    let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed").id;
     let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
@@ -49,7 +49,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         embed.field("The amount of infractions they have is below:", format!("{}", user_infractions), false);
         embed.footer(|f| f.text("This message will appear for users with high infraction counts"));
         embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
-        log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect("Unable to send embed").id;
+        log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed").id;
     }
 
     let data = LogData {

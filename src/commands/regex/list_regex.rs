@@ -1,6 +1,8 @@
 use crate::{
-    utils::logger::LogExpect,
-    utils::toml,
+    utils::{
+        logger::{LogExpect, LogImportance},
+        toml
+    },
     Data,
 };
 
@@ -14,7 +16,7 @@ pub async fn list_regex(
     let status_msg = ctx
         .say("Sending regex phrases this may take a few seconds...")
         .await
-        .log_expect("Unable to send message");
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
     let blocked_phrases = toml::list_block_phrases();
     let mut formatted_blocked_phrases = String::new();
@@ -44,7 +46,7 @@ pub async fn list_regex(
                 channel_id
                     .say(ctx, message_part)
                     .await
-                    .log_expect("Unable to send message");
+                    .log_expect(LogImportance::Warning, "Unable to send message");
                 split_status_message = String::new();
                 line_count = 0;
                 tokio::time::sleep(std::time::Duration::from_millis(40)).await;
@@ -53,7 +55,7 @@ pub async fn list_regex(
     } else {
         ctx.say(status_message)
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
     }
 
     status_msg
@@ -61,6 +63,6 @@ pub async fn list_regex(
             m.content("Finished sending regex phrases to the channel.")
         })
         .await
-        .log_expect("Unable to edit message");
+        .log_expect(LogImportance::Warning, "Unable to edit message");
     Ok(())
 }

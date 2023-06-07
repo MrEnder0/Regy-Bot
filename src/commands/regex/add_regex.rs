@@ -1,6 +1,8 @@
 use crate::{
-    utils::logger::LogExpect,
-    utils::toml,
+    utils::{
+        logger::{LogExpect, LogImportance},
+        toml
+    },
     Data,
 };
 
@@ -16,7 +18,7 @@ pub async fn add_regex(
     {
         ctx.say("You need to specify a regex phrase to add; it cant be empty and it also cant be less than 3 characters long.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
@@ -28,6 +30,6 @@ pub async fn add_regex(
     );
     ctx.say(status_message)
         .await
-        .log_expect("Unable to send message");
+        .log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }

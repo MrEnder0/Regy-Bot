@@ -1,5 +1,5 @@
 use crate::{
-    utils::logger::LogExpect,
+    utils::logger::{LogExpect, LogImportance},
     Data,
 };
 
@@ -15,6 +15,6 @@ pub async fn skid(ctx: Context<'_>) -> Result<(), Error> {
         In the oil and gas industry, a skid <@&1087534862937890896> refers to a modular system that contains equipment for processing or controlling fluids, such as oil or gas. The skid is designed to be easily transported and installed, and can be connected to other skids to form a larger processing or control system.\n\
         In construction, a skid <@&1087534862937890896> steer is a type of compact, maneuverable loader that is used for digging, pushing, and carrying materials. The loader is mounted on four wheels or tracks, and can be operated by a single person.\n\
         These are just a few examples of the different meanings of the term 'skid.' <@&1087534862937890896> The exact meaning of the term will depend on the context in which it is used."
-    ).await.log_expect("Unable to send message");
+    ).await.log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }

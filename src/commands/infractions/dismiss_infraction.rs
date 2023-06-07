@@ -1,10 +1,10 @@
 use poise::serenity_prelude as serenity;
 
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Staff},
     utils::{
+        perm_check::{has_perm, PermissionLevel::Staff},
         type_conversions::userid_to_u64,
-        logger::LogExpect,
+        logger::{LogExpect, LogImportance},
         toml
     },
     Data,
@@ -21,7 +21,7 @@ pub async fn dismiss_infraction(
     if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Staff).await {
         ctx.say("You do not have permission to use this command.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
@@ -32,14 +32,14 @@ pub async fn dismiss_infraction(
         user.clone().name
     ))
     .await
-    .log_expect("Unable to send message");
+    .log_expect(LogImportance::Warning, "Unable to send message");
 
     user.dm(ctx, |m| {
         m.content(format!(
             "You have has a infraction dismissed from {}",
             ctx.author().name
         ))
-    }).await.log_expect("Unable to dm user");
+    }).await.log_expect(LogImportance::Warning, "Unable to dm user");
 
     Ok(())
 }

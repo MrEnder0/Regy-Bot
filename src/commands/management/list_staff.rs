@@ -1,6 +1,8 @@
 use crate::{
-    utils::logger::LogExpect,
-    utils::toml,
+    utils::{
+        logger::{LogExpect, LogImportance},
+        toml
+    },
     Data,
 };
 
@@ -23,7 +25,7 @@ pub async fn list_staff(
         staff_list
     ))
     .await
-    .log_expect("Unable to send message");
+    .log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }

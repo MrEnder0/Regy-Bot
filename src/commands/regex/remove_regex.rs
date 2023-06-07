@@ -1,8 +1,10 @@
 use uuid::Uuid;
 
 use crate::{
-    utils::logger::LogExpect,
-    utils::toml,
+    utils::{
+        logger::{LogExpect, LogImportance},
+        toml
+    },
     Data,
 };
 
@@ -17,7 +19,7 @@ pub async fn remove_regex(
     if id == "none" {
         ctx.say("You need to specify a target UUID.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
     let id = id.parse::<Uuid>().unwrap();
@@ -25,6 +27,6 @@ pub async fn remove_regex(
     let status_message = format!("Removed the regex phrase with UUID: {}", id);
     ctx.say(status_message)
         .await
-        .log_expect("Unable to send message");
+        .log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }

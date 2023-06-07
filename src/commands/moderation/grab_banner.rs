@@ -1,8 +1,10 @@
 use poise::serenity_prelude as serenity;
 
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Staff},
-    utils::logger::LogExpect,
+    utils::{
+        perm_check::{has_perm, PermissionLevel::Staff},
+        logger::{LogExpect, LogImportance}
+    },
     Data,
 };
 
@@ -17,7 +19,7 @@ pub async fn grab_banner(
     if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Staff).await {
         ctx.say("You do not have permission to use this command.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
@@ -26,6 +28,6 @@ pub async fn grab_banner(
         .unwrap_or("This user does not have a banner.".to_string()),
     )
     .await
-    .log_expect("Unable to send message");
+    .log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }

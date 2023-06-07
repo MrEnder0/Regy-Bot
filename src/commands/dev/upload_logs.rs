@@ -14,16 +14,16 @@ pub async fn upload_logs(
     if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
         ctx.say("You do not have permission to use this command.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
     if std::path::Path::new("regy.log").exists() {
         ctx.say("Uploading log file, this may take a few seconds...")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
 
-        let log_file = std::fs::read_to_string("regy.log").log_expect("Unable to read log file");
+        let log_file = std::fs::read_to_string("regy.log").log_expect(LogImportance::Warning, "Unable to read log file");
         let log_file = log_file.as_bytes();
 
         ctx.channel_id()
@@ -31,7 +31,7 @@ pub async fn upload_logs(
                 m.content("Log file:")
             })
             .await
-            .log_expect("Unable to upload log file");
+            .log_expect(LogImportance::Warning, "Unable to upload log file");
 
         return Ok(());
     } else {
@@ -43,7 +43,7 @@ pub async fn upload_logs(
 
         ctx.say("Log file does not exist")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
 
         return Ok(());
     }

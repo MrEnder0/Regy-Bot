@@ -1,5 +1,5 @@
 use crate::{
-    utils::logger::LogExpect,
+    utils::logger::{LogExpect, LogImportance},
     Data,
 };
 
@@ -38,7 +38,7 @@ pub async fn help(
                 `/permission_level <user>` - Shows the specified user's permission level",
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         },
         HelpChoice::Information => {
             ctx.say(
@@ -49,7 +49,7 @@ pub async fn help(
                 `/what_is_regex` - Explains what regex is",
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         },
         HelpChoice::Moderation => {
             ctx.say(
@@ -58,7 +58,7 @@ pub async fn help(
                 `/grab_banner <user>` - Grabs the user banner of the specified user",
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         },
         HelpChoice::Infraction => {
             ctx.say(
@@ -69,7 +69,7 @@ pub async fn help(
                 `/my_infractions` - Shows how many infractions you have",
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         },
         HelpChoice::Management => {
             ctx.say(
@@ -80,7 +80,7 @@ pub async fn help(
                 `/config_server` - (BETA) Configures the current server",
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
         HelpChoice::Regex => {
             ctx.say(
@@ -90,7 +90,7 @@ pub async fn help(
                 `/list_regex` - Lists all the current blocked regex phrases",
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         },
         HelpChoice::Developer => {
             ctx.say(
@@ -104,7 +104,7 @@ pub async fn help(
                 `/local_update` - Updates the bot from a local file",
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         },
         #[allow(unreachable_patterns)]
         _ => {
@@ -120,7 +120,7 @@ pub async fn help(
 
             )
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
     };
 

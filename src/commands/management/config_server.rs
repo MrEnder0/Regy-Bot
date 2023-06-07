@@ -1,7 +1,7 @@
 use poise::serenity_prelude::Channel;
 
 use crate::{
-    utils::logger::LogExpect,
+    utils::logger::{LogExpect, LogImportance},
     Data,
 };
 
@@ -30,6 +30,6 @@ pub async fn config_server(
         "Successful!"
     )
     .await
-    .log_expect("Unable to send message");
+    .log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }

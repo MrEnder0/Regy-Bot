@@ -1,8 +1,10 @@
 use poise::serenity_prelude as serenity;
 
 use crate::{
-    utils::logger::LogExpect,
-    utils::perm_check::*,
+    utils::{
+        logger::{LogExpect, LogImportance},
+        perm_check::*
+    },
     Data,
 };
 
@@ -29,7 +31,7 @@ pub async fn permission_level(
         perm
     ))
     .await
-    .log_expect("Unable to send message");
+    .log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }

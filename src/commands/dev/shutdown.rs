@@ -16,7 +16,7 @@ pub async fn shutdown(
     if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
         ctx.say("You do not have permission to use this command.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
@@ -35,7 +35,7 @@ pub async fn shutdown(
 
     ctx.say("Initialized shutdown countdown for 90 seconds")
         .await
-        .log_expect("Unable to send message");
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
     for i in 0..90 {
         let mut embed = CreateEmbed::default();
@@ -58,7 +58,7 @@ pub async fn shutdown(
             .channel_id()
             .send_message(&ctx, |m| m.set_embed(embed))
             .await
-            .log_expect("Unable to send shutdown embed")
+            .log_expect(LogImportance::Warning, "Unable to send shutdown embed")
             .id;
         tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
         ctx.channel_id()

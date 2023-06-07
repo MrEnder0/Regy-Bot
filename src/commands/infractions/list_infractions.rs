@@ -1,10 +1,10 @@
 use poise::serenity_prelude as serenity;
 
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Staff},
     utils::{
+        perm_check::{has_perm, PermissionLevel::Staff},
         type_conversions::userid_to_u64,
-        logger::LogExpect,
+        logger::{LogExpect, LogImportance},
         toml
     },
     Data,
@@ -21,7 +21,7 @@ pub async fn list_infractions(
     if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Staff).await {
         ctx.say("You do not have permission to use this command.")
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
@@ -33,6 +33,6 @@ pub async fn list_infractions(
         infraction_count
     ))
     .await
-    .log_expect("Unable to send message");
+    .log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }

@@ -1,7 +1,7 @@
 use crate::{
     utils::{
         type_conversions::userid_to_u64,
-        logger::LogExpect,
+        logger::{LogExpect, LogImportance},
         toml
     },
     Data,
@@ -18,6 +18,6 @@ pub async fn my_infractions(ctx: Context<'_>) -> Result<(), Error> {
     let infractions_message = format!("You have {} infraction(s).", user_infractions);
     ctx.say(infractions_message)
         .await
-        .log_expect("Unable to send message");
+        .log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }

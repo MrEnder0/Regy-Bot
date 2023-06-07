@@ -1,9 +1,11 @@
 use poise::serenity_prelude as serenity;
 
 use crate::{
-    utils::type_conversions::userid_to_u64,
-    utils::logger::LogExpect,
-    utils::toml,
+    utils::{
+        type_conversions::userid_to_u64,
+        logger::{LogExpect, LogImportance},
+        toml
+    },
     Data,
 };
 
@@ -25,7 +27,7 @@ pub async fn remove_staff(
                 user.clone().name
             ))
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         
             user.dm(ctx, |m| {
                 m.content(format!(
@@ -33,7 +35,7 @@ pub async fn remove_staff(
                     ctx.author().name,
                     ctx.guild().unwrap().name
                 ))
-            }).await.log_expect("Unable to dm user");
+            }).await.log_expect(LogImportance::Warning, "Unable to dm user");
         },
         false => {
             ctx.say(format!(
@@ -41,7 +43,7 @@ pub async fn remove_staff(
                 user.clone().name
             ))
             .await
-            .log_expect("Unable to send message");
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
         
     }
