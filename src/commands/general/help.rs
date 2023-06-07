@@ -7,7 +7,7 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[derive(Debug, poise::ChoiceParameter)]
-pub enum HelpChoice {
+pub enum HelpEnum {
     #[name = "General commands help"]
     General,
     #[name = "Information commands help"]
@@ -28,10 +28,10 @@ pub enum HelpChoice {
 #[poise::command(slash_command, prefix_command, user_cooldown = 25, ephemeral = true)]
 pub async fn help(
     ctx: Context<'_>,
-    #[description = "Target Permission"] choice: HelpChoice,
+    #[description = "Help Type"] help_type: HelpEnum,
 ) -> Result<(), Error> {
-    match choice {
-        HelpChoice::General => {
+    match help_type {
+        HelpEnum::General => {
             ctx.say(
                 "The general commands are:\n\
                 `/help <choice>` - Shows help on a given subset of commands\n\
@@ -40,7 +40,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         },
-        HelpChoice::Information => {
+        HelpEnum::Information => {
             ctx.say(
                 "The information commands are:\n\
                 `/info` - Tells you a full description of what Regy is\n\
@@ -51,7 +51,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         },
-        HelpChoice::Moderation => {
+        HelpEnum::Moderation => {
             ctx.say(
                 "The moderation commands are:\n\
                 `/grab_pfp <user>` - Grabs the profile picture of the specified user\n\
@@ -60,7 +60,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         },
-        HelpChoice::Infraction => {
+        HelpEnum::Infraction => {
             ctx.say(
                 "The infraction commands are:\n\
                 `/add_infraction <user>` - Adds an infraction to the specified user\n\
@@ -71,7 +71,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         },
-        HelpChoice::Management => {
+        HelpEnum::Management => {
             ctx.say(
                 "The management commands are:\n\
                 `/add_staff <user>` - Adds the specified user to the staff list\n\
@@ -82,7 +82,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         }
-        HelpChoice::Regex => {
+        HelpEnum::Regex => {
             ctx.say(
                 "The regex commands are:\n\
                 `/add_regex <phrase>` - Adds a new regex phrase to the list\n\
@@ -92,7 +92,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         },
-        HelpChoice::Developer => {
+        HelpEnum::Developer => {
             ctx.say(
                 "The dev commands are:\n\
                 `/shutdown` - Shuts down the bot after a 120 second countdown\n\
@@ -117,7 +117,6 @@ pub async fn help(
                 `Management` - Management commands\n\
                 `Regex` - Regex commands\n\
                 `Developer` - Developer commands",
-
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
