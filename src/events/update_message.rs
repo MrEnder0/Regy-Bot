@@ -77,7 +77,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
             let user_infractions = list_infractions(author.id.into());
-            if user_infractions % 10 == 0 {
+            if user_infractions > 10 {
                 let mut embed = CreateEmbed::default();
                 embed.color(0x8B0000);
                 embed.title(":warning: High infraction count");
