@@ -31,7 +31,7 @@ pub async fn echo(
     let channel_id = ctx.channel_id();
     channel_id.say(ctx, echo_msg).await.log_expect(LogImportance::Warning, "Unable to send message");
 
-    ctx.say("Message sent.").await.log_expect(LogImportance::Warning, "Unable to send message");
+    ctx.say("Sent message as bot").await.log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }
