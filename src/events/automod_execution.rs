@@ -49,7 +49,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         embed.field("The amount of infractions they have is below:", format!("{}", user_infractions), false);
         embed.footer(|f| f.text("This message will appear for users with high infraction counts"));
         embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
-        log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed").id;
+        log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed");
     }
 
     let data = LogData {
