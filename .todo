@@ -69,4 +69,4 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 12
 [x] Create infraction user limit warning messages
 [ ] Make config file per server basis
-[ ] Make terminal have colored output
+[x] Make terminal have colored output
