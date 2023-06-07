@@ -3,6 +3,7 @@ use std::{
     io::prelude::*,
     fmt::Debug
 };
+use owo_colors::{OwoColorize, colors::{css::*}};
 use chrono::Local;
 
 pub enum LogImportance {
@@ -27,29 +28,26 @@ pub fn log_this(data: LogData) {
         .create(true)
         .open("regy.log");
 
-    let log_importance = {
-        match data.importance {
-            LogImportance::Error => "ERROR",
-            LogImportance::Warning => "WARNING",
-            LogImportance::Info => "INFO",
-            LogImportance::Debug => "DEBUG",
-        }
-    };
-
-    file.unwrap().write_all(format!("{} [{}] {}\n", formatted_time, log_importance, data.message).as_bytes()).unwrap();
+    match data.importance {
+        LogImportance::Error => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[ERROR]".fg::<Black>().bg::<Red>(), data.message).as_bytes()).unwrap(),
+        LogImportance::Warning => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[WARNING]".fg::<Black>().bg::<Yellow>(), data.message).as_bytes()).unwrap(),
+        LogImportance::Info => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[INFO]".fg::<Black>().bg::<Blue>(), data.message).as_bytes()).unwrap(),
+        LogImportance::Debug => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[DEBUG]".fg::<Black>().bg::<Gray>(), data.message).as_bytes()).unwrap(),
+        _ => file.unwrap().write_all(format!("{} {} {}\n", formatted_time, "[UNKNOWN]".fg::<Black>().bg::<White>(), data.message).as_bytes()).unwrap()
+    }
 }
 
 pub trait LogExpect<T, E: Debug> {
-    fn log_expect(self, msg: &str) -> T;
+    fn log_expect(self, importance: LogImportance, msg: &str) -> T;
 }
 
 impl<T, E: Debug> LogExpect<T, E> for Result<T, E> {
-    fn log_expect(self, msg: &str) -> T {
+    fn log_expect(self, importance: LogImportance, msg: &str) -> T {
         match self {
             Ok(val) => val,
             Err(err) => {
                 let data = LogData {
-                    importance: LogImportance::Error,
+                    importance,
                     message: format!("{}: {:?}", msg, err),
                 };
                 log_this(data);
@@ -60,12 +58,12 @@ impl<T, E: Debug> LogExpect<T, E> for Result<T, E> {
 }
 
 impl<T> LogExpect<T, ()> for Option<T> {
-    fn log_expect(self, msg: &str) -> T {
+    fn log_expect(self, importance: LogImportance, msg: &str) -> T {
         match self {
             Some(val) => val,
             None => {
                 let data = LogData {
-                    importance: LogImportance::Error,
+                    importance,
                     message: msg.to_string(),
                 };
                 log_this(data);
