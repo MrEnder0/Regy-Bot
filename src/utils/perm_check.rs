@@ -20,18 +20,10 @@ pub async fn has_perm(userid: u64, permission_level: PermissionLevel) -> bool {
             true
         }
         PermissionLevel::Staff => {
-            if toml::get_config().staff.contains(&user_id) {
-                true
-            } else {
-                false
-            }
+            toml::get_config().staff.contains(&user_id)
         }
         PermissionLevel::Developer => {
-            if DEVELOPERS.contains(&&user_id[..]) {
-                true
-            } else {
-                false
-            }
+            DEVELOPERS.contains(&&user_id[..])
         }
     }
 }
