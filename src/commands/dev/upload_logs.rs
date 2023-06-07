@@ -15,6 +15,7 @@ pub async fn upload_logs(
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
@@ -33,7 +34,7 @@ pub async fn upload_logs(
             .await
             .log_expect(LogImportance::Warning, "Unable to upload log file");
 
-        return Ok(());
+        Ok(())
     } else {
         let data = LogData {
             importance: LogImportance::Error,
@@ -45,6 +46,6 @@ pub async fn upload_logs(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
 
-        return Ok(());
+        Ok(())
     }
 }
