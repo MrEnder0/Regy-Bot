@@ -70,3 +70,6 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Create infraction user limit warning messages
 [ ] Make config file per server basis
 [x] Make terminal have colored output
+
+# Release 13
+[ ] Make dm message embeds
