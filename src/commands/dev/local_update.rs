@@ -92,6 +92,10 @@ pub async fn update(
                 .log_expect(LogImportance::Warning, "Unable to send successful update embed")
                 .id;
 
+            ctx.say("Update has been successful, bot will restart.")
+                .await
+                .log_expect(LogImportance::Warning, "Unable to send message");
+
             let data = LogData {
                 importance: LogImportance::Info,
                 message: "Update has been successful, bot will restart.".to_string(),
