@@ -73,7 +73,7 @@ pub async fn update(
                 .id;
 
             let data = LogData {
-                importance: LogImportance::Info,
+                importance: LogImportance::Warning,
                 message: "Update has been successful, but a update helper was not found, please restart the bot manually to finish the update.".to_string(),
             };
             log_this(data);
@@ -116,8 +116,8 @@ pub async fn update(
                 .id;
 
             let data = LogData {
-                importance: LogImportance::Warning,
-                message: "Update has finished with an unknown outcome, bot will return to normal operation and ignore the update.".to_string(),
+                importance: LogImportance::Error,
+                message: "Update has finished with an unknown outcome, bot will return to normal operation and ignore the update and its possible lingering side-effects.".to_string(),
             };
             log_this(data);
 

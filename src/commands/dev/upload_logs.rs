@@ -24,7 +24,7 @@ pub async fn upload_logs(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
 
-        let log_file = std::fs::read_to_string("regy.log").log_expect(LogImportance::Warning, "Unable to read log file");
+        let log_file = std::fs::read_to_string("regy.log").log_expect(LogImportance::Error, "Unable to read log file");
         let log_file = log_file.as_bytes();
 
         ctx.channel_id()
@@ -37,7 +37,7 @@ pub async fn upload_logs(
         Ok(())
     } else {
         let data = LogData {
-            importance: LogImportance::Error,
+            importance: LogImportance::Warning,
             message: "Log file does not exist".to_string(),
         };
         log_this(data);
