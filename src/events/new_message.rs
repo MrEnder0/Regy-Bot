@@ -102,7 +102,6 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
             log_this(data);
 
-            println!("{} sent a message that matched a blocked regex pattern, their message is the following below:\n{}\n\nThere message broke the following pattern:\n{}", new_message.author.id, new_message.content, phrase);
             add_infraction(new_message.author.id.into());
             return;
         }
