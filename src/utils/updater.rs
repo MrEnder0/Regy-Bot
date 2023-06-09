@@ -1,7 +1,7 @@
 use self_replace;
 use std::path::Path;
 
-use crate::utils::logger::{LogImportance, LogExpect};
+use super::logger::{LogImportance, LogExpect};
 
 pub fn local_update(new_bin: &str) -> i8 {
     if !Path::new(new_bin).exists() {

@@ -1,4 +1,4 @@
-use crate::utils::toml;
+use super::toml;
 
 pub enum PermissionLevel {
     User,
