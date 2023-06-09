@@ -3,6 +3,8 @@ use serde::{Serialize, Deserialize};
 use std::{collections::HashMap};
 use uuid::Uuid;
 
+use super::logger::{LogData, LogImportance, log_this};
+
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub token: String,
@@ -31,6 +33,12 @@ pub fn gen_config() {
     //Write base config to file
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: "Config file has been generated.".to_string(),
+    };
+    log_this(data);
 }
 
 pub fn get_config() -> Config {
@@ -41,9 +49,15 @@ pub fn get_config() -> Config {
 
 pub fn add_block_phrase (phrase: String) {
     let mut config = get_config();
-    config.block_phrases.insert(Uuid::new_v4(),general_purpose::STANDARD_NO_PAD.encode(phrase));
+    config.block_phrases.insert(Uuid::new_v4(),general_purpose::STANDARD_NO_PAD.encode(&phrase));
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} Has been added to the block phrase list.", phrase),
+    };
+    log_this(data);
 }
 
 pub fn remove_block_phrase (id: Uuid) {
@@ -51,6 +65,12 @@ pub fn remove_block_phrase (id: Uuid) {
     config.block_phrases.remove(&id);
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} Has been removed from the block phrase list.", id),
+    };
+    log_this(data);
 }
 
 
@@ -73,6 +93,12 @@ pub fn add_infraction(id: u64) {
     *infractions += 1;
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} Has been given an infraction.", id),
+    };
+    log_this(data);
 }
 
 pub fn dismiss_infraction(id: u64) {
@@ -88,6 +114,12 @@ pub fn dismiss_infraction(id: u64) {
 
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
+
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} Has had an infraction dismissed.", id),
+    };
+    log_this(data);
 }
 
 pub fn list_infractions(id: u64) -> u32 {
@@ -105,6 +137,13 @@ pub fn add_staff(id: u64) -> bool {
         config.staff.push(id.to_string());
         let toml = toml::to_string(&config).unwrap();
         std::fs::write("config.toml", toml).unwrap();
+
+        let data = LogData {
+            importance: LogImportance::Info,
+            message: format!("{} Has been added to the staff list.", id),
+        };
+        log_this(data);
+
         true
     }
 }
@@ -116,6 +155,13 @@ pub fn remove_staff(id: u64) -> bool {
         config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
         let toml = toml::to_string(&config).unwrap();
         std::fs::write("config.toml", toml).unwrap();
+
+        let data = LogData {
+            importance: LogImportance::Info,
+            message: format!("{} Has been removed from the staff list.", id),
+        };
+        log_this(data);
+
         true
     } else {
         false
@@ -135,9 +181,21 @@ pub fn delete_user(id: u64) {
     let mut config = get_config();
     config.infractions.remove(&id.to_string());
 
+    let data = LogData {
+        importance: LogImportance::Info,
+        message: format!("{} Has been deleted from the infractions list due to being banned.", id),
+    };
+    log_this(data);
+
     //Removes from staff list if they are on it
     if config.staff.iter().any(|x| *x == id.to_string()) {
         config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
+
+        let data = LogData {
+            importance: LogImportance::Info,
+            message: format!("{} Has been deleted from the staff list due to being banned.", id),
+        };
+        log_this(data);
     }
 
     let toml = toml::to_string(&config).unwrap();
