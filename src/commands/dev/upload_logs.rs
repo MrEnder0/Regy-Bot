@@ -36,11 +36,10 @@ pub async fn upload_logs(
 
         Ok(())
     } else {
-        let data = LogData {
+        log_this(LogData {
             importance: LogImportance::Warning,
             message: "Log file does not exist".to_string(),
-        };
-        log_this(data);
+        });
 
         ctx.say("Log file does not exist")
             .await

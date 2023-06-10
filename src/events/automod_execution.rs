@@ -55,12 +55,10 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         _ => {}
     }
 
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: format!("{} Has sent a message which breaks an auto-mod rule.", user.id),
-    };
-
-    log_this(data);
+    });
 
     add_infraction(user.id.into());
 }

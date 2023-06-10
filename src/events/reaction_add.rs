@@ -35,11 +35,10 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         let mut msg = reaction_clone.channel_id.message(&ctx_clone.http, reaction_clone.message_id).await.unwrap();
         let user_id = &msg.embeds[0].fields[0].value[2..msg.embeds[0].fields[0].value.len() - 1];
     
-        let data = LogData {
+        log_this(LogData {
             importance: LogImportance::Info,
             message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
-        };
-        log_this(data);
+        });
     
         dismiss_infraction(user_id.parse::<u64>().unwrap());
     

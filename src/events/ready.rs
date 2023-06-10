@@ -11,11 +11,10 @@ use crate::utils::{toml::*, logger::*};
 use crate::IPM;
 
 pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: format!("{} has started and connected to discord.", data_about_bot.user.name),
-    };
-    log_this(data);
+    });
 
     let ctx_clone = ctx.clone();
     /* Prints IPM for debug
@@ -38,13 +37,10 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
             if IPM.load(Ordering::SeqCst) >= get_config().max_activity_influx.into() {
-                let data = LogData {
+                log_this(LogData {
                     importance: LogImportance::Info,
                     message: "Possible raid detected due to IPM influx.".to_string(),
-                };
-
-                log_this(data);
-                println!("Possible raid detected due to IPM influx.");
+                });
 
                 let log_channel = ChannelId(get_config().log_channel);
                 let mut embed = CreateEmbed::default();

@@ -91,12 +91,10 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 _ => {}
             }
 
-            let data = LogData {
+            log_this(LogData {
                 importance: LogImportance::Info,
                 message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
-            };
-
-            log_this(data);
+            });
 
             add_infraction(author.id.into());
             return;

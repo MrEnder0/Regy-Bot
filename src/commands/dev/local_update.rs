@@ -52,11 +52,10 @@ pub async fn update(
                 .log_expect(LogImportance::Warning, "Unable to send failed update embed")
                 .id;
 
-            let data = LogData {
+            log_this(LogData {
                 importance: LogImportance::Error,
                 message: "Update has failed, bot will return to normal operation.".to_string(),
-            };
-            log_this(data);
+            });
 
             Ok(())
         }
@@ -72,11 +71,10 @@ pub async fn update(
                 .log_expect(LogImportance::Warning, "Unable to send partial update embed")
                 .id;
 
-            let data = LogData {
+            log_this(LogData {
                 importance: LogImportance::Warning,
                 message: "Update has been successful, but a update helper was not found, please restart the bot manually to finish the update.".to_string(),
-            };
-            log_this(data);
+            });
 
             Ok(())
         }
@@ -96,11 +94,10 @@ pub async fn update(
                 .await
                 .log_expect(LogImportance::Warning, "Unable to send message");
 
-            let data = LogData {
+            log_this(LogData {
                 importance: LogImportance::Info,
                 message: "Update has been successful, bot will restart.".to_string(),
-            };
-            log_this(data);
+            });
 
             std::process::Command::new("regy_bot_update_helper.exe")
                 .spawn()
@@ -119,11 +116,10 @@ pub async fn update(
                 .log_expect(LogImportance::Warning, "Unable to send unknown update status embed")
                 .id;
 
-            let data = LogData {
+            log_this(LogData {
                 importance: LogImportance::Error,
                 message: "Update has finished with an unknown outcome, bot will return to normal operation and ignore the update and its possible lingering side-effects.".to_string(),
-            };
-            log_this(data);
+            });
 
             Ok(())
         }

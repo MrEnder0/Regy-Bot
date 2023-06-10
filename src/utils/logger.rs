@@ -61,11 +61,10 @@ impl<T, E: Debug> LogExpect<T, E> for Result<T, E> {
         match self {
             Ok(val) => val,
             Err(err) => {
-                let data = LogData {
+                log_this(LogData {
                     importance,
                     message: format!("{}: {:?}", msg, err),
-                };
-                log_this(data);
+                });
                 panic!("{}: {:?}", msg, err);
             }
         }
@@ -77,11 +76,10 @@ impl<T> LogExpect<T, ()> for Option<T> {
         match self {
             Some(val) => val,
             None => {
-                let data = LogData {
+                log_this(LogData {
                     importance,
                     message: msg.to_string(),
-                };
-                log_this(data);
+                });
                 panic!("{}", msg);
             }
         }

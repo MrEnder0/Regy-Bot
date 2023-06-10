@@ -34,11 +34,10 @@ pub fn gen_config() {
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: "Config file has been generated.".to_string(),
-    };
-    log_this(data);
+    });
 }
 
 pub fn get_config() -> Config {
@@ -53,11 +52,10 @@ pub fn add_block_phrase (phrase: String) {
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: format!("{} Has been added to the block phrase list.", phrase),
-    };
-    log_this(data);
+    });
 }
 
 pub fn remove_block_phrase (id: Uuid) {
@@ -66,11 +64,10 @@ pub fn remove_block_phrase (id: Uuid) {
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: format!("{} Has been removed from the block phrase list.", id),
-    };
-    log_this(data);
+    });
 }
 
 
@@ -94,11 +91,10 @@ pub fn add_infraction(id: u64) {
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: format!("{} Has been given an infraction.", id),
-    };
-    log_this(data);
+    });
 }
 
 pub fn dismiss_infraction(id: u64) {
@@ -115,11 +111,10 @@ pub fn dismiss_infraction(id: u64) {
     let toml = toml::to_string(&config).unwrap();
     std::fs::write("config.toml", toml).unwrap();
 
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: format!("{} Has had an infraction dismissed.", id),
-    };
-    log_this(data);
+    });
 }
 
 pub fn list_infractions(id: u64) -> u32 {
@@ -138,11 +133,10 @@ pub fn add_staff(id: u64) -> bool {
         let toml = toml::to_string(&config).unwrap();
         std::fs::write("config.toml", toml).unwrap();
 
-        let data = LogData {
+        log_this(LogData {
             importance: LogImportance::Info,
             message: format!("{} Has been added to the staff list.", id),
-        };
-        log_this(data);
+        });
 
         true
     }
@@ -156,11 +150,10 @@ pub fn remove_staff(id: u64) -> bool {
         let toml = toml::to_string(&config).unwrap();
         std::fs::write("config.toml", toml).unwrap();
 
-        let data = LogData {
+        log_this(LogData {
             importance: LogImportance::Info,
             message: format!("{} Has been removed from the staff list.", id),
-        };
-        log_this(data);
+        });
 
         true
     } else {
@@ -181,21 +174,19 @@ pub fn delete_user(id: u64) {
     let mut config = get_config();
     config.infractions.remove(&id.to_string());
 
-    let data = LogData {
+    log_this(LogData {
         importance: LogImportance::Info,
         message: format!("{} Has been deleted from the infractions list due to being banned.", id),
-    };
-    log_this(data);
+    });
 
     //Removes from staff list if they are on it
     if config.staff.iter().any(|x| *x == id.to_string()) {
         config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
 
-        let data = LogData {
+        log_this(LogData {
             importance: LogImportance::Info,
             message: format!("{} Has been deleted from the staff list due to being banned.", id),
-        };
-        log_this(data);
+        });
     }
 
     let toml = toml::to_string(&config).unwrap();
