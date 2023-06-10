@@ -73,4 +73,5 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 13
 [ ] Implement offical checks system before command execution
+[ ] Offline detection and handling
 [ ] Make dm message embeds
