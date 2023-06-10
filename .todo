@@ -72,4 +72,5 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Make terminal have colored output
 
 # Release 13
+[ ] Implement offical checks system before command execution
 [ ] Make dm message embeds
