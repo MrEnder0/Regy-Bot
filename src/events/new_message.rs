@@ -84,15 +84,18 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
             let user_infractions = list_infractions(new_message.author.id.into());
-            if user_infractions > 10 {
-                let mut embed = CreateEmbed::default();
-                embed.color(0x8B0000);
-                embed.title(":warning: High infraction count");
-                embed.field("The user with the high infractions warning is below:", format!("<@{}>", new_message.author.id), false);
-                embed.field("The amount of infractions they have is below:", format!("{}", user_infractions), false);
-                embed.footer(|f| f.text("This message will appear for users with high infraction counts"));
-                embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
-                log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed");
+            match (user_infractions >= 10, user_infractions % 5) {
+                (true, 0) => {
+                    let mut embed = CreateEmbed::default();
+                    embed.color(0x8B0000);
+                    embed.title(":warning: High infraction count");
+                    embed.field("The user with the high infractions warning is below:", format!("<@{}>", new_message.author.id), false);
+                    embed.field("The amount of infractions they have is below:", format!("{}", user_infractions), false);
+                    embed.footer(|f| f.text("This message will appear for users with high infraction counts"));
+                    embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+                    log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed");
+                },
+                _ => {}
             }
 
             let data = LogData {
