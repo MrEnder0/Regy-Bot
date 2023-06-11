@@ -12,7 +12,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(slash_command, user_cooldown = 5, required_permissions = "ADMINISTRATOR")]
+#[poise::command(slash_command, guild_cooldown = 5, required_permissions = "ADMINISTRATOR")]
 pub async fn add_staff(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,

@@ -10,7 +10,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(slash_command, user_cooldown = 5)]
+#[poise::command(slash_command, guild_cooldown = 5)]
 pub async fn reset_ipm(
     ctx: Context<'_>,
 ) -> Result<(), Error> {

@@ -19,7 +19,7 @@ pub enum ModerationLevelChoice {
 
 }
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 5, required_permissions = "ADMINISTRATOR")]
+#[poise::command(prefix_command, slash_command, guild_cooldown = 240, required_permissions = "ADMINISTRATOR")]
 pub async fn config_server(
     ctx: Context<'_>,
     #[description = "Moderation Level"] ModerationLevel: ModerationLevelChoice,

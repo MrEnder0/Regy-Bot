@@ -9,7 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(slash_command, user_cooldown = 5, required_permissions = "ADMINISTRATOR")]
+#[poise::command(slash_command, guild_cooldown = 5, required_permissions = "ADMINISTRATOR")]
 pub async fn list_staff(
     ctx: Context<'_>,
 ) -> Result<(), Error> {

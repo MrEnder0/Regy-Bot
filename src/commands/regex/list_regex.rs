@@ -9,7 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 45, required_permissions = "ADMINISTRATOR")]
+#[poise::command(prefix_command, slash_command, user_cooldown = 45, channel_cooldown = 30, required_permissions = "ADMINISTRATOR")]
 pub async fn list_regex(
     ctx: Context<'_>,
 ) -> Result<(), Error> {

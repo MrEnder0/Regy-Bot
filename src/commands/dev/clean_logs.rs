@@ -9,7 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(slash_command, user_cooldown = 5)]
+#[poise::command(slash_command, global_cooldown = 10)]
 pub async fn clean_logs(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
