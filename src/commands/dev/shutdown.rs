@@ -1,5 +1,3 @@
-use poise::serenity_prelude::CreateEmbed;
-
 use crate::{
     utils::perm_check::{has_perm, PermissionLevel::Developer},
     utils::{logger::{LogExpect, LogData, log_this, LogImportance}, toml::get_config},
