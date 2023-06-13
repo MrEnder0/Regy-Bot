@@ -49,20 +49,15 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 println!("Error deleting message: {:?}", why);
             }
 
-            let temp_msg_content = format!("<@{}> You are not allowed to edit your message to have that due to the server setup regex rules", author.id);
-            let temp_msg = channel_id.send_message(&ctx.http, |m| m.content(temp_msg_content)).await.log_expect(LogImportance::Warning, "Unable to send message");
-            let ctx_clone = ctx.clone();
-            tokio::spawn(async move {
-                std::thread::sleep(std::time::Duration::from_secs(5));
-                temp_msg.delete(&ctx_clone.http).await.ok();
-            });
+            add_infraction(author.id.into());
+
             IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
-            let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
-                                        The message which has been blocked is below:\n\
-                                        ||{}||", updated_message);
+            log_this(LogData {
+                importance: LogImportance::Info,
+                message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
+            });
 
-            author.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect(LogImportance::Warning, "Unable to dm user");
             let log_channel = ChannelId(get_config().log_channel);
 
             let mut embed = CreateEmbed::default();
@@ -91,12 +86,20 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 _ => {}
             }
 
-            log_this(LogData {
-                importance: LogImportance::Info,
-                message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
+            let temp_msg_content = format!("<@{}> You are not allowed to edit your message to have that due to the server setup regex rules", author.id);
+            let temp_msg = channel_id.send_message(&ctx.http, |m| m.content(temp_msg_content)).await.log_expect(LogImportance::Warning, "Unable to send message");
+            let ctx_clone = ctx.clone();
+            tokio::spawn(async move {
+                std::thread::sleep(std::time::Duration::from_secs(5));
+                temp_msg.delete(&ctx_clone.http).await.ok();
             });
 
-            add_infraction(author.id.into());
+            let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
+                                        The message which has been blocked is below:\n\
+                                        ||{}||", updated_message);
+
+            author.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect(LogImportance::Warning, "Unable to dm user");
+
             return;
         }
     }

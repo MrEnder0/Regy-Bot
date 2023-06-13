@@ -17,16 +17,18 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         return
     }
 
-    let user = execution.user_id;
+    let user = execution.user_id.to_user(&ctx.http).await.log_expect(LogImportance::Warning, "Unable to get user");
     let message = execution.matched_content.clone().unwrap();
+
+    add_infraction(user.id.into());
+
     IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
-    let dm_msg = format!("You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
-                                The message which has been blocked is below:\n\
-                                ||{}||", message);
+    log_this(LogData {
+        importance: LogImportance::Info,
+        message: format!("{} Has sent a message which breaks an auto-mod rule.", user.id),
+    });
 
-    let user = user.to_user(&ctx.http).await.log_expect(LogImportance::Warning, "Unable to get user");
-    user.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect(LogImportance::Warning, "Unable to dm user");
     let log_channel = ChannelId(get_config().log_channel);
 
     let mut embed = CreateEmbed::default();
@@ -55,10 +57,9 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         _ => {}
     }
 
-    log_this(LogData {
-        importance: LogImportance::Info,
-        message: format!("{} Has sent a message which breaks an auto-mod rule.", user.id),
-    });
+    let dm_msg = format!("You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
+                                The message which has been blocked is below:\n\
+                                ||{}||", message);
 
-    add_infraction(user.id.into());
+    user.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect(LogImportance::Warning, "Unable to dm user");
 }
