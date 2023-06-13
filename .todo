@@ -70,7 +70,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Create infraction user limit warning messages
 [x] Make terminal have colored output
 [ ] Implement offical checks system before command execution
-[o] Command cool-down balancing
+[x] Command cool-down balancing
 
 # Release 13
 [ ] Make config file per server basis
