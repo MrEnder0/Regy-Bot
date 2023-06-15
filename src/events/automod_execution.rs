@@ -23,8 +23,6 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     }
 
     let user = execution.user_id.to_user(&ctx.http).await.log_expect(LogImportance::Warning, "Unable to get user");
-    let message = execution.matched_content.clone().unwrap();
-
     add_infraction(execution.guild_id.to_string(), user.id.into());
 
     IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
@@ -40,7 +38,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     embed.color(0xFFA500);
     embed.title("Message blocked due to matching a set auto-mod pattern");
     embed.field("The user who broke a auto-mod pattern is below:", format!("{}", user), false);
-    embed.field("The detected content is below:", format!("||{}||", message), false);
+    embed.field("The detected content is below:", format!("||{}||", execution.content), false);
     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
     embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
     let embed_message_id = log_channel.send_message(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed").id;
@@ -75,9 +73,6 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         _ => {}
     }
 
-    let dm_msg = format!("You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
-                                The message which has been blocked is below:\n\
-                                ||{}||", message);
-
+    let dm_msg = format!("You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.");
     user.dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect(LogImportance::Warning, "Unable to dm user");
 }
