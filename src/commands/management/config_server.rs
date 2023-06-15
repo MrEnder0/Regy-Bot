@@ -27,5 +27,10 @@ pub async fn config_server(
     }
 
     gen_server(guild_id, log_channel_id);
+
+    ctx.say("Server added to database.")
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
     Ok(())
 }
