@@ -17,6 +17,12 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     let channel_id = event.channel_id;
     let message_id = event.id;
 
+    //Reply to dm messages
+    if guild_id.is_none() {
+        channel_id.send_message(&ctx.http, |m| m.content("I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:")).await.log_expect(LogImportance::Warning, "Unable to send message");
+        return;
+    }
+
     //Check if server exists in config
     if guild_id.is_some() {
         if !read_config().servers.contains_key(&guild_id.unwrap().to_string()) {
@@ -26,12 +32,6 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     //ignore messages from bots
     if author.bot {
-        return;
-    }
-
-    //Reply to dm messages
-    if guild_id.is_none() {
-        channel_id.send_message(&ctx.http, |m| m.content("I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:")).await.log_expect(LogImportance::Warning, "Unable to send message");
         return;
     }
 
