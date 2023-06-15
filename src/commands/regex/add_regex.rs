@@ -24,7 +24,7 @@ pub async fn add_regex(
     let server_id = ctx.guild_id().unwrap().0.to_string();
     let phrase = regex_phrase.clone();
 
-    toml::add_regex(server_id, phrase);
+    toml::add_regex(server_id, phrase + " ");
 
     let status_message = format!(
         "Added the regex phrase:\n||```{}```||",
