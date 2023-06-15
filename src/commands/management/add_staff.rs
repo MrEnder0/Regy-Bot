@@ -17,8 +17,10 @@ pub async fn add_staff(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
+    let server_id = ctx.guild_id().unwrap().0.to_string();
     let userid = user.clone().id;
-    let add_staff_status = toml::add_staff(userid_to_u64(userid));
+
+    let add_staff_status = toml::add_staff(server_id, userid_to_u64(userid));
 
     match add_staff_status {
         true => {

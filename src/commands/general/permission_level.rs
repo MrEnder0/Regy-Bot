@@ -16,9 +16,10 @@ pub async fn permission_level(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
-    let userid = user.clone().id.to_string();
+    let server_id = ctx.guild_id().unwrap().to_string();
+    let user_id = user.clone().id.to_string().parse::<u64>().unwrap();
 
-    let perm = match highest_unlocked_perm(userid.parse::<u64>().unwrap()).await {
+    let perm = match highest_unlocked_perm(server_id, user_id).await {
         PermissionLevel::User => "User",
         PermissionLevel::Staff => "Staff",
         PermissionLevel::Developer => "Developer",

@@ -36,13 +36,14 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     tokio::spawn(async move {
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-            if IPM.load(Ordering::SeqCst) >= get_config().max_activity_influx.into() {
+            if IPM.load(Ordering::SeqCst) >= read_config().global.max_activity_influx.into() {
                 log_this(LogData {
                     importance: LogImportance::Info,
                     message: "Possible raid detected due to IPM influx.".to_string(),
                 });
 
-                let log_channel = ChannelId(get_config().log_channel);
+                let server_id = ctx_clone.cache.guilds().iter().next().unwrap().0;
+                let log_channel = ChannelId(read_config().servers.get(&server_id.to_string()).unwrap().log_channel);
                 let mut embed = CreateEmbed::default();
                 embed.color(0x8B0000);
                 embed.title(":warning: Raid Detection");

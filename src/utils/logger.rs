@@ -3,14 +3,13 @@ use std::{
     io::prelude::*,
     fmt::Debug
 };
-use owo_colors::{OwoColorize, colors::{css::*}};
+use owo_colors::{OwoColorize, colors::css::*};
 use chrono::Local;
 
 pub enum LogImportance {
     Error,
     Warning,
     Info,
-    #[allow(dead_code)]
     Debug
 }
 
@@ -44,10 +43,6 @@ pub fn log_this(data: LogData) {
         LogImportance::Debug => {
             file.unwrap().write_all(format!("{} [DEBUG] {}\n", formatted_time, data.message).as_bytes()).unwrap();
             println!("{} {} {}", formatted_time, "[DEBUG]".fg::<Black>().bg::<LightBlue>(), data.message);
-        }
-        _ => {
-            file.unwrap().write_all(format!("{} [UNKNOWN] {}\n", formatted_time, data.message).as_bytes()).unwrap();
-            println!("{} {} {}", formatted_time, "[UNKNOWN]".fg::<Black>().bg::<Magenta>(), data.message);
         }
     }
 }

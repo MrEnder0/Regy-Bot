@@ -9,18 +9,26 @@ use poise::{
 use crate::utils::{toml::*, logger::*};
 
 pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity::Reaction) {
+    let server_id = add_reaction.guild_id.unwrap().to_string();
+    let user_id = add_reaction.user_id.unwrap().to_string();
+
+    //Check if server exists in config
+    if !read_config().servers.contains_key(&server_id) {
+        return;
+    }
+
     //ignore reactions from the bot
     if add_reaction.user_id.unwrap() == ctx.cache.current_user_id() {
         return;
     }
 
     //only look at reactions in the log channel
-    if add_reaction.channel_id != ChannelId(get_config().log_channel) {
+    if add_reaction.channel_id != ChannelId(read_config().servers.get(&server_id).unwrap().log_channel) {
         return;
     }
 
     //ignore events except for staff
-    if !get_config().staff.contains(&add_reaction.user_id.unwrap().to_string()) {
+    if !read_config().servers.get(&server_id).unwrap().staff.contains(&user_id.parse::<u64>().unwrap()) {
         return;
     }
 
@@ -40,7 +48,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
         });
     
-        dismiss_infraction(user_id.parse::<u64>().unwrap());
+        dismiss_infraction(server_id, user_id.parse::<u64>().unwrap());
     
         let user = UserId(user_id.parse::<u64>().unwrap()).to_user(&ctx_clone.http).await.unwrap();
         let blocked_content = &msg.embeds[0].fields[1].value[2..msg.embeds[0].fields[1].value.len() - 2];

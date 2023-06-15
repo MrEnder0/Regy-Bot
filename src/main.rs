@@ -47,7 +47,7 @@ async fn main() {
                 management::add_staff::add_staff(),
                 management::remove_staff::remove_staff(),
                 management::list_staff::list_staff(),
-                //management::config_server::config_server(),
+                management::config_server::config_server(),
                 dev::upload_logs::upload_logs(),
                 dev::clean_logs::clean_logs(),
                 dev::get_ipm::get_ipm(),
@@ -88,10 +88,10 @@ async fn main() {
                         }
 
                         Event::GuildBanAddition {
-                            guild_id: _,
+                            guild_id: guild_id,
                             banned_user,
                         } => {
-                            guild_ban::guild_ban_event(banned_user).await;
+                            guild_ban::guild_ban_event(*guild_id, banned_user).await;
                         }
 
                         _ => {}
@@ -101,7 +101,7 @@ async fn main() {
             },
             ..Default::default()
         })
-        .token(get_config().token)
+        .token(read_config().global.token)
         .intents(serenity::GatewayIntents::all())
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {

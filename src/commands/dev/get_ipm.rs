@@ -14,7 +14,9 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 pub async fn get_ipm(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
-    if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
+    let server_id = ctx.guild_id().unwrap().to_string();
+
+    if !has_perm(server_id, ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");

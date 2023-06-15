@@ -11,12 +11,18 @@ use regex::Regex;
 use crate::{utils::{toml::*, logger::*}, IPM};
 
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
-    //get content of new message
     let updated_message = event.content.clone().log_expect(LogImportance::Warning, "Unable to get updated message content");
     let author = event.author.clone().unwrap();
     let guild_id = event.guild_id;
     let channel_id = event.channel_id;
     let message_id = event.id;
+
+    //Check if server exists in config
+    if guild_id.is_some() {
+        if !read_config().servers.contains_key(&guild_id.unwrap().to_string()) {
+            return;
+        }
+    }
 
     //ignore messages from bots
     if author.bot {
@@ -35,21 +41,22 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     }
 
     //Ignores moderation from staff
-    for user in get_config().staff {
-        if author.id == UserId(user.parse::<u64>().unwrap()) {
+    for user in read_config().servers.get(&guild_id.unwrap().to_string()).unwrap().staff.iter() {
+        if author.id == UserId(*user) {
             return;
         }
     }
 
-    let list_block_phrases = list_block_phrases();
-    for (_id, phrase) in list_block_phrases {
+    let block_phrases_hashmap = list_regex(guild_id.unwrap().to_string());
+    for phrase in block_phrases_hashmap.as_ref().unwrap().values() {        
         let re = Regex::new(&phrase).unwrap();
         if re.is_match(&updated_message) {
             if let Err(why) = channel_id.delete_message(&ctx.http, message_id).await {
                 println!("Error deleting message: {:?}", why);
             }
 
-            add_infraction(author.id.into());
+            let server_id = guild_id.unwrap().to_string();
+            add_infraction(server_id, author.id.into());
 
             IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
@@ -58,7 +65,8 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
             });
 
-            let log_channel = ChannelId(get_config().log_channel);
+            let server_id = guild_id.unwrap().to_string();
+            let log_channel = ChannelId(read_config().servers.get(&server_id).unwrap().log_channel);
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);
@@ -71,7 +79,21 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
             embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
-            let user_infractions = list_infractions(author.id.into());
+            let user_infractions = list_infractions(server_id, author.id.into());
+
+            let user_infractions = match user_infractions {
+                Some(infractions) => {
+                    infractions
+                },
+                None => {
+                    log_this(LogData {
+                        importance: LogImportance::Warning,
+                        message: format!("Unable to get infractions for user {}", author.id),
+                    });
+                    return
+                }
+            };
+
             match (user_infractions >= 10, user_infractions % 5) {
                 (true, 0) => {
                     let mut embed = CreateEmbed::default();

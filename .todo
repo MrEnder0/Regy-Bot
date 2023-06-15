@@ -69,10 +69,10 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 12
 [x] Create infraction user limit warning messages
 [x] Make terminal have colored output
-[ ] Implement offical checks system before command execution
 [x] Command cool-down balancing
+[x] Make config file per server basis
 
 # Release 13
-[ ] Make config file per server basis
+[ ] Implement offical checks system before command execution
 [ ] Offline detection and handling
 [ ] Make dm message embeds

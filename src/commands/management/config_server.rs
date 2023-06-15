@@ -1,35 +1,31 @@
 use poise::serenity_prelude::Channel;
 
 use crate::{
-    utils::logger::{LogExpect, LogImportance},
+    utils::{
+        logger::{LogExpect, LogImportance},
+        toml::{gen_server, server_exists}
+    },
     Data,
 };
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[derive(Debug, poise::ChoiceParameter)]
-pub enum ModerationLevelChoice {
-    #[name = "Basic: Raid/scam protection"]
-    Basic,
-    #[name = "Intermediate: Raid/scam protection, and address protection"]
-    Intermediate,
-    #[name = "Advanced: Raid/scam protection, address protection, and ip protection"]
-    Advanced,
-
-}
-
 #[poise::command(prefix_command, slash_command, guild_cooldown = 240, required_permissions = "ADMINISTRATOR")]
 pub async fn config_server(
     ctx: Context<'_>,
-    #[description = "Moderation Level"] ModerationLevel: ModerationLevelChoice,
-    #[description = "Log channel"] LogChannel: Channel,
+    #[description = "Log channel"] log_channel: Channel,
 ) -> Result<(), Error> {
-    //TODO: Add server setup
-    ctx.say(
-        "Successful!"
-    )
-    .await
-    .log_expect(LogImportance::Warning, "Unable to send message");
+    let guild_id = ctx.guild_id().unwrap().to_string();
+    let log_channel_id = log_channel.id().to_string().parse::<u64>().unwrap();
+
+    if server_exists(guild_id.clone()) {
+        ctx.say("This server already exists in the database.")
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+        return Ok(());
+    }
+
+    gen_server(guild_id, log_channel_id);
     Ok(())
 }

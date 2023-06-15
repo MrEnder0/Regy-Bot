@@ -12,6 +12,13 @@ use crate::utils::{toml::*, logger::*};
 use crate::IPM;
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
+    let server_id = new_message.guild_id.unwrap().to_string();
+
+    //Check if server exists in config
+    if !read_config().servers.contains_key(&server_id) {
+        return;
+    }
+
     //ignore messages from bots
     if new_message.author.bot {
         return;
@@ -42,21 +49,22 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     //Ignores moderation from staff
-    for user in get_config().staff {
-        if new_message.author.id == UserId(user.parse::<u64>().unwrap()) {
+    for user in read_config().servers.get(&server_id).unwrap().staff.iter() {
+        if new_message.author.id == UserId(*user) {
             return;
         }
     }
 
-    let list_block_phrases = list_block_phrases();
-    for (_id, phrase) in list_block_phrases {
+    let block_phrases_hashmap = list_regex(server_id);
+    for phrase in block_phrases_hashmap.as_ref().unwrap().values() {   
         let re = Regex::new(&phrase).unwrap();
         if re.is_match(&new_message.content) {
             if let Err(why) = new_message.delete(&ctx.http).await {
                 println!("Error deleting message: {:?}", why);
             }
 
-            add_infraction(new_message.author.id.into());
+            let server_id = new_message.guild_id.unwrap().to_string();
+            add_infraction(server_id, new_message.author.id.into());
 
             IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
@@ -65,7 +73,8 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 message: format!("{} Has sent a message which is not allowed due to the set regex patterns", new_message.author.id),
             });
 
-            let log_channel = ChannelId(get_config().log_channel);
+            let server_id = new_message.guild_id.unwrap().to_string();
+            let log_channel = ChannelId(read_config().servers.get(&server_id).unwrap().log_channel);
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);
@@ -78,7 +87,21 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
             embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
-            let user_infractions = list_infractions(new_message.author.id.into());
+            let user_infractions = list_infractions(server_id, new_message.author.id.into());
+
+            let user_infractions = match user_infractions {
+                Some(infractions) => {
+                    infractions
+                },
+                None => {
+                    log_this(LogData {
+                        importance: LogImportance::Warning,
+                        message: format!("Unable to get infractions for user {}", new_message.author.id),
+                    });
+                    return
+                }
+            };
+
             match (user_infractions >= 10, user_infractions % 5) {
                 (true, 0) => {
                     let mut embed = CreateEmbed::default();

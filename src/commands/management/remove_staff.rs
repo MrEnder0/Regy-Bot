@@ -17,8 +17,10 @@ pub async fn remove_staff(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
+    let server_id = ctx.guild_id().unwrap().0.to_string();
     let userid = user.clone().id;
-    let remove_staff_status = toml::remove_staff(userid_to_u64(userid));
+
+    let remove_staff_status = toml::remove_staff(server_id, userid_to_u64(userid));
 
     match remove_staff_status {
         true => {

@@ -16,7 +16,9 @@ pub async fn grab_banner(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
-    if !has_perm(ctx.author().id.to_string().parse::<u64>().unwrap(), Staff).await {
+    let server_id = ctx.guild_id().unwrap().to_string();
+
+    if !has_perm(server_id, ctx.author().id.to_string().parse::<u64>().unwrap(), Staff).await {
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");

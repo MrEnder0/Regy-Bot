@@ -18,9 +18,11 @@ pub async fn list_regex(
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
-    let blocked_phrases = toml::list_block_phrases();
+    let server_id = ctx.guild_id().unwrap().0.to_string();
+    let block_phrases_hashmap = toml::list_regex(server_id);
     let mut formatted_blocked_phrases = String::new();
-    for (id, phrase) in blocked_phrases {
+    for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
+        let id = block_phrases_hashmap.as_ref().unwrap().iter().position(|x| x.1 == phrase).unwrap();
         formatted_blocked_phrases.push_str(&id.to_string());
         formatted_blocked_phrases.push_str(" | ");
         formatted_blocked_phrases.push_str(&phrase);
@@ -64,5 +66,6 @@ pub async fn list_regex(
         })
         .await
         .log_expect(LogImportance::Warning, "Unable to edit message");
+
     Ok(())
 }

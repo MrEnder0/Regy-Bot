@@ -12,6 +12,11 @@ use std::sync::atomic::Ordering;
 use crate::{utils::{toml::*, logger::*}, IPM};
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
+    //Check if server exists in config
+    if !read_config().servers.contains_key(&execution.guild_id.to_string()) {
+        return
+    }
+    
     //If action is BlockMessage
     if execution.action != serenity::model::guild::automod::Action::BlockMessage {
         return
@@ -20,7 +25,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     let user = execution.user_id.to_user(&ctx.http).await.log_expect(LogImportance::Warning, "Unable to get user");
     let message = execution.matched_content.clone().unwrap();
 
-    add_infraction(user.id.into());
+    add_infraction(execution.guild_id.to_string(), user.id.into());
 
     IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
 
@@ -29,7 +34,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         message: format!("{} Has sent a message which breaks an auto-mod rule.", user.id),
     });
 
-    let log_channel = ChannelId(get_config().log_channel);
+    let log_channel = ChannelId(read_config().servers.get(&execution.guild_id.to_string()).unwrap().log_channel);
 
     let mut embed = CreateEmbed::default();
     embed.color(0xFFA500);
@@ -42,7 +47,20 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
     embed_message.unwrap().react(&ctx.http, ReactionType::Unicode("🚫".to_string())).await.ok();
 
-    let user_infractions = list_infractions(user.id.into());
+    let user_infractions = list_infractions(execution.guild_id.to_string(), user.id.into());
+    let user_infractions = match user_infractions {
+        Some(infractions) => {
+            infractions
+        },
+        None => {
+            log_this(LogData {
+                importance: LogImportance::Warning,
+                message: format!("Unable to get infractions for user {}", user.id),
+            });
+            return
+        }
+    };
+
     match (user_infractions >= 10, user_infractions % 5) {
         (true, 0) => {
             let mut embed = CreateEmbed::default();
