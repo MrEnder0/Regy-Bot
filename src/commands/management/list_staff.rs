@@ -1,3 +1,5 @@
+use poise::serenity_prelude::UserId;
+
 use crate::{
     utils::{
         logger::{LogExpect, LogImportance},
@@ -20,7 +22,10 @@ pub async fn list_staff(
         Some(staff) => {
             let mut staff_list = String::new();
             for staff_member in staff.clone() {
-                staff_list.push_str(&format!("{}\n", staff_member));
+                //userid to username
+                let staff_member_user = UserId(staff_member).to_user(&ctx).await.log_expect(LogImportance::Warning, "Unable to get user");
+
+                staff_list.push_str(&format!("{}\n", staff_member_user.name));
             }
 
             ctx.say(format!(
