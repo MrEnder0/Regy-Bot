@@ -25,22 +25,23 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
     let server_id = new_message.guild_id.unwrap().to_string();
 
-    //Check if server exists in config
-    if !read_config().servers.contains_key(&server_id) {
-        return;
-    }
-
-    //Reply to pings
-    if new_message.mentions_user_id(ctx.cache.current_user_id()) {
-        let ctx = ctx.clone();
-        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/help'").await.log_expect(LogImportance::Warning, "Unable to reply to ping");
-    }
-
     //Poll detection
     let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|opinion poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
     if poll_re.is_match(&new_message.content) {
         new_message.react(&ctx.http, ReactionType::Unicode("👍".to_string())).await.ok();
         new_message.react(&ctx.http, ReactionType::Unicode("👎".to_string())).await.ok();
+    }
+
+    
+    //Reply to pings
+    if new_message.mentions_user_id(ctx.cache.current_user_id()) {
+        let ctx = ctx.clone();
+        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/help' to setup server run '/config_server'").await.log_expect(LogImportance::Warning, "Unable to reply to ping");
+    }
+
+    //Check if server exists in config
+    if !read_config().servers.contains_key(&server_id) {
+        return;
     }
 
     //Ignores moderation from devs
