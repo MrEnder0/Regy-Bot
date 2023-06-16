@@ -43,7 +43,7 @@ pub async fn help(
         HelpEnum::Information => {
             ctx.say(
                 "The information commands are:\n\
-                `/info` - Tells you a full description of what Regy is\n\
+                `/about` - Tells you a little about what Regy is\n\
                 `/skid` - Explains what a skid is\n\
                 `/why_rust` - Shows why rust is the best language\n\
                 `/what_is_regex` - Explains what regex is",
