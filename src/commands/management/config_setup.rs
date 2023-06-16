@@ -12,7 +12,7 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(prefix_command, slash_command, guild_cooldown = 240, required_permissions = "ADMINISTRATOR")]
-pub async fn config_server(
+pub async fn config_setup(
     ctx: Context<'_>,
     #[description = "Log channel"] log_channel: Channel,
 ) -> Result<(), Error> {

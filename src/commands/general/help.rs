@@ -77,7 +77,8 @@ pub async fn help(
                 `/add_staff <user>` - Adds the specified user to the staff list\n\
                 `/remove_staff <user>` - Removes the specified user from the staff list\n\
                 `/list_staff` - Lists all the current staff members\n\
-                `/config_server` - (BETA) Configures the current server",
+                `/config_setup` - Adds the current server to the config file\n\
+                `/config_clone_regex <guild_id>` - Clones the regex phrases from the specified server to the current server",
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");

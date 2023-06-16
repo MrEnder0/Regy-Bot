@@ -36,7 +36,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     //Reply to pings
     if new_message.mentions_user_id(ctx.cache.current_user_id()) {
         let ctx = ctx.clone();
-        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/help' to setup server run '/config_server'").await.log_expect(LogImportance::Warning, "Unable to reply to ping");
+        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/help' to setup server run '/config_setup'").await.log_expect(LogImportance::Warning, "Unable to reply to ping");
     }
 
     //Check if server exists in config

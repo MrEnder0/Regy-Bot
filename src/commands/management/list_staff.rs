@@ -36,7 +36,7 @@ pub async fn list_staff(
             .log_expect(LogImportance::Warning, "Unable to send message");
         },
         None => {
-            ctx.say("There are no staff members, try adding some with /add_staff or /config_server if the server has not been configured yet.")
+            ctx.say("There are no staff members, try adding some with /add_staff or /config_setup if the server has not been configured yet.")
                 .await
                 .log_expect(LogImportance::Warning, "Unable to send message");
         }
