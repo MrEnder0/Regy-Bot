@@ -23,6 +23,8 @@ async fn main() {
         gen_config();
     }
 
+    check_config();
+
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![

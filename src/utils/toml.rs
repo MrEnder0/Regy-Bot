@@ -5,6 +5,13 @@ use uuid::Uuid;
 
 use super::logger::{log_this, LogData, LogImportance};
 
+static CONFIG_VERSION: f32 = 2.1;
+
+#[derive(Serialize, Deserialize)]
+pub struct MetaData {
+    pub version: f32
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct GlobalOptions {
     pub token: String,
@@ -27,6 +34,7 @@ pub struct ServerOptions {
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
+    pub meta: MetaData,
     pub global: GlobalOptions,
     pub servers: HashMap<String, ServerOptions>,
 }
@@ -38,6 +46,7 @@ pub fn gen_config() {
         general_purpose::STANDARD_NO_PAD.encode("regy test phrase"),
     );
     let config = Config {
+        meta: MetaData { version: CONFIG_VERSION },
         global: GlobalOptions {
             token: "token".to_string(),
             user_delete_on_ban: true,
@@ -60,6 +69,17 @@ pub fn read_config() -> Config {
     let toml = std::fs::read_to_string("config.toml").unwrap();
     let config: Config = toml::from_str(&toml).unwrap();
     config
+}
+
+pub fn check_config() {
+    let config = read_config();
+    if config.meta.version != CONFIG_VERSION {
+        log_this(LogData {
+            importance: LogImportance::Warning,
+            message: "Config file is out of date. Please delete it and restart the bot to regenerate a new config.".to_string(),
+        });
+        std::process::exit(0);
+    }
 }
 
 pub fn gen_server(guid_id: String, log_channel: u64) {
