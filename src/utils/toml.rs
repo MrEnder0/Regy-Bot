@@ -1,5 +1,4 @@
 use base64::{engine::general_purpose, Engine as _};
-use poise::serenity_prelude::guild;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -94,9 +93,6 @@ pub fn server_exists(guid_id: String) -> bool {
 
 pub fn add_regex(server_id: String, phrase: String) -> bool {
     let mut config = read_config();
-    //config.block_phrases.insert(Uuid::new_v4(),general_purpose::STANDARD_NO_PAD.encode(&phrase));
-    //let toml = toml::to_string(&config).unwrap();
-    //std::fs::write("config.toml", toml).unwrap();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -124,9 +120,6 @@ pub fn add_regex(server_id: String, phrase: String) -> bool {
 
 pub fn remove_regex(server_id: String, id: Uuid) -> bool {
     let mut config = read_config();
-    //config.block_phrases.remove(&id);
-    //let toml = toml::to_string(&config).unwrap();
-    //std::fs::write("config.toml", toml).unwrap();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -175,10 +168,6 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
 
 pub fn add_infraction(server_id: String, id: u64) -> bool {
     let mut config = read_config();
-    //let infractions = config.infractions.entry(id.to_string()).or_insert(0);
-    //*infractions += 1;
-    //let toml = toml::to_string(&config).unwrap();
-    //std::fs::write("config.toml", toml).unwrap();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -205,17 +194,6 @@ pub fn add_infraction(server_id: String, id: u64) -> bool {
 
 pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
     let mut config = read_config();
-    //let infractions = config.infractions.entry(id.to_string()).or_insert(1);
-    //if *infractions == 0 {
-    //    return
-    //} else if *infractions == 1{
-    //    *infractions = 0;
-    //} else {
-    //    *infractions -= 1;
-    //}
-
-    //let toml = toml::to_string(&config).unwrap();
-    //std::fs::write("config.toml", toml).unwrap();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -233,7 +211,8 @@ pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
         .infractions
         .entry(id.to_string())
         .or_insert(1);
-    if *infractions <= 0 {
+
+    if *infractions == 0 {
         return false;
     } else {
         *infractions -= 1;
