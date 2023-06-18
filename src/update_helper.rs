@@ -1,10 +1,6 @@
 mod utils;
 
-use std::{
-    process::Command,
-    time::Duration,
-    path::Path
-};
+use std::{path::Path, process::Command, time::Duration};
 
 use crate::utils::logger::*;
 
@@ -21,7 +17,8 @@ fn main() {
     if !Path::new(regy_bin).exists() {
         log_this(LogData {
             importance: LogImportance::Error,
-            message: "[Update Helper] Updated Regy binary does not exist, shutting down.".to_string(),
+            message: "[Update Helper] Updated Regy binary does not exist, shutting down."
+                .to_string(),
         });
         return;
     }
@@ -38,8 +35,11 @@ fn main() {
         importance: LogImportance::Info,
         message: "[Update Helper] Regy has finished updating restarting Regy.".to_string(),
     });
-    std::fs::remove_file("updated").log_expect(LogImportance::Error, "Failed to remove updated file");
-    Command::new("regy_bot.exe").spawn().log_expect(LogImportance::Error, "Failed to start regy_bot.exe");
+    std::fs::remove_file("updated")
+        .log_expect(LogImportance::Error, "Failed to remove updated file");
+    Command::new("regy_bot.exe")
+        .spawn()
+        .log_expect(LogImportance::Error, "Failed to start regy_bot.exe");
 
     log_this(LogData {
         importance: LogImportance::Info,

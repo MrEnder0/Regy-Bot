@@ -1,9 +1,9 @@
 use crate::{
     utils::{
+        logger::{LogExpect, LogImportance},
         perm_check::{has_perm, PermissionLevel::Developer},
-        logger::{LogExpect, LogImportance}
     },
-    Data
+    Data,
 };
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -16,7 +16,13 @@ pub async fn echo(
 ) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
-    if !has_perm(server_id, ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
+    if !has_perm(
+        server_id,
+        ctx.author().id.to_string().parse::<u64>().unwrap(),
+        Developer,
+    )
+    .await
+    {
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
@@ -31,9 +37,14 @@ pub async fn echo(
     }
 
     let channel_id = ctx.channel_id();
-    channel_id.say(ctx, echo_msg).await.log_expect(LogImportance::Warning, "Unable to send message");
+    channel_id
+        .say(ctx, echo_msg)
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
-    ctx.say("Sent message as bot").await.log_expect(LogImportance::Warning, "Unable to send message");
+    ctx.say("Sent message as bot")
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }

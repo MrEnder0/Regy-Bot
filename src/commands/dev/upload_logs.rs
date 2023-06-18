@@ -1,19 +1,23 @@
 use crate::{
+    utils::logger::{log_this, LogData, LogExpect, LogImportance},
     utils::perm_check::{has_perm, PermissionLevel::Developer},
-    utils::logger::{LogExpect, LogImportance, LogData, log_this},
-    Data
+    Data,
 };
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(slash_command, global_cooldown = 5)]
-pub async fn upload_logs(
-    ctx: Context<'_>,
-) -> Result<(), Error> {
+pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
-    if !has_perm(server_id, ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
+    if !has_perm(
+        server_id,
+        ctx.author().id.to_string().parse::<u64>().unwrap(),
+        Developer,
+    )
+    .await
+    {
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
@@ -26,7 +30,8 @@ pub async fn upload_logs(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
 
-        let log_file = std::fs::read_to_string("regy.log").log_expect(LogImportance::Error, "Unable to read log file");
+        let log_file = std::fs::read_to_string("regy.log")
+            .log_expect(LogImportance::Error, "Unable to read log file");
         let log_file = log_file.as_bytes();
 
         ctx.channel_id()

@@ -2,23 +2,27 @@ use poise::serenity_prelude::CreateEmbed;
 
 use crate::{
     utils::{
+        logger::*,
         perm_check::{has_perm, PermissionLevel::Developer},
         updater::local_update,
-        logger::*
     },
-    Data
+    Data,
 };
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(slash_command, ephemeral = true)]
-pub async fn update(
-    ctx: Context<'_>,
-) -> Result<(), Error> {
+pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
-    if !has_perm(server_id, ctx.author().id.to_string().parse::<u64>().unwrap(), Developer).await {
+    if !has_perm(
+        server_id,
+        ctx.author().id.to_string().parse::<u64>().unwrap(),
+        Developer,
+    )
+    .await
+    {
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
@@ -28,7 +32,9 @@ pub async fn update(
     let mut embed = CreateEmbed::default();
     embed.color(0x565e6e);
     embed.title("Regy Update");
-    embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/update.png");
+    embed.thumbnail(
+        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/update.png",
+    );
     embed.description("A local update has been initialized.");
     embed.footer(|f| f.text("If the update fails you will be notified automatically."));
     ctx.channel_id()
@@ -70,7 +76,10 @@ pub async fn update(
             ctx.channel_id()
                 .send_message(&ctx, |m| m.set_embed(embed))
                 .await
-                .log_expect(LogImportance::Warning, "Unable to send partial update embed")
+                .log_expect(
+                    LogImportance::Warning,
+                    "Unable to send partial update embed",
+                )
                 .id;
 
             log_this(LogData {
@@ -89,7 +98,10 @@ pub async fn update(
             ctx.channel_id()
                 .send_message(&ctx, |m| m.set_embed(embed))
                 .await
-                .log_expect(LogImportance::Warning, "Unable to send successful update embed")
+                .log_expect(
+                    LogImportance::Warning,
+                    "Unable to send successful update embed",
+                )
                 .id;
 
             ctx.say("Update has been successful, bot will restart.")
@@ -115,7 +127,10 @@ pub async fn update(
             ctx.channel_id()
                 .send_message(&ctx, |m| m.set_embed(embed))
                 .await
-                .log_expect(LogImportance::Warning, "Unable to send unknown update status embed")
+                .log_expect(
+                    LogImportance::Warning,
+                    "Unable to send unknown update status embed",
+                )
                 .id;
 
             log_this(LogData {

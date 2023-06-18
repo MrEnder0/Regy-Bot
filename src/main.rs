@@ -6,10 +6,7 @@ use poise::{
     serenity_prelude::{self as serenity},
     Event,
 };
-use std::{
-    path::Path,
-    sync::atomic::AtomicUsize
-};
+use std::{path::Path, sync::atomic::AtomicUsize};
 
 use crate::commands::*;
 use crate::events::*;

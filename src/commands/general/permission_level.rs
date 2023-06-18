@@ -3,7 +3,7 @@ use poise::serenity_prelude as serenity;
 use crate::{
     utils::{
         logger::{LogExpect, LogImportance},
-        perm_check::*
+        perm_check::*,
     },
     Data,
 };
@@ -11,7 +11,12 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(context_menu_command = "Permission Level", slash_command, user_cooldown = 15, ephemeral = true)]
+#[poise::command(
+    context_menu_command = "Permission Level",
+    slash_command,
+    user_cooldown = 15,
+    ephemeral = true
+)]
 pub async fn permission_level(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,

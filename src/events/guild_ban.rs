@@ -1,6 +1,4 @@
-use poise::{
-    serenity_prelude::{User, GuildId}
-};
+use poise::serenity_prelude::{GuildId, User};
 
 use crate::utils::toml::*;
 

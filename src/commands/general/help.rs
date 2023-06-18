@@ -22,7 +22,6 @@ pub enum HelpEnum {
     Regex,
     #[name = "Developer commands help"]
     Developer,
-
 }
 
 #[poise::command(slash_command, prefix_command, user_cooldown = 25, ephemeral = true)]
@@ -39,7 +38,7 @@ pub async fn help(
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-        },
+        }
         HelpEnum::Information => {
             ctx.say(
                 "The information commands are:\n\
@@ -50,7 +49,7 @@ pub async fn help(
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-        },
+        }
         HelpEnum::Moderation => {
             ctx.say(
                 "The moderation commands are:\n\
@@ -59,7 +58,7 @@ pub async fn help(
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-        },
+        }
         HelpEnum::Infraction => {
             ctx.say(
                 "The infraction commands are:\n\
@@ -70,7 +69,7 @@ pub async fn help(
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-        },
+        }
         HelpEnum::Management => {
             ctx.say(
                 "The management commands are:\n\
@@ -92,7 +91,7 @@ pub async fn help(
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-        },
+        }
         HelpEnum::Developer => {
             ctx.say(
                 "The dev commands are:\n\
@@ -106,7 +105,7 @@ pub async fn help(
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-        },
+        }
         #[allow(unreachable_patterns)]
         _ => {
             ctx.say(

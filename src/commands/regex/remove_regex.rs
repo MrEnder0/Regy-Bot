@@ -3,7 +3,7 @@ use uuid::Uuid;
 use crate::{
     utils::{
         logger::{LogExpect, LogImportance},
-        toml
+        toml,
     },
     Data,
 };
@@ -11,10 +11,15 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 10, required_permissions = "ADMINISTRATOR")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    user_cooldown = 10,
+    required_permissions = "ADMINISTRATOR"
+)]
 pub async fn remove_regex(
     ctx: Context<'_>,
-    #[description = "Regex id"] id: String
+    #[description = "Regex id"] id: String,
 ) -> Result<(), Error> {
     if id == " " || id.is_empty() {
         ctx.say("You need to specify a target UUID.")
@@ -37,7 +42,7 @@ pub async fn remove_regex(
 
     let server_id = ctx.guild_id().unwrap().0.to_string();
     toml::remove_regex(server_id, id);
- 
+
     let status_message = format!("Removed the regex phrase with UUID: {}", id);
     ctx.say(status_message)
         .await

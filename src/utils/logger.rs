@@ -1,16 +1,12 @@
-use std::{
-    fs::OpenOptions,
-    io::prelude::*,
-    fmt::Debug
-};
-use owo_colors::{OwoColorize, colors::css::*};
 use chrono::Local;
+use owo_colors::{colors::css::*, OwoColorize};
+use std::{fmt::Debug, fs::OpenOptions, io::prelude::*};
 
 pub enum LogImportance {
     Error,
     Warning,
     Info,
-    Debug
+    Debug,
 }
 
 pub struct LogData {
@@ -29,20 +25,48 @@ pub fn log_this(data: LogData) {
 
     match data.importance {
         LogImportance::Error => {
-            file.unwrap().write_all(format!("{} [ERROR] {}\n", formatted_time, data.message).as_bytes()).unwrap();
-            println!("{} {} {}", formatted_time, "[ERROR]".fg::<Black>().bg::<Red>(), data.message);
-        },
+            file.unwrap()
+                .write_all(format!("{} [ERROR] {}\n", formatted_time, data.message).as_bytes())
+                .unwrap();
+            println!(
+                "{} {} {}",
+                formatted_time,
+                "[ERROR]".fg::<Black>().bg::<Red>(),
+                data.message
+            );
+        }
         LogImportance::Warning => {
-            file.unwrap().write_all(format!("{} [WARNING] {}\n", formatted_time, data.message).as_bytes()).unwrap();
-            println!("{} {} {}", formatted_time, "[WARNING]".fg::<Black>().bg::<Yellow>(), data.message);
-        },
+            file.unwrap()
+                .write_all(format!("{} [WARNING] {}\n", formatted_time, data.message).as_bytes())
+                .unwrap();
+            println!(
+                "{} {} {}",
+                formatted_time,
+                "[WARNING]".fg::<Black>().bg::<Yellow>(),
+                data.message
+            );
+        }
         LogImportance::Info => {
-            file.unwrap().write_all(format!("{} [INFO] {}\n", formatted_time, data.message).as_bytes()).unwrap();
-            println!("{} {} {}", formatted_time, "[INFO]".fg::<Black>().bg::<LightGray>(), data.message);
+            file.unwrap()
+                .write_all(format!("{} [INFO] {}\n", formatted_time, data.message).as_bytes())
+                .unwrap();
+            println!(
+                "{} {} {}",
+                formatted_time,
+                "[INFO]".fg::<Black>().bg::<LightGray>(),
+                data.message
+            );
         }
         LogImportance::Debug => {
-            file.unwrap().write_all(format!("{} [DEBUG] {}\n", formatted_time, data.message).as_bytes()).unwrap();
-            println!("{} {} {}", formatted_time, "[DEBUG]".fg::<Black>().bg::<LightBlue>(), data.message);
+            file.unwrap()
+                .write_all(format!("{} [DEBUG] {}\n", formatted_time, data.message).as_bytes())
+                .unwrap();
+            println!(
+                "{} {} {}",
+                formatted_time,
+                "[DEBUG]".fg::<Black>().bg::<LightBlue>(),
+                data.message
+            );
         }
     }
 }

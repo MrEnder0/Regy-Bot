@@ -1,19 +1,19 @@
 use poise::{
     serenity_prelude::{self as serenity, Ready},
-    serenity_prelude::{
-        CreateEmbed,
-        ChannelId
-    }
+    serenity_prelude::{ChannelId, CreateEmbed},
 };
 use std::sync::atomic::Ordering;
 
-use crate::utils::{toml::*, logger::*};
+use crate::utils::{logger::*, toml::*};
 use crate::IPM;
 
 pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     log_this(LogData {
         importance: LogImportance::Info,
-        message: format!("{} has started and connected to discord.", data_about_bot.user.name),
+        message: format!(
+            "{} has started and connected to discord.",
+            data_about_bot.user.name
+        ),
     });
 
     let ctx_clone = ctx.clone();
@@ -43,14 +43,28 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                 });
 
                 let server_id = ctx_clone.cache.guilds().iter().next().unwrap().0;
-                let log_channel = ChannelId(read_config().servers.get(&server_id.to_string()).unwrap().log_channel);
+                let log_channel = ChannelId(
+                    read_config()
+                        .servers
+                        .get(&server_id.to_string())
+                        .unwrap()
+                        .log_channel,
+                );
                 let mut embed = CreateEmbed::default();
                 embed.color(0x8B0000);
                 embed.title(":warning: Raid Detection");
                 embed.field("Possible raid detected due to IPM influx.", "", false);
                 embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/denied.png");
-                embed.footer(|f| f.text("False detection? Try increasing the min influx in the config.toml file"));
-                log_channel.send_message(&ctx_clone.http, |m| m.content("<@&1009589625230213200>").set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send embed").id;
+                embed.footer(|f| {
+                    f.text("False detection? Try increasing the min influx in the config.toml file")
+                });
+                log_channel
+                    .send_message(&ctx_clone.http, |m| {
+                        m.content("<@&1009589625230213200>").set_embed(embed)
+                    })
+                    .await
+                    .log_expect(LogImportance::Warning, "Unable to send embed")
+                    .id;
                 IPM.store(0, Ordering::SeqCst);
             }
         }

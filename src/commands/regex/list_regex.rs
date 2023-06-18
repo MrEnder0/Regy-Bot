@@ -1,7 +1,7 @@
 use crate::{
     utils::{
         logger::{LogExpect, LogImportance},
-        toml
+        toml,
     },
     Data,
 };
@@ -9,10 +9,14 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 45, channel_cooldown = 30, required_permissions = "ADMINISTRATOR")]
-pub async fn list_regex(
-    ctx: Context<'_>,
-) -> Result<(), Error> {
+#[poise::command(
+    prefix_command,
+    slash_command,
+    user_cooldown = 45,
+    channel_cooldown = 30,
+    required_permissions = "ADMINISTRATOR"
+)]
+pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
     let status_msg = ctx
         .say("Sending regex phrases this may take a few seconds...")
         .await
@@ -22,7 +26,12 @@ pub async fn list_regex(
     let block_phrases_hashmap = toml::list_regex(server_id);
     let mut formatted_blocked_phrases = String::new();
     for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
-        let id = block_phrases_hashmap.as_ref().unwrap().iter().position(|x| x.1 == phrase).unwrap();
+        let id = block_phrases_hashmap
+            .as_ref()
+            .unwrap()
+            .iter()
+            .position(|x| x.1 == phrase)
+            .unwrap();
         formatted_blocked_phrases.push_str(&id.to_string());
         formatted_blocked_phrases.push_str(" | ");
         formatted_blocked_phrases.push_str(&phrase);
@@ -33,7 +42,12 @@ pub async fn list_regex(
     let channel_id = ctx.channel_id();
 
     if status_message.len() > 2000 {
-        channel_id.say(ctx, "The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**").await?;
+        channel_id
+            .say(
+                ctx,
+                "The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**",
+            )
+            .await?;
         let mut split_status_message = String::new();
         //remove the warning message
         let status_message = status_message[75..status_message.len()].to_string();

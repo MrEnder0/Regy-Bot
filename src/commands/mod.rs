@@ -9,5 +9,5 @@ pub mod infractions;
 pub mod moderation;
 
 //Administrator
-pub mod regex;
 pub mod management;
+pub mod regex;

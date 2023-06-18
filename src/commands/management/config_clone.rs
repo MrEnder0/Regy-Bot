@@ -3,7 +3,7 @@ use poise::serenity_prelude::Channel;
 use crate::{
     utils::{
         logger::{LogExpect, LogImportance},
-        toml::{server_exists, list_regex, add_regex}
+        toml::{add_regex, list_regex, server_exists},
     },
     Data,
 };
@@ -11,7 +11,12 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, guild_cooldown = 240, required_permissions = "ADMINISTRATOR")]
+#[poise::command(
+    prefix_command,
+    slash_command,
+    guild_cooldown = 240,
+    required_permissions = "ADMINISTRATOR"
+)]
 pub async fn config_clone_regex(
     ctx: Context<'_>,
     #[description = "Guild ID"] guild_id: String,

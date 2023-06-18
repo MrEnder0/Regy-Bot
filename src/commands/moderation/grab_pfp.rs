@@ -2,8 +2,8 @@ use poise::serenity_prelude as serenity;
 
 use crate::{
     utils::{
+        logger::{LogExpect, LogImportance},
         perm_check::{has_perm, PermissionLevel::Staff},
-        logger::{LogExpect, LogImportance}
     },
     Data,
 };
@@ -18,7 +18,13 @@ pub async fn grab_pfp(
 ) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
-    if !has_perm(server_id, ctx.author().id.to_string().parse::<u64>().unwrap(), Staff).await {
+    if !has_perm(
+        server_id,
+        ctx.author().id.to_string().parse::<u64>().unwrap(),
+        Staff,
+    )
+    .await
+    {
         ctx.say("You do not have permission to use this command.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
@@ -26,7 +32,7 @@ pub async fn grab_pfp(
     }
 
     ctx.say(user.face())
-    .await
-    .log_expect(LogImportance::Warning, "Unable to send message");
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
     Ok(())
 }
