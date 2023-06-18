@@ -1,5 +1,3 @@
-use poise::serenity_prelude::Channel;
-
 use crate::{
     utils::{
         logger::{LogExpect, LogImportance},
