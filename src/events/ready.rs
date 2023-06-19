@@ -2,10 +2,14 @@ use poise::{
     serenity_prelude::{self as serenity, Ready},
     serenity_prelude::{ChannelId, CreateEmbed},
 };
-use std::sync::atomic::Ordering;
+use std::sync::atomic::{Ordering, AtomicUsize};
+use std::net::TcpStream;
+
 
 use crate::utils::{logger::*, toml::*};
 use crate::IPM;
+
+static OFFLINE_TIME: AtomicUsize = AtomicUsize::new(0);
 
 pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     log_this(LogData {
@@ -66,6 +70,32 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                     .log_expect(LogImportance::Warning, "Unable to send embed")
                     .id;
                 IPM.store(0, Ordering::SeqCst);
+            }
+        }
+    });
+    // Checks if bot is online
+    tokio::spawn(async move {
+        loop {
+            tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
+            let addr = "discord.com:443".parse().unwrap();
+
+            let result = TcpStream::connect_timeout(&addr, std::time::Duration::from_secs(5));
+            match result {
+                Ok(_) => {
+                    if OFFLINE_TIME.load(Ordering::SeqCst) > 0 {
+                        log_this(LogData {
+                            importance: LogImportance::Info,
+                            message: format!("The bot has reconnected to Discord after being offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)),
+                        });
+                        OFFLINE_TIME.store(0, Ordering::SeqCst);
+                    }
+                }
+                Err(_) => {
+                    log_this(LogData {
+                        importance: LogImportance::Warning,
+                        message: format!("The bot has lost connection, and has been offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)),
+                    });
+                }
             }
         }
     });
