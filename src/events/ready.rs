@@ -77,15 +77,14 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     tokio::spawn(async move {
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
-            let addr = "discord.com:443".parse().unwrap();
 
-            let result = TcpStream::connect_timeout(&addr, std::time::Duration::from_secs(5));
+            let result = TcpStream::connect("discord.com:443");
             match result {
                 Ok(_) => {
                     if OFFLINE_TIME.load(Ordering::SeqCst) > 0 {
                         log_this(LogData {
                             importance: LogImportance::Info,
-                            message: format!("The bot has reconnected to Discord after being offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)),
+                            message: format!("The bot has reconnected to Discord after being offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)+1),
                         });
                         OFFLINE_TIME.store(0, Ordering::SeqCst);
                     }
@@ -93,7 +92,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                 Err(_) => {
                     log_this(LogData {
                         importance: LogImportance::Warning,
-                        message: format!("The bot has lost connection, and has been offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)),
+                        message: format!("The bot has lost connection, and has been offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)+1),
                     });
                 }
             }
