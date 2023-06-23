@@ -80,8 +80,6 @@ Note none of these plans are guaranteed and also there may be other changes that
     [ ] Package index
     [ ] Package searching
     [ ] Package installation
-    [ ] Package uninstallation
-    [ ] Package updating
 
 # Release 14
 [ ] Implement offical checks system before command execution
