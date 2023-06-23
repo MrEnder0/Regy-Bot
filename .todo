@@ -75,13 +75,11 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 13
 [x] Config metadata version
 [ ] Make dm message embeds
-[ ] Offline detection and handling
+[x] Offline detection and handling
 [ ] Regex package index (rpi)
     [ ] Package index
     [ ] Package searching
     [ ] Package installation
-    [ ] Package uninstallation
-    [ ] Package updating
 
 # Release 14
 [ ] Implement offical checks system before command execution
