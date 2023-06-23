@@ -2,8 +2,9 @@ use poise::{
     serenity_prelude as serenity,
     serenity_prelude::{ChannelId, CreateEmbed, ReactionType, UserId},
 };
+use scorched::*;
 
-use crate::utils::{logger::*, toml::*};
+use crate::utils::toml::*;
 
 pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity::Reaction) {
     let server_id = add_reaction.guild_id.unwrap().to_string();

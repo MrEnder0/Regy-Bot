@@ -1,10 +1,8 @@
 use poise::serenity_prelude::Channel;
+use scorched::*;
 
 use crate::{
-    utils::{
-        logger::{LogExpect, LogImportance},
-        toml::{gen_server, server_exists},
-    },
+    utils::toml::{gen_server, server_exists},
     Data,
 };
 

@@ -1,8 +1,8 @@
 use poise::serenity_prelude as serenity;
+use scorched::*;
 
 use crate::{
     utils::{
-        logger::{LogExpect, LogImportance},
         perm_check::{has_perm, PermissionLevel::Staff},
         toml,
         type_conversions::userid_to_u64,

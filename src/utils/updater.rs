@@ -1,7 +1,6 @@
+use scorched::*;
 use self_replace;
 use std::path::Path;
-
-use super::logger::{LogExpect, LogImportance};
 
 pub fn local_update(new_bin: &str) -> i8 {
     if !Path::new(new_bin).exists() {

@@ -1,8 +1,8 @@
 use poise::serenity_prelude::CreateEmbed;
+use scorched::*;
 
 use crate::{
     utils::{
-        logger::*,
         perm_check::{has_perm, PermissionLevel::Developer},
         updater::local_update,
     },

@@ -3,10 +3,10 @@ use poise::{
     serenity_prelude::{ChannelId, CreateEmbed, ReactionType, UserId},
 };
 use regex::Regex;
+use scorched::*;
 use std::sync::atomic::Ordering;
 
-use crate::utils::{logger::*, toml::*};
-use crate::IPM;
+use crate::{utils::toml::*, IPM};
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
     //ignore messages from bots

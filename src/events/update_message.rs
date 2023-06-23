@@ -3,12 +3,10 @@ use poise::{
     serenity_prelude::{ChannelId, CreateEmbed, MessageUpdateEvent, ReactionType, UserId},
 };
 use regex::Regex;
+use scorched::*;
 use std::sync::atomic::Ordering;
 
-use crate::{
-    utils::{logger::*, toml::*},
-    IPM,
-};
+use crate::{utils::toml::*, IPM};
 
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
     let updated_message = event.content.clone().log_expect(

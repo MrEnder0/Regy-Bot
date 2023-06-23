@@ -1,10 +1,6 @@
-use crate::{
-    utils::{
-        logger::{LogExpect, LogImportance},
-        toml,
-    },
-    Data,
-};
+use scorched::*;
+
+use crate::{utils::toml, Data};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;

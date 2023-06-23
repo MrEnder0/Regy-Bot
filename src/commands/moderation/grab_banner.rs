@@ -1,10 +1,8 @@
 use poise::serenity_prelude as serenity;
+use scorched::*;
 
 use crate::{
-    utils::{
-        logger::{LogExpect, LogImportance},
-        perm_check::{has_perm, PermissionLevel::Staff},
-    },
+    utils::perm_check::{has_perm, PermissionLevel::Staff},
     Data,
 };
 

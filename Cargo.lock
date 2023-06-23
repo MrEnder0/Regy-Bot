@@ -872,10 +872,10 @@ name = "regy_bot"
 version = "1.12.1"
 dependencies = [
  "base64 0.21.2",
- "chrono",
  "owo-colors",
  "poise",
  "regex",
+ "scorched",
  "self-replace",
  "serde",
  "tokio",
@@ -1014,6 +1014,16 @@ name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
+
+[[package]]
+name = "scorched"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "53971fd582bc8b25be6f2493249fe8f6d8dec2ee502b2996c9eaac7f107af4bc"
+dependencies = [
+ "chrono",
+ "owo-colors",
+]
 
 [[package]]
 name = "sct"

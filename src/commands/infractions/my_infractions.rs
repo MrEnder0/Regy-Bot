@@ -1,9 +1,7 @@
+use scorched::*;
+
 use crate::{
-    utils::{
-        logger::{LogExpect, LogImportance},
-        toml,
-        type_conversions::userid_to_u64,
-    },
+    utils::{toml, type_conversions::userid_to_u64},
     Data,
 };
 

@@ -1,15 +1,14 @@
 use base64::{engine::general_purpose, Engine as _};
+use scorched::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
-
-use super::logger::{log_this, LogData, LogImportance};
 
 static CONFIG_VERSION: f32 = 2.1;
 
 #[derive(Serialize, Deserialize)]
 pub struct MetaData {
-    pub version: f32
+    pub version: f32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -46,7 +45,9 @@ pub fn gen_config() {
         general_purpose::STANDARD_NO_PAD.encode("regy test phrase"),
     );
     let config = Config {
-        meta: MetaData { version: CONFIG_VERSION },
+        meta: MetaData {
+            version: CONFIG_VERSION,
+        },
         global: GlobalOptions {
             token: "token".to_string(),
             user_delete_on_ban: true,

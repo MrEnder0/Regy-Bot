@@ -1,8 +1,7 @@
+use scorched::*;
+
 use crate::{
-    utils::{
-        logger::{LogExpect, LogImportance},
-        toml::{add_regex, list_regex, server_exists},
-    },
+    utils::toml::{add_regex, list_regex, server_exists},
     Data,
 };
 

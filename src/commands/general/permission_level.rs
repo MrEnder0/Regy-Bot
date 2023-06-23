@@ -1,12 +1,7 @@
 use poise::serenity_prelude as serenity;
+use scorched::*;
 
-use crate::{
-    utils::{
-        logger::{LogExpect, LogImportance},
-        perm_check::*,
-    },
-    Data,
-};
+use crate::{utils::perm_check::*, Data};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;

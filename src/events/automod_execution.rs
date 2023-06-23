@@ -2,10 +2,11 @@ use poise::{
     serenity_prelude as serenity,
     serenity_prelude::{ActionExecution, ChannelId, CreateEmbed, ReactionType},
 };
+use scorched::*;
 use std::sync::atomic::Ordering;
 
 use crate::{
-    utils::{logger::*, toml::*},
+    utils::toml::{add_infraction, list_infractions, read_config},
     IPM,
 };
 

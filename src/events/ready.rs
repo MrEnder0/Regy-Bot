@@ -2,12 +2,11 @@ use poise::{
     serenity_prelude::{self as serenity, Ready},
     serenity_prelude::{ChannelId, CreateEmbed},
 };
-use std::sync::atomic::{Ordering, AtomicUsize};
+use scorched::*;
 use std::net::TcpStream;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
-
-use crate::utils::{logger::*, toml::*};
-use crate::IPM;
+use crate::{utils::toml::read_config, IPM};
 
 static OFFLINE_TIME: AtomicUsize = AtomicUsize::new(0);
 
@@ -92,7 +91,10 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                 Err(_) => {
                     log_this(LogData {
                         importance: LogImportance::Warning,
-                        message: format!("The bot has lost connection, and has been offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)+1),
+                        message: format!(
+                            "The bot has lost connection, and has been offline for {} minutes.",
+                            OFFLINE_TIME.load(Ordering::SeqCst) + 1
+                        ),
                     });
                 }
             }

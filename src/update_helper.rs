@@ -1,8 +1,7 @@
 mod utils;
 
+use scorched::*;
 use std::{path::Path, process::Command, time::Duration};
-
-use crate::utils::logger::*;
 
 fn main() {
     //Wait for Regy to fully shutdown

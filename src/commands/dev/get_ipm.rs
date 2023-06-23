@@ -1,8 +1,7 @@
+use scorched::*;
+
 use crate::{
-    utils::{
-        logger::{LogExpect, LogImportance},
-        perm_check::{has_perm, PermissionLevel::Developer},
-    },
+    utils::perm_check::{has_perm, PermissionLevel::Developer},
     Data, IPM,
 };
 
