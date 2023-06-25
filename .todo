@@ -76,11 +76,11 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Config metadata version
 [ ] Make dm message embeds
 [x] Offline detection and handling
-[x] Logging seg fault fix for Linux
+[x] Rewrite logging system
+[x] Fix issues with new regex id system
+
+# Release 14
 [ ] Regex package index (rpi)
     [ ] Package index
     [ ] Package searching
     [ ] Package installation
-
-# Release 14
-[ ] Implement offical checks system before command execution
