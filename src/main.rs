@@ -88,7 +88,7 @@ async fn main() {
                         }
 
                         Event::GuildBanAddition {
-                            guild_id: guild_id,
+                            guild_id,
                             banned_user,
                         } => {
                             guild_ban::guild_ban_event(*guild_id, banned_user).await;
