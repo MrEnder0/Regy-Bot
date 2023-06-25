@@ -24,6 +24,15 @@ pub async fn config_clone_regex(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
     } else {
+        //check if current server exists in database
+        if !server_exists(ctx.guild_id().unwrap().0.to_string()) {
+            ctx.say("This server does not exist in the database, please run `config_setup` first.")
+                .await
+                .log_expect(LogImportance::Warning, "Unable to send message");
+
+            return Ok(());
+        }
+
         let server_id = ctx.guild_id().unwrap().0.to_string();
         let block_phrases = list_regex(server_id);
 
