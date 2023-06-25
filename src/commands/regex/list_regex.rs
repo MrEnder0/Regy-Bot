@@ -5,6 +5,11 @@ use crate::{utils::toml, Data};
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+struct Regex {
+    id: String,
+    phrase: String,
+}
+
 #[poise::command(
     prefix_command,
     slash_command,
@@ -19,19 +24,16 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
         .log_expect(LogImportance::Warning, "Unable to send message");
 
     let server_id = ctx.guild_id().unwrap().0.to_string();
-    let block_phrases_hashmap = toml::list_regex(server_id);
+    let block_phrases = toml::list_regex(server_id);
+
     let mut formatted_blocked_phrases = String::new();
-    for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
-        let id = block_phrases_hashmap
-            .as_ref()
-            .unwrap()
-            .iter()
-            .position(|x| x.1 == phrase)
-            .unwrap();
-        formatted_blocked_phrases.push_str(&id.to_string());
-        formatted_blocked_phrases.push_str(" | ");
-        formatted_blocked_phrases.push_str(&phrase);
-        formatted_blocked_phrases.push('\n');
+    for item in block_phrases.as_ref().unwrap().iter() {
+        let regex = Regex {
+            id: item.0.to_string(),
+            phrase: item.1.to_string(),
+        };
+
+        formatted_blocked_phrases.push_str(&format!("{} | {}\n", regex.id, regex.phrase));
     }
 
     let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | REGEX\n{}```||", formatted_blocked_phrases);
