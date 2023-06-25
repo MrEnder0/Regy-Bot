@@ -25,9 +25,10 @@ pub async fn config_clone_regex(
             .log_expect(LogImportance::Warning, "Unable to send message");
     } else {
         let server_id = ctx.guild_id().unwrap().0.to_string();
-        let block_phrases_hashmap = list_regex(server_id);
-        for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
-            let phrase = phrase.to_string();
+        let block_phrases = list_regex(server_id);
+
+        for item in block_phrases.as_ref().unwrap().iter() {
+            let phrase = item.1.to_string();
             add_regex(guild_id.clone(), phrase);
         }
 
