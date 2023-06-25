@@ -16,10 +16,10 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 )]
 pub async fn config_clone_regex(
     ctx: Context<'_>,
-    #[description = "Guild ID"] guild_id: String,
+    #[description = "Guild ID"] target_server_id: String,
 ) -> Result<(), Error> {
     //check if server exists in database
-    if !server_exists(guild_id.clone()) {
+    if !server_exists(target_server_id.clone()) {
         ctx.say("This server does not exist in the database.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
@@ -33,12 +33,11 @@ pub async fn config_clone_regex(
             return Ok(());
         }
 
-        let server_id = ctx.guild_id().unwrap().0.to_string();
-        let block_phrases = list_regex(server_id);
+        let target_block_phrases = list_regex(target_server_id);
 
-        for item in block_phrases.as_ref().unwrap().iter() {
+        for item in target_block_phrases.as_ref().unwrap().iter() {
             let phrase = item.1.to_string();
-            add_regex(guild_id.clone(), phrase);
+            add_regex(ctx.guild_id().unwrap().0.to_string(), phrase);
         }
 
         ctx.say("Regex phrases cloned.")
