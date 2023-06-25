@@ -24,10 +24,18 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
         .log_expect(LogImportance::Warning, "Unable to send message");
 
     let server_id = ctx.guild_id().unwrap().0.to_string();
-    let block_phrases = toml::list_regex(server_id);
+    let block_phrases = match { toml::list_regex(server_id) } {
+        Some(block_phrases) => block_phrases,
+        None => {
+            ctx.say("This server does not exist in the database, please run `config_setup` first; if you have already done this please add a regex phrase before trying to list them.")
+                .await
+                .log_expect(LogImportance::Warning, "Unable to send message");
+            return Ok(());
+        }
+    };
 
     let mut formatted_blocked_phrases = String::new();
-    for item in block_phrases.as_ref().unwrap().iter() {
+    for item in block_phrases.iter() {
         let regex = Regex {
             id: item.0.to_string(),
             phrase: item.1.to_string(),
