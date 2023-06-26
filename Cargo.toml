@@ -13,7 +13,7 @@ base64 = "0.21.2"
 uuid = { version = "1.3.4", features = ["v4", "serde"] }
 self-replace = "1.3.5"
 owo-colors = "3.5.0"
-scorched = "0.2.1"
+scorched = "0.2.3"
 
 [[bin]]
 name = "regy_bot"
