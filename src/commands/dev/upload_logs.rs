@@ -26,33 +26,17 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    if std::path::Path::new("regy.log").exists() {
-        ctx.say("Uploading log file, this may take a few seconds...")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
-
-        let log_file = std::fs::read_to_string("regy.log")
-            .log_expect(LogImportance::Error, "Unable to read log file");
-        let log_file = log_file.as_bytes();
-
+    for file in std::fs::read_dir("logs").unwrap() {
+        let log_file = std::fs::read_to_string(file.unwrap().path())
+            .log_expect(LogImportance::Warning, "Unable to read log file");
+        let file_name = log_file.split(" ").collect::<Vec<&str>>()[0];
         ctx.channel_id()
-            .send_files(ctx, vec![(log_file, "regy.log")], |m| {
-                m.content("Log file:")
+            .send_files(ctx, vec![(log_file.as_bytes(), "logs.zip")], |m| {
+                m.content(format!("Logs for {}:", file_name))
             })
             .await
             .log_expect(LogImportance::Warning, "Unable to upload log file");
-
-        Ok(())
-    } else {
-        log_this(LogData {
-            importance: LogImportance::Warning,
-            message: "Log file does not exist".to_string(),
-        });
-
-        ctx.say("Log file does not exist")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
-
-        Ok(())
     }
+
+    Ok(())
 }
