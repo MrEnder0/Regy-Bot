@@ -26,24 +26,30 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    if std::path::Path::new("regy.log").exists() {
-        std::fs::remove_file("regy.log")
-            .log_expect(LogImportance::Warning, "Unable to delete log filet");
-        ctx.say("Log file deleted")
+    if std::path::Path::new("logs").exists() {
+        std::fs::remove_dir_all("logs")
+            .log_expect(LogImportance::Warning, "Unable to delete log folder");
+        ctx.say("Log folder deleted")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-
-        Ok(())
     } else {
         log_this(LogData {
             importance: LogImportance::Error,
-            message: "Log file does not exist".to_string(),
+            message: "Log folder does not exist".to_string(),
         });
 
-        ctx.say("Log file does not exist")
+        ctx.say("Log folder does not exist")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-
-        Ok(())
     }
+
+    if std::path::Path::new("logs.zip").exists() {
+        std::fs::remove_file("logs.zip")
+            .log_expect(LogImportance::Warning, "Unable to delete found log archive");
+        ctx.say("Found and deleted log archive")
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+    }
+
+    Ok(())
 }

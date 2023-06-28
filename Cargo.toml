@@ -1,6 +1,6 @@
 [package]
 name = "regy_bot"
-version = "1.12.1"
+version = "1.12.6"
 edition = "2021"
 
 [dependencies]
@@ -10,10 +10,11 @@ regex = "1.8.4"
 serde = { version = "1.0.164", features = ["derive"] }
 toml = "0.7.5"
 base64 = "0.21.2"
-uuid = { version = "1.3.4", features = ["v4", "serde"] }
+uuid = { version = "1.4.0", features = ["v4", "serde"] }
 self-replace = "1.3.5"
 owo-colors = "3.5.0"
 scorched = "0.2.3"
+once_cell = "1.18.0"
 
 [[bin]]
 name = "regy_bot"

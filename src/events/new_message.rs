@@ -4,9 +4,8 @@ use poise::{
 };
 use regex::Regex;
 use scorched::*;
-use std::sync::atomic::Ordering;
 
-use crate::{utils::toml::*, IPM};
+use crate::{utils::toml::*, IpmStruct};
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
     //ignore messages from bots
@@ -69,7 +68,14 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             let server_id = new_message.guild_id.unwrap().to_string();
             add_infraction(server_id, new_message.author.id.into());
 
-            IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+            IpmStruct::increment_server(
+                new_message
+                    .guild_id
+                    .unwrap()
+                    .to_string()
+                    .parse::<u64>()
+                    .unwrap(),
+            );
 
             log_this(LogData {
                 importance: LogImportance::Info,

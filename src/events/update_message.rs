@@ -4,9 +4,8 @@ use poise::{
 };
 use regex::Regex;
 use scorched::*;
-use std::sync::atomic::Ordering;
 
-use crate::{utils::toml::*, IPM};
+use crate::{utils::toml::*, IpmStruct};
 
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
     let updated_message = event.content.clone().log_expect(
@@ -68,7 +67,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             let server_id = guild_id.unwrap().to_string();
             add_infraction(server_id, author.id.into());
 
-            IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+            IpmStruct::increment_server(guild_id.unwrap().to_string().parse::<u64>().unwrap());
 
             log_this(LogData {
                 importance: LogImportance::Info,

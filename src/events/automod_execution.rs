@@ -3,11 +3,10 @@ use poise::{
     serenity_prelude::{ActionExecution, ChannelId, CreateEmbed, ReactionType},
 };
 use scorched::*;
-use std::sync::atomic::Ordering;
 
 use crate::{
     utils::toml::{add_infraction, list_infractions, read_config},
-    IPM,
+    IpmStruct,
 };
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
@@ -31,7 +30,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         .log_expect(LogImportance::Warning, "Unable to get user");
     add_infraction(execution.guild_id.to_string(), user.id.into());
 
-    IPM.store(IPM.load(Ordering::SeqCst) + 1, Ordering::SeqCst);
+    IpmStruct::increment_server(execution.guild_id.into());
 
     log_this(LogData {
         importance: LogImportance::Info,
