@@ -894,6 +894,7 @@ name = "regy_bot"
 version = "1.12.6"
 dependencies = [
  "base64 0.21.2",
+ "once_cell",
  "owo-colors",
  "poise",
  "regex",

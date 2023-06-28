@@ -2,7 +2,7 @@ use scorched::*;
 
 use crate::{
     utils::perm_check::{has_perm, PermissionLevel::Developer},
-    Data, IPM,
+    Data, IpmStruct,
 };
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -27,7 +27,7 @@ pub async fn get_ipm(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.say(format!(
         "Current server IPM: {}",
-        IPM.load(std::sync::atomic::Ordering::Relaxed)
+        IpmStruct::get_server(ctx.guild_id().unwrap().into())
     ))
     .await
     .log_expect(LogImportance::Warning, "Unable to send message");
