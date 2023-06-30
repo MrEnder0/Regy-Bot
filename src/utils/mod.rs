@@ -1,3 +1,4 @@
+pub mod ipm;
 pub mod perm_check;
 pub mod toml;
 pub mod type_conversions;

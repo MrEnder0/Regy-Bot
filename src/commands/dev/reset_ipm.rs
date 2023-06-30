@@ -2,7 +2,7 @@ use scorched::*;
 
 use crate::{
     utils::perm_check::{has_perm, PermissionLevel::Developer},
-    Data, IpmStruct, IPM,
+    Data, IpmStruct,
 };
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -38,8 +38,8 @@ pub async fn reset_ipm(
 
     match reset_level {
         ResetEnum::Global => {
-            IPM.lock().unwrap().clear();
-            ctx.say("Reset global IPM to 0")
+            IpmStruct::global_reset();
+            ctx.say("Reset global IPM")
                 .await
                 .log_expect(LogImportance::Warning, "Unable to send message");
         }
