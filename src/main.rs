@@ -4,11 +4,7 @@ mod utils;
 
 use once_cell::sync::Lazy;
 use poise::{serenity_prelude as serenity, Event};
-use std::{
-    collections::HashMap,
-    path::Path,
-    sync::{Arc, Mutex},
-};
+use std::{collections::HashMap, path::Path, sync::Mutex};
 
 use crate::commands::*;
 use crate::events::*;
@@ -16,37 +12,27 @@ use crate::utils::toml::*;
 
 pub struct Data {}
 
-pub struct IpmStruct {
-    ipm: Lazy<Arc<Mutex<HashMap<u64, u16>>>>,
-}
+const IPM: Lazy<Mutex<HashMap<u64, u16>>> = Lazy::new(|| Mutex::new(HashMap::new()));
+
+struct IpmStruct {}
 
 impl IpmStruct {
     pub fn get_server(server_id: u64) -> u16 {
-        let mut ipm = IPM.lock().unwrap();
+        let binding = IPM;
+        let guard = binding.lock().unwrap();
 
-        //Checks if server is in ipm
-        if ipm.contains_key(&server_id) {
-            ipm[&server_id]
-        } else {
-            ipm.insert(server_id, 0);
-            0
-        }
+        guard[&server_id]
     }
     pub fn set_server(server_id: u64, value: u16) {
-        //Removes old value if present
-        let mut ipm = IPM.lock().unwrap();
-        if ipm.contains_key(&server_id) {
-            ipm.remove(&server_id);
-        }
-
-        //Adds new value
-        ipm.insert(server_id, value);
+        let binding = IPM;
+        let mut guard = binding.lock().unwrap();
+        guard.insert(server_id, value);
     }
     pub fn get_overflow() -> Vec<u64> {
-        //Used to check if server is breaking max activity influx
         let mut overflow: Vec<u64> = Vec::new();
-        let ipm = IPM.lock().unwrap();
-        for (key, value) in ipm.iter() {
+        let binding = IPM;
+        let guard = binding.lock().unwrap();
+        for (key, value) in guard.iter() {
             if value > &read_config().global.max_activity_influx {
                 overflow.push(*key);
             }
@@ -55,24 +41,19 @@ impl IpmStruct {
         overflow
     }
     pub fn increment_server(server_id: u64) {
-        let mut ipm = IPM.lock().unwrap();
-        //Sets server to 1 if not present
-        if !ipm.contains_key(&server_id) {
-            ipm.insert(server_id, 1);
+        let binding = IPM;
+        let mut guard = binding.lock().unwrap();
+        if !guard.contains_key(&server_id) {
+            guard.insert(server_id, 1);
         } else {
-            let mut ipm = IPM.lock().unwrap();
-            let value = ipm[&server_id];
-            ipm.remove(&server_id);
-            ipm.insert(server_id, value + 1);
+            let original = guard[&server_id];
+            guard.insert(server_id, original + 1);
         }
     }
     pub fn global_reset() {
         IPM.lock().unwrap().clear();
     }
 }
-
-static IPM: Lazy<Arc<Mutex<HashMap<u64, u16>>>> =
-    Lazy::new(|| Arc::new(Mutex::new(HashMap::new())));
 
 #[tokio::main]
 async fn main() {
