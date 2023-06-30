@@ -179,7 +179,10 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
 
     for (id, phrase) in &config.servers.get(&server_id).unwrap().block_phrases {
         let phrase =
-            String::from_utf8(general_purpose::STANDARD_NO_PAD.decode(&phrase).unwrap()).unwrap();
+            String::from_utf8(general_purpose::STANDARD_NO_PAD.decode(&phrase).log_expect(
+                LogImportance::Warning,
+                "Unable to decode regex phrase",
+            )).unwrap();
         let phrase = &phrase[..phrase.len() - 1];
         phrases.insert(id.parse::<Uuid>().unwrap(), phrase.to_string());
     }
