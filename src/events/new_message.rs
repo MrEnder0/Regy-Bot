@@ -15,7 +15,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
     //Reply to dm messages
     if new_message.guild_id.is_none() {
-        new_message.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:").await.log_expect(LogImportance::Warning, "Unable to reply to dm");
+        new_message.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of love to you :heart:").await.log_expect(LogImportance::Warning, "Unable to reply to dm");
         return;
     }
 
