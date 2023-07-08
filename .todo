@@ -81,6 +81,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Attomic server based IPM system
 
 # Release 14
+[ ] Automatic build and deploy off main branch option
 [ ] Regex package index (rpi)
     [ ] Package index
     [ ] Package searching
