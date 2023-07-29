@@ -18,6 +18,7 @@ pub async fn add_regex(
         || regex_phrase == " "
         || regex_phrase.len() < 3
         || regex_phrase.len() > 350
+        || regex_phrase == ".*+"
     {
         ctx.say("You need to specify a regex phrase to add; it cant be empty and it also must be between 3 and 350 characters long.")
             .await
