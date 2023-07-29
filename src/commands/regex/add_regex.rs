@@ -9,7 +9,6 @@ type Context<'a> = poise::Context<'a, Data, Error>;
     prefix_command,
     slash_command,
     user_cooldown = 10,
-    required_permissions = "ADMINISTRATOR"
 )]
 pub async fn add_regex(
     ctx: Context<'_>,

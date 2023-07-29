@@ -9,8 +9,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 #[poise::command(
     prefix_command,
     slash_command,
-    user_cooldown = 10,
-    required_permissions = "ADMINISTRATOR"
+    user_cooldown = 15,
 )]
 pub async fn remove_regex(
     ctx: Context<'_>,
