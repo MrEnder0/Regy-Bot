@@ -53,7 +53,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
     embed.title("Message blocked due to matching a set auto-mod pattern");
     embed.field(
         "The user who broke a auto-mod pattern is below:",
-        format!("{}", user),
+        format!("<@{}>", user.id),
         false,
     );
     embed.field(
