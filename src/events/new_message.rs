@@ -173,6 +173,8 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 temp_msg.delete(&ctx_clone.http).await.ok();
             });
 
+            //TODO: Change message to embed
+
             let dm_msg = format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
                                 The message which has been blocked is below:\n\
                                 ||{}||", new_message.content);
