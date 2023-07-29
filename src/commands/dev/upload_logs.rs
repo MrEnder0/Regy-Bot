@@ -39,7 +39,7 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
             .log_expect(LogImportance::Warning, "Unable to read log file");
         let file_name = log_file.split(" ").collect::<Vec<&str>>()[0];
         ctx.channel_id()
-            .send_files(ctx, vec![(log_file.as_bytes(), "logs.zip")], |m| {
+            .send_files(ctx, vec![(log_file.as_bytes(), "logs.log")], |m| {
                 m.content(format!("Logs for {}:", file_name))
             })
             .await
