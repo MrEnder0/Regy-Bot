@@ -82,6 +82,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 14
 [ ] Make word to regex converter
+[ ] Staff roles
 
 # Release 15
 [ ] Automatic build and deploy off main branch option
