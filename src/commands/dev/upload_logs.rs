@@ -31,7 +31,7 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
 
-        return Ok(())
+        return Ok(());
     }
 
     for file in std::fs::read_dir("logs").unwrap() {

@@ -5,11 +5,7 @@ use crate::{utils::toml, Data};
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(
-    prefix_command,
-    slash_command,
-    user_cooldown = 10,
-)]
+#[poise::command(prefix_command, slash_command, user_cooldown = 10)]
 pub async fn add_regex(
     ctx: Context<'_>,
     #[description = "Regex Phrase"] regex_phrase: String,
