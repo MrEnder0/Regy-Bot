@@ -74,7 +74,6 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 13
 [x] Config metadata version
-[ ] Make dm messages embeds
 [x] Offline detection and handling
 [x] Rewrite logging system
 [x] Fix issues with new regex id system
@@ -82,6 +81,8 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 14
 [ ] Make word to regex converter
+[ ] Make more replies embeds
+[ ] Make dm messages embeds
 [ ] Staff roles
 
 # Release 15
