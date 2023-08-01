@@ -21,6 +21,13 @@ pub async fn remove_staff(
     let server_id = ctx.guild_id().unwrap().0.to_string();
     let userid = user.clone().id;
 
+    if !toml::server_exists(server_id.clone()) {
+        ctx.say("Server does not exist in config")
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+        return Ok(());
+    }
+
     let remove_staff_status = toml::remove_staff(server_id, userid_to_u64(userid));
 
     match remove_staff_status {

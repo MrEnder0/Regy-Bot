@@ -5,12 +5,7 @@ use crate::{utils::toml, Data};
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(
-    prefix_command,
-    slash_command,
-    user_cooldown = 10,
-    required_permissions = "ADMINISTRATOR"
-)]
+#[poise::command(prefix_command, slash_command, user_cooldown = 10)]
 pub async fn add_regex(
     ctx: Context<'_>,
     #[description = "Regex Phrase"] regex_phrase: String,
@@ -19,6 +14,7 @@ pub async fn add_regex(
         || regex_phrase == " "
         || regex_phrase.len() < 3
         || regex_phrase.len() > 350
+        || regex_phrase == ".*+"
     {
         ctx.say("You need to specify a regex phrase to add; it cant be empty and it also must be between 3 and 350 characters long.")
             .await

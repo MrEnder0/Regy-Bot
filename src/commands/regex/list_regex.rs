@@ -14,8 +14,7 @@ struct Regex {
     prefix_command,
     slash_command,
     user_cooldown = 45,
-    channel_cooldown = 30,
-    required_permissions = "ADMINISTRATOR"
+    channel_cooldown = 30
 )]
 pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
     let status_msg = ctx

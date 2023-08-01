@@ -7,8 +7,8 @@ use uuid::Uuid;
 static CONFIG_VERSION: f32 = 2.1;
 
 #[derive(Serialize, Deserialize)]
-pub struct MetaData {
-    pub version: f32,
+struct MetaData {
+    version: f32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -21,19 +21,15 @@ pub struct GlobalOptions {
 
 #[derive(Serialize, Deserialize)]
 pub struct ServerOptions {
-    //user-id | infraction-count
     pub infractions: HashMap<String, u64>,
-    //uuid | phrase
     pub block_phrases: HashMap<String, String>,
-    //user-id
     pub staff: Vec<u64>,
-    //channel-id
     pub log_channel: u64,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-    pub meta: MetaData,
+    meta: MetaData,
     pub global: GlobalOptions,
     pub servers: HashMap<String, ServerOptions>,
 }
@@ -178,11 +174,12 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
     let mut phrases: HashMap<Uuid, String> = HashMap::new();
 
     for (id, phrase) in &config.servers.get(&server_id).unwrap().block_phrases {
-        let phrase =
-            String::from_utf8(general_purpose::STANDARD_NO_PAD.decode(&phrase).log_expect(
-                LogImportance::Warning,
-                "Unable to decode regex phrase",
-            )).unwrap();
+        let phrase = String::from_utf8(
+            general_purpose::STANDARD_NO_PAD
+                .decode(&phrase)
+                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
+        )
+        .unwrap();
         let phrase = &phrase[..phrase.len() - 1];
         phrases.insert(id.parse::<Uuid>().unwrap(), phrase.to_string());
     }
@@ -247,8 +244,6 @@ pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
 
 pub fn list_infractions(server_id: String, id: u64) -> Option<u64> {
     let mut config = read_config();
-    //let infractions = config.infractions.entry(id.to_string()).or_insert(0);
-    //*infractions
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -272,21 +267,6 @@ pub fn list_infractions(server_id: String, id: u64) -> Option<u64> {
 pub fn add_staff(server_id: String, id: u64) -> bool {
     let mut config = read_config();
 
-    //if config.staff.contains(&id.to_string()) {
-    //    false
-    //} else {
-    //    config.staff.push(id.to_string());
-    //    let toml = toml::to_string(&config).unwrap();
-    //    std::fs::write("config.toml", toml).unwrap();
-
-    //    log_this(LogData {
-    //        importance: LogImportance::Info,
-    //        message: format!("{} Has been added to the staff list.", id),
-    //    });
-
-    //    true
-    //}
-
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
         log_this(LogData {
@@ -309,21 +289,6 @@ pub fn add_staff(server_id: String, id: u64) -> bool {
 
 pub fn remove_staff(server_id: String, id: u64) -> bool {
     let mut config = read_config();
-
-    //if config.staff.contains(&id.to_string()) {
-    //    config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
-    //    let toml = toml::to_string(&config).unwrap();
-    //    std::fs::write("config.toml", toml).unwrap();
-
-    //    log_this(LogData {
-    //        importance: LogImportance::Info,
-    //        message: format!("{} Has been removed from the staff list.", id),
-    //    });
-
-    //    true
-    //} else {
-    //    false
-    //}
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -365,11 +330,6 @@ pub fn remove_staff(server_id: String, id: u64) -> bool {
 
 pub fn list_staff(server_id: String) -> Option<Vec<u64>> {
     let config = read_config();
-    //let mut staff: Vec<u64> = Vec::new();
-    //for id in config.staff {
-    //    staff.push(id.parse::<u64>().unwrap());
-    //}
-    //staff
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -390,20 +350,6 @@ pub fn list_staff(server_id: String) -> Option<Vec<u64>> {
 
 pub fn delete_user(server_id: String, id: u64) {
     let mut config = read_config();
-    //config.infractions.remove(&id.to_string());
-
-    ////Removes from staff list if they are on it
-    //if config.staff.iter().any(|x| *x == id.to_string()) {
-    //    config.staff.remove(config.staff.iter().position(|x| *x == id.to_string()).unwrap());
-
-    //    log_this(LogData {
-    //        importance: LogImportance::Info,
-    //        message: format!("{} Has been deleted from the staff list due to being banned.", id),
-    //    });
-    //}
-
-    //let toml = toml::to_string(&config).unwrap();
-    //std::fs::write("config.toml", toml).unwrap();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {

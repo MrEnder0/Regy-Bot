@@ -26,12 +26,20 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
+    if std::fs::read_dir("logs").unwrap().count() == 0 || std::fs::read_dir("logs").is_err() {
+        ctx.say("There are no logs to upload.")
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+
+        return Ok(());
+    }
+
     for file in std::fs::read_dir("logs").unwrap() {
         let log_file = std::fs::read_to_string(file.unwrap().path())
             .log_expect(LogImportance::Warning, "Unable to read log file");
         let file_name = log_file.split(" ").collect::<Vec<&str>>()[0];
         ctx.channel_id()
-            .send_files(ctx, vec![(log_file.as_bytes(), "logs.zip")], |m| {
+            .send_files(ctx, vec![(log_file.as_bytes(), "logs.log")], |m| {
                 m.content(format!("Logs for {}:", file_name))
             })
             .await
