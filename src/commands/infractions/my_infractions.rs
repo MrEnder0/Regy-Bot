@@ -13,6 +13,13 @@ pub async fn my_infractions(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
     let user_id = userid_to_u64(ctx.author().id);
 
+    if !toml::server_exists(server_id.clone()) {
+        ctx.say("Server does not exist in config")
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+        return Ok(());
+    }
+
     let user_infractions = toml::list_infractions(server_id, user_id);
 
     match user_infractions {
