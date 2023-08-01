@@ -13,6 +13,14 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 )]
 pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().0.to_string();
+
+    if !toml::server_exists(server_id.clone()) {
+        ctx.say("Server does not exist in config")
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+        return Ok(());
+    }
+    
     let staff = toml::list_staff(server_id);
 
     match staff {
