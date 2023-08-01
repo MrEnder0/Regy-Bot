@@ -20,7 +20,7 @@ pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
             .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
-    
+
     let staff = toml::list_staff(server_id);
 
     match staff {
