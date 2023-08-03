@@ -5,7 +5,7 @@ use poise::{
 use regex::Regex;
 use scorched::*;
 
-use crate::{utils::toml::*, IpmStruct};
+use crate::{utils::{toml::*, word_prep::*}, IpmStruct};
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
     //ignore messages from bots
@@ -57,10 +57,12 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
         }
     }
 
+    let filtered_message = filter_characters(&new_message.content.to_lowercase());
+
     let block_phrases_hashmap = list_regex(server_id);
     for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
         let re = Regex::new(&phrase).unwrap();
-        if re.is_match(&new_message.content) {
+        if re.is_match(&filtered_message) {
             if let Err(why) = new_message.delete(&ctx.http).await {
                 println!("Error deleting message: {:?}", why);
             }

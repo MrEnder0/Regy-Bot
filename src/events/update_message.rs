@@ -5,7 +5,7 @@ use poise::{
 use regex::Regex;
 use scorched::*;
 
-use crate::{utils::toml::*, IpmStruct};
+use crate::{utils::{toml::*, word_prep::*}, IpmStruct};
 
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
     let updated_message = event.content.clone().log_expect(
@@ -56,10 +56,12 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
         }
     }
 
+    let filtered_message = filter_characters(&updated_message.to_lowercase());
+
     let block_phrases_hashmap = list_regex(guild_id.unwrap().to_string());
     for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
         let re = Regex::new(&phrase).unwrap();
-        if re.is_match(&updated_message) {
+        if re.is_match(&filtered_message) {
             if let Err(why) = channel_id.delete_message(&ctx.http, message_id).await {
                 println!("Error deleting message: {:?}", why);
             }
