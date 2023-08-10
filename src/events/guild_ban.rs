@@ -1,6 +1,6 @@
 use poise::serenity_prelude::{GuildId, User};
 
-use crate::utils::toml::*;
+use crate::utils::config::*;
 
 pub async fn guild_ban_event(server_id: GuildId, banned_user: &User) {
     //Check if server exists in config

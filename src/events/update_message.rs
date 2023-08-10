@@ -6,7 +6,7 @@ use regex::Regex;
 use scorched::*;
 
 use crate::{
-    utils::{toml::*, word_prep::*},
+    utils::{config::*, word_prep::*},
     IpmStruct,
 };
 

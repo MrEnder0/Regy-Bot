@@ -1,7 +1,7 @@
 use scorched::*;
 
 use crate::{
-    utils::toml::{add_regex, list_regex, server_exists},
+    utils::config::{add_regex, list_regex, server_exists},
     Data,
 };
 

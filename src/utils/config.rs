@@ -65,6 +65,7 @@ pub fn gen_config() {
 pub fn read_config() -> Config {
     let toml = std::fs::read_to_string("config.toml").unwrap();
     let config: Config = toml::from_str(&toml).unwrap();
+
     config
 }
 
@@ -72,10 +73,12 @@ pub fn check_config() {
     let config = read_config();
     if config.meta.version != CONFIG_VERSION {
         log_this(LogData {
-            importance: LogImportance::Warning,
+            importance: LogImportance::Error,
             message: "Config file is out of date. Please delete it and restart the bot to regenerate a new config.".to_string(),
         });
         std::process::exit(0);
+
+        //TODO: Add config updater
     }
 }
 
