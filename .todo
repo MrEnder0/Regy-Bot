@@ -81,15 +81,15 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 14
 [x] Message character cleaning
-[ ] Make more replies embeds
-[ ] Make dm messages embeds
+[ ] Ron config language support
 [o] Regex template index (rti)
     [o] Rti core util
     [ ] add regex template command
 
 # Release 15
 [ ] Config auto cleaning
-[ ] Ron config language support
+[ ] Make more replies embeds
+[ ] Make dm messages embeds
 [ ] Staff roles
 
 # Release 16
