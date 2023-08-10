@@ -7,6 +7,7 @@ Seamless automation using regex moderation.
 ## Important info
 
 * MSRV Policy 1.67.1 (Last checked 8/5/23)
+* Built to run on Windows; Linux is untested
 * Made for IrwinTechs discord server
 
 ## Features
