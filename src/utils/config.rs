@@ -53,8 +53,8 @@ pub fn gen_config() {
         servers: HashMap::new(),
     };
     //Write base config to file
-    let toml = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", toml).unwrap();
+    let config = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", config).unwrap();
 
     log_this(LogData {
         importance: LogImportance::Info,
@@ -63,8 +63,8 @@ pub fn gen_config() {
 }
 
 pub fn read_config() -> Config {
-    let toml = std::fs::read_to_string("config.toml").unwrap();
-    let config: Config = toml::from_str(&toml).unwrap();
+    let config = std::fs::read_to_string("config.toml").unwrap();
+    let config = toml::from_str(&config).unwrap();
 
     config
 }
@@ -94,8 +94,8 @@ pub fn gen_server(guid_id: String, log_channel: u64) {
             log_channel: log_channel,
         },
     );
-    let toml = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", toml).unwrap();
+    let config = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", config).unwrap();
 
     log_this(LogData {
         importance: LogImportance::Info,
@@ -132,8 +132,8 @@ pub fn add_regex(server_id: String, phrase: String) -> bool {
             Uuid::new_v4().to_string(),
             general_purpose::STANDARD_NO_PAD.encode(&phrase),
         );
-    let toml = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", toml).unwrap();
+    let config = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", config).unwrap();
 
     true
 }
@@ -156,8 +156,8 @@ pub fn remove_regex(server_id: String, id: Uuid) -> bool {
         .unwrap()
         .block_phrases
         .remove(&id.to_string());
-    let toml = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", toml).unwrap();
+    let config = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", config).unwrap();
 
     true
 }
@@ -210,8 +210,8 @@ pub fn add_infraction(server_id: String, id: u64) -> bool {
         .entry(id.to_string())
         .or_insert(0);
     *infractions += 1;
-    let toml = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", toml).unwrap();
+    let config = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", config).unwrap();
 
     true
 }
@@ -283,8 +283,8 @@ pub fn add_staff(server_id: String, id: u64) -> bool {
         false
     } else {
         config.servers.get_mut(&server_id).unwrap().staff.push(id);
-        let toml = toml::to_string(&config).unwrap();
-        std::fs::write("config.toml", toml).unwrap();
+        let config = toml::to_string(&config).unwrap();
+        std::fs::write("config.toml", config).unwrap();
 
         true
     }
@@ -317,8 +317,8 @@ pub fn remove_staff(server_id: String, id: u64) -> bool {
             .unwrap()
             .staff
             .remove(user_index);
-        let toml = toml::to_string(&config).unwrap();
-        std::fs::write("config.toml", toml).unwrap();
+        let config = toml::to_string(&config).unwrap();
+        std::fs::write("config.toml", config).unwrap();
 
         log_this(LogData {
             importance: LogImportance::Info,
@@ -390,6 +390,6 @@ pub fn delete_user(server_id: String, id: u64) {
         remove_staff(server_id.clone(), id);
     }
 
-    let toml = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", toml).unwrap();
+    let config = toml::to_string(&config).unwrap();
+    std::fs::write("config.toml", config).unwrap();
 }
