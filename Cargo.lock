@@ -947,7 +947,7 @@ checksum = "e5ea92a5b6195c6ef2a0295ea818b312502c6fc94dde986c5553242e18fd4ce2"
 
 [[package]]
 name = "regy_bot"
-version = "1.13.1"
+version = "1.13.6"
 dependencies = [
  "base64 0.21.2",
  "owo-colors",
