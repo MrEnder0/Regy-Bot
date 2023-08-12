@@ -1,4 +1,6 @@
 /target
 config.toml
+config.toml.bak
+config.ron
 *.log
 *.exe
