@@ -9,7 +9,7 @@ fn main() {
         importance: LogImportance::Info,
         message: "[Update Helper] Waiting for Regy to fully shutdown.".to_string(),
     });
-    std::thread::sleep(Duration::from_secs(3));
+    std::thread::sleep(Duration::from_secs(2));
 
     let regy_bin = "regy_bot.exe";
 
