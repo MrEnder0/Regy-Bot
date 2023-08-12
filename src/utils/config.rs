@@ -1,14 +1,16 @@
 use base64::{engine::general_purpose, Engine as _};
 use scorched::*;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, path::Path, fs::File};
 use uuid::Uuid;
+use ron::{self, ser::{PrettyConfig, to_string_pretty}, de::from_reader};
+use toml;
 
-static CONFIG_VERSION: f32 = 2.1;
+static CONFIG_VERSION: u16 = 5;
 
 #[derive(Serialize, Deserialize)]
 struct MetaData {
-    version: f32,
+    version: u16
 }
 
 #[derive(Serialize, Deserialize)]
@@ -40,7 +42,8 @@ pub fn gen_config() {
         Uuid::new_v4(),
         general_purpose::STANDARD_NO_PAD.encode("regy test phrase"),
     );
-    let config = Config {
+
+    let data = Config {
         meta: MetaData {
             version: CONFIG_VERSION,
         },
@@ -52,9 +55,15 @@ pub fn gen_config() {
         },
         servers: HashMap::new(),
     };
+
     //Write base config to file
-    let config = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", config).unwrap();
+    let config = PrettyConfig::new()
+        .depth_limit(3)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
 
     log_this(LogData {
         importance: LogImportance::Info,
@@ -63,8 +72,18 @@ pub fn gen_config() {
 }
 
 pub fn read_config() -> Config {
-    let config = std::fs::read_to_string("config.toml").unwrap();
-    let config = toml::from_str(&config).unwrap();
+    let config_file = File::open("config.ron").log_expect(LogImportance::Error, "Config file not found");
+    let config: Config = match from_reader(config_file) {
+        Ok(x) => x,
+        Err(e) => {
+            log_this(LogData {
+                importance: LogImportance::Error,
+                message: format!("Unable to read config file, shutting down: {}", e),
+            });
+
+            std::process::exit(0);
+        }
+    };
 
     config
 }
@@ -73,19 +92,19 @@ pub fn check_config() {
     let config = read_config();
     if config.meta.version != CONFIG_VERSION {
         log_this(LogData {
-            importance: LogImportance::Error,
-            message: "Config file is out of date. Please delete it and restart the bot to regenerate a new config.".to_string(),
+            importance: LogImportance::Info,
+            message: "Config file is out of date, updating config.".to_string(),
         });
-        std::process::exit(0);
+        update_config();
 
-        //TODO: Add config updater
+        std::process::exit(0);
     }
 }
 
 pub fn gen_server(guid_id: String, log_channel: u64) {
-    let mut config = read_config();
+    let mut data = read_config();
     let guild_id = guid_id.clone();
-    config.servers.insert(
+    data.servers.insert(
         guild_id,
         ServerOptions {
             infractions: HashMap::new(),
@@ -94,8 +113,14 @@ pub fn gen_server(guid_id: String, log_channel: u64) {
             log_channel: log_channel,
         },
     );
-    let config = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", config).unwrap();
+
+    let config = PrettyConfig::new()
+        .depth_limit(3)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
 
     log_this(LogData {
         importance: LogImportance::Info,
@@ -107,12 +132,12 @@ pub fn gen_server(guid_id: String, log_channel: u64) {
 }
 
 pub fn server_exists(guid_id: String) -> bool {
-    let config = read_config();
-    config.servers.contains_key(&guid_id)
+    let data = read_config();
+    data.servers.contains_key(&guid_id)
 }
 
 pub fn add_regex(server_id: String, phrase: String) -> bool {
-    let mut config = read_config();
+    let mut data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -123,23 +148,26 @@ pub fn add_regex(server_id: String, phrase: String) -> bool {
         return false;
     }
 
-    config
-        .servers
+    let id = Uuid::new_v4();
+    data.servers
         .get_mut(&server_id)
         .unwrap()
         .block_phrases
-        .insert(
-            Uuid::new_v4().to_string(),
-            general_purpose::STANDARD_NO_PAD.encode(&phrase),
-        );
-    let config = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", config).unwrap();
+        .insert(id.to_string(), general_purpose::STANDARD_NO_PAD.encode(&phrase));
+
+    let config = PrettyConfig::new()
+        .depth_limit(3)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
 
     true
 }
 
 pub fn remove_regex(server_id: String, id: Uuid) -> bool {
-    let mut config = read_config();
+    let mut data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -150,48 +178,55 @@ pub fn remove_regex(server_id: String, id: Uuid) -> bool {
         return false;
     }
 
-    config
+    if data
         .servers
-        .get_mut(&server_id)
+        .get(&server_id)
         .unwrap()
         .block_phrases
-        .remove(&id.to_string());
-    let config = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", config).unwrap();
+        .contains_key(&id.to_string())
+    {
+        data.servers
+            .get_mut(&server_id)
+            .unwrap()
+            .block_phrases
+            .remove(&id.to_string());
+
+        let config = PrettyConfig::new()
+            .depth_limit(3)
+            .separate_tuple_members(true)
+            .enumerate_arrays(true);
+
+        let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+        std::fs::write("config.ron", config_str).unwrap();
+    } else {
+        return false;
+    }
 
     true
 }
 
 pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
-    let config = read_config();
+    let data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
         log_this(LogData {
             importance: LogImportance::Warning,
-            message: format!("A server with the id {} does not exist.", server_id),
+            message: format!("A server with the id '{}' does not exist or does not have any regex phrases.", server_id),
         });
         return None;
     }
 
     let mut phrases: HashMap<Uuid, String> = HashMap::new();
-
-    for (id, phrase) in &config.servers.get(&server_id).unwrap().block_phrases {
-        let phrase = String::from_utf8(
-            general_purpose::STANDARD_NO_PAD
-                .decode(&phrase)
-                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
-        )
-        .unwrap();
-        let phrase = &phrase[..phrase.len() - 1];
-        phrases.insert(id.parse::<Uuid>().unwrap(), phrase.to_string());
+    for (key, value) in &data.servers.get(&server_id).unwrap().block_phrases {
+        phrases.insert(Uuid::parse_str(key).unwrap(), String::from_utf8(general_purpose::STANDARD_NO_PAD.decode(value).unwrap()).unwrap());
     }
 
     Some(phrases)
 }
 
 pub fn add_infraction(server_id: String, id: u64) -> bool {
-    let mut config = read_config();
+    let mut data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -202,7 +237,7 @@ pub fn add_infraction(server_id: String, id: u64) -> bool {
         return false;
     }
 
-    let infractions = config
+    let infractions = data
         .servers
         .get_mut(&server_id)
         .unwrap()
@@ -210,14 +245,20 @@ pub fn add_infraction(server_id: String, id: u64) -> bool {
         .entry(id.to_string())
         .or_insert(0);
     *infractions += 1;
-    let config = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", config).unwrap();
+
+    let config = PrettyConfig::new()
+        .depth_limit(3)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
 
     true
 }
 
 pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
-    let mut config = read_config();
+    let mut data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -228,18 +269,36 @@ pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
         return false;
     }
 
-    let infractions = config
+    if data
         .servers
-        .get_mut(&server_id)
+        .get(&server_id)
         .unwrap()
         .infractions
-        .entry(id.to_string())
-        .or_insert(1);
+        .contains_key(&id.to_string())
+    {
+        let infractions = data
+            .servers
+            .get_mut(&server_id)
+            .unwrap()
+            .infractions
+            .entry(id.to_string())
+            .or_insert(0);
+        
+        if *infractions > 0 {
+            *infractions -= 1;
+        } else {
+            return false;
+        }
 
-    if *infractions == 0 {
-        return false;
+        let config = PrettyConfig::new()
+            .depth_limit(3)
+            .separate_tuple_members(true)
+            .enumerate_arrays(true);
+
+        let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+        std::fs::write("config.ron", config_str).unwrap();
     } else {
-        *infractions -= 1;
+        return false;
     }
 
     true
@@ -264,11 +323,12 @@ pub fn list_infractions(server_id: String, id: u64) -> Option<u64> {
         .infractions
         .entry(id.to_string())
         .or_insert(0);
+
     Some(*infractions)
 }
 
 pub fn add_staff(server_id: String, id: u64) -> bool {
-    let mut config = read_config();
+    let mut data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -279,19 +339,25 @@ pub fn add_staff(server_id: String, id: u64) -> bool {
         return false;
     }
 
-    if config.servers.get(&server_id).unwrap().staff.contains(&id) {
+    if data.servers.get(&server_id).unwrap().staff.contains(&id) {
         false
     } else {
-        config.servers.get_mut(&server_id).unwrap().staff.push(id);
-        let config = toml::to_string(&config).unwrap();
-        std::fs::write("config.toml", config).unwrap();
+        data.servers.get_mut(&server_id).unwrap().staff.push(id);
+        
+        let config = PrettyConfig::new()
+            .depth_limit(3)
+            .separate_tuple_members(true)
+            .enumerate_arrays(true);
+
+        let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+        std::fs::write("config.ron", config_str).unwrap();
 
         true
     }
 }
 
 pub fn remove_staff(server_id: String, id: u64) -> bool {
-    let mut config = read_config();
+    let mut data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -302,28 +368,16 @@ pub fn remove_staff(server_id: String, id: u64) -> bool {
         return false;
     }
 
-    if config.servers.get(&server_id).unwrap().staff.contains(&id) {
-        let user_index = config
-            .servers
-            .get(&server_id)
-            .unwrap()
-            .staff
-            .iter()
-            .position(|x| *x == id)
-            .unwrap();
-        config
-            .servers
-            .get_mut(&server_id)
-            .unwrap()
-            .staff
-            .remove(user_index);
-        let config = toml::to_string(&config).unwrap();
-        std::fs::write("config.toml", config).unwrap();
+    if data.servers.get(&server_id).unwrap().staff.contains(&id) {
+        data.servers.get_mut(&server_id).unwrap().staff.retain(|&x| x != id);
 
-        log_this(LogData {
-            importance: LogImportance::Info,
-            message: format!("{} Has been removed from the staff list.", id),
-        });
+        let config = PrettyConfig::new()
+            .depth_limit(3)
+            .separate_tuple_members(true)
+            .enumerate_arrays(true);
+
+        let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+        std::fs::write("config.ron", config_str).unwrap();
 
         true
     } else {
@@ -352,7 +406,7 @@ pub fn list_staff(server_id: String) -> Option<Vec<u64>> {
 }
 
 pub fn delete_user(server_id: String, id: u64) {
-    let mut config = read_config();
+    let mut data = read_config();
 
     //Checks if server exists
     if server_exists(server_id.clone()) == false {
@@ -363,14 +417,14 @@ pub fn delete_user(server_id: String, id: u64) {
     }
 
     //Checks if user is on infraction list and removes them if they are
-    if config
+    if data
         .servers
         .get(&server_id)
         .unwrap()
         .infractions
         .contains_key(&id.to_string())
     {
-        config
+        data
             .servers
             .get_mut(&server_id)
             .unwrap()
@@ -379,7 +433,7 @@ pub fn delete_user(server_id: String, id: u64) {
     }
 
     //Checks if user is on staff list and removes them if they are
-    if config
+    if data
         .servers
         .get(&server_id)
         .unwrap()
@@ -390,6 +444,97 @@ pub fn delete_user(server_id: String, id: u64) {
         remove_staff(server_id.clone(), id);
     }
 
-    let config = toml::to_string(&config).unwrap();
-    std::fs::write("config.toml", config).unwrap();
+    let config = PrettyConfig::new()
+        .depth_limit(3)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
+}
+
+pub fn update_config() {
+    if !Path::new("config.ron").exists() {
+        if Path::new("config.toml").exists() {
+            log_this(LogData {
+                importance: LogImportance::Info,
+                message: "Legacy Toml config found, updating to ron config format.".to_string(),
+            });
+
+            std::fs::rename("config.toml", "config.toml.bak").unwrap();
+
+            let old_config_file = std::fs::read_to_string("config.toml.bak").unwrap();
+            let config_data: toml::Value = toml::from_str(&old_config_file).unwrap();
+
+            //convert config_data to new config format
+            let mut converted_config_data = Config {
+                meta: MetaData {
+                    version: CONFIG_VERSION,
+                },
+                global: GlobalOptions {
+                    token: config_data["global"]["token"].as_str().unwrap().to_string(),
+                    user_delete_on_ban: config_data["global"]["user_delete_on_ban"]
+                        .as_bool()
+                        .unwrap(),
+                    max_activity_influx: config_data["global"]["max_activity_influx"]
+                        .as_integer()
+                        .unwrap() as u16,
+                    allow_shutdown: config_data["global"]["allow_shutdown"]
+                        .as_bool()
+                        .unwrap(),
+                },
+                servers: HashMap::new(),
+            };
+
+            //convert servers
+            for (key, value) in config_data["servers"].as_table().unwrap() {
+                let mut server_options = ServerOptions {
+                    infractions: HashMap::new(),
+                    block_phrases: HashMap::new(),
+                    staff: Vec::new(),
+                    log_channel: value["log_channel"].as_integer().unwrap() as u64,
+                };
+
+                //convert infractions
+                for (key, value) in value["infractions"].as_table().unwrap() {
+                    server_options
+                        .infractions
+                        .insert(key.to_string(), value.as_integer().unwrap() as u64);
+                }
+
+                //convert block_phrases
+                for (key, value) in value["block_phrases"].as_table().unwrap() {
+                    server_options.block_phrases.insert(
+                        key.to_string(),
+                        general_purpose::STANDARD_NO_PAD
+                            .encode(value.as_str().unwrap()),
+                    );
+                }
+
+                //convert staff
+                for value in value["staff"].as_array().unwrap() {
+                    server_options.staff.push(value.as_integer().unwrap() as u64);
+                }
+
+                converted_config_data.servers.insert(key.to_string(), server_options);
+            }
+
+            let config = PrettyConfig::new()
+                .depth_limit(3)
+                .separate_tuple_members(true)
+                .enumerate_arrays(true);
+            let new_config = to_string_pretty(&converted_config_data, config).expect("Serialization failed");
+
+            std::fs::write("config.ron", new_config).unwrap();
+
+        } else {
+            log_this(LogData {
+                importance: LogImportance::Error,
+                message: "Config file not found, generating default.".to_string(),
+            });
+            gen_config();
+            std::process::exit(0);
+        }
+    }
+    
 }
