@@ -84,7 +84,10 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Ron config language support
 [o] Regex template index (rti)
     [o] Rti core util
-    [ ] add regex template command
+    [ ] add regex template commands
+        [ ] Add rti package
+        [ ] Remove rti package
+        [ ] Update rti packages
 
 # Release 15
 [ ] Config auto cleaning
