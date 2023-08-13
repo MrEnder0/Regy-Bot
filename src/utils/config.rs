@@ -526,9 +526,11 @@ pub fn update_config() {
 
                 //convert block_phrases
                 for (key, value) in value["block_phrases"].as_table().unwrap() {
+                    let cleaned_value = &value.to_string()[1..value.to_string().len() - 1];
+
                     server_options
                         .block_phrases
-                        .insert(key.to_string(), value.to_string());
+                        .insert(key.to_string(), cleaned_value.to_string());
                 }
 
                 //convert staff
