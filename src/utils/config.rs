@@ -569,6 +569,7 @@ pub fn update_config() {
 
         //Commented due to lack of any ron based config updates
 
+        /*
         while read_config().meta.version < CONFIG_VERSION {
             match read_config().meta.version {
                 5 => {
@@ -596,5 +597,6 @@ pub fn update_config() {
                 }
             }
         }
+        */
     }
 }
