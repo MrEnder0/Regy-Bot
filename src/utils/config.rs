@@ -561,5 +561,31 @@ pub fn update_config() {
             gen_config();
             std::process::exit(0);
         }
+    } else {
+        log_this(LogData {
+            importance: LogImportance::Info,
+            message: "Updating ron based config version, this is necessary to implement new features into Regy, it may take a few updates to get up to date.".to_string(),
+        });
+
+        //TODO: Add loopback for case of multiple config updates needing to be applied
+
+        //Commented due to lack of any ron based config updates
+        /*
+        match read_config().meta.version {
+            5 => {
+                log_this(LogData {
+                    importance: LogImportance::Info,
+                    message: "Updating config version 5 to 6, this config patch adds support for staff roles.".to_string(),
+                });
+            }
+            _ => {
+                log_this(LogData {
+                    importance: LogImportance::Error,
+                    message: "Unknown config version, unable to update config.".to_string(),
+                });
+                std::process::exit(0);
+            }
+        }
+        */
     }
 }
