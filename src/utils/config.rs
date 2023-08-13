@@ -219,7 +219,8 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
 
     let mut phrases: HashMap<Uuid, String> = HashMap::new();
     for (key, value) in &data.servers.get(&server_id).unwrap().block_phrases {
-        phrases.insert(Uuid::parse_str(key).unwrap(), String::from_utf8(general_purpose::STANDARD_NO_PAD.decode(value).unwrap()).unwrap());
+        let phrase = String::from_utf8(general_purpose::STANDARD_NO_PAD.decode(value).unwrap()).unwrap();
+        phrases.insert(Uuid::parse_str(key).unwrap(), phrase[..phrase.len() - 1].to_owned());
     }
 
     Some(phrases)
