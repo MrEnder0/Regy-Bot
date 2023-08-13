@@ -16,8 +16,12 @@ pub struct Data {}
 #[tokio::main]
 async fn main() {
     //check for config file
-    if !Path::new("config.toml").exists() {
-        gen_config();
+    if !Path::new("config.ron").exists() {
+        if Path::new("config.toml").exists() {
+            update_config();
+        } else {
+            gen_config();
+        }
     }
 
     check_config();
