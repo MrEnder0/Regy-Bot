@@ -1,6 +1,6 @@
+use chrono::Local;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
-use chrono::Local;
 
 pub struct LogData {
     pub importance: String,
@@ -16,5 +16,13 @@ pub fn log_this(data: LogData) {
         .create(true)
         .open("regy.log");
 
-    file.unwrap().write_all(format!("{} [{}] {}\n", formatted_time, data.importance, data.message).as_bytes()).unwrap();
+    file.unwrap()
+        .write_all(
+            format!(
+                "{} [{}] {}\n",
+                formatted_time, data.importance, data.message
+            )
+            .as_bytes(),
+        )
+        .unwrap();
 }

@@ -70,19 +70,13 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
         "remove_regex" => {
             let id = args.next().unwrap_or("none");
             if id == "none" {
-                msg.reply(
-                    ctx,
-                    "You need to specify a UUID you silly kitten :heart:",
-                )
-                .await?;
+                msg.reply(ctx, "You need to specify a UUID you silly kitten :heart:")
+                    .await?;
                 return Ok(());
             }
             let id = id.parse::<Uuid>().unwrap();
             toml::remove_block_phrase(id);
-            let status_message = format!(
-                "Removed the regex phrase with UUID: {}",
-                id
-            );
+            let status_message = format!("Removed the regex phrase with UUID: {}", id);
             msg.reply(ctx, status_message).await?;
             return Ok(());
         }
@@ -135,7 +129,8 @@ async fn staff(ctx: &Context, msg: &Message) -> CommandResult {
             }
             let user_id = user_id.parse::<u64>().unwrap();
             toml::add_infraction(user_id);
-            msg.reply(ctx, "Added infraction to the specified user.").await?;
+            msg.reply(ctx, "Added infraction to the specified user.")
+                .await?;
             return Ok(());
         }
         "list_infractions" => {
