@@ -574,8 +574,18 @@ pub fn update_config() {
                 5 => {
                     log_this(LogData {
                         importance: LogImportance::Info,
-                        message: "Updating config version 5 to 6, this config patch adds support for staff roles.".to_string(),
+                        message: "Updating config version 5 to 6, this config patch adds support for rti packages.".to_string(),
                     });
+
+                    //TODO: Add rti package support
+                }
+                6 => {
+                    log_this(LogData {
+                        importance: LogImportance::Info,
+                        message: "Updating config version 6 to 7, this config patch adds support for staff roles.".to_string(),
+                    });
+
+                    //TODO: Add staff role support
                 }
                 _ => {
                     log_this(LogData {
