@@ -1,16 +1,20 @@
 use base64::{engine::general_purpose, Engine as _};
+use ron::{
+    self,
+    de::from_reader,
+    ser::{to_string_pretty, PrettyConfig},
+};
 use scorched::*;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, path::Path, fs::File};
-use uuid::Uuid;
-use ron::{self, ser::{PrettyConfig, to_string_pretty}, de::from_reader};
+use std::{collections::HashMap, fs::File, path::Path};
 use toml;
+use uuid::Uuid;
 
 static CONFIG_VERSION: u16 = 5;
 
 #[derive(Serialize, Deserialize)]
 struct MetaData {
-    version: u16
+    version: u16,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -72,7 +76,8 @@ pub fn gen_config() {
 }
 
 pub fn read_config() -> Config {
-    let config_file = File::open("config.ron").log_expect(LogImportance::Error, "Config file not found");
+    let config_file =
+        File::open("config.ron").log_expect(LogImportance::Error, "Config file not found");
     let config: Config = match from_reader(config_file) {
         Ok(x) => x,
         Err(e) => {
@@ -153,7 +158,10 @@ pub fn add_regex(server_id: String, phrase: String) -> bool {
         .get_mut(&server_id)
         .unwrap()
         .block_phrases
-        .insert(id.to_string(), general_purpose::STANDARD_NO_PAD.encode(&phrase));
+        .insert(
+            id.to_string(),
+            general_purpose::STANDARD_NO_PAD.encode(&phrase),
+        );
 
     let config = PrettyConfig::new()
         .depth_limit(4)
@@ -212,15 +220,27 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
     if server_exists(server_id.clone()) == false {
         log_this(LogData {
             importance: LogImportance::Warning,
-            message: format!("A server with the id '{}' does not exist or does not have any regex phrases.", server_id),
+            message: format!(
+                "A server with the id '{}' does not exist or does not have any regex phrases.",
+                server_id
+            ),
         });
         return None;
     }
 
     let mut phrases: HashMap<Uuid, String> = HashMap::new();
     for (key, value) in &data.servers.get(&server_id).unwrap().block_phrases {
-        let phrase = String::from_utf8(general_purpose::STANDARD_NO_PAD.decode(value).unwrap()).unwrap();
-        phrases.insert(Uuid::parse_str(key).unwrap(), phrase[..phrase.len() - 1].to_owned());
+        let phrase = String::from_utf8(
+            general_purpose::STANDARD_NO_PAD
+                .decode(&value)
+                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
+        )
+        .unwrap();
+
+        phrases.insert(
+            Uuid::parse_str(key).unwrap(),
+            phrase[..phrase.len() - 1].to_owned(),
+        );
     }
 
     Some(phrases)
@@ -284,7 +304,7 @@ pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
             .infractions
             .entry(id.to_string())
             .or_insert(0);
-        
+
         if *infractions > 0 {
             *infractions -= 1;
         } else {
@@ -344,7 +364,7 @@ pub fn add_staff(server_id: String, id: u64) -> bool {
         false
     } else {
         data.servers.get_mut(&server_id).unwrap().staff.push(id);
-        
+
         let config = PrettyConfig::new()
             .depth_limit(4)
             .separate_tuple_members(true)
@@ -370,7 +390,11 @@ pub fn remove_staff(server_id: String, id: u64) -> bool {
     }
 
     if data.servers.get(&server_id).unwrap().staff.contains(&id) {
-        data.servers.get_mut(&server_id).unwrap().staff.retain(|&x| x != id);
+        data.servers
+            .get_mut(&server_id)
+            .unwrap()
+            .staff
+            .retain(|&x| x != id);
 
         let config = PrettyConfig::new()
             .depth_limit(4)
@@ -425,8 +449,7 @@ pub fn delete_user(server_id: String, id: u64) {
         .infractions
         .contains_key(&id.to_string())
     {
-        data
-            .servers
+        data.servers
             .get_mut(&server_id)
             .unwrap()
             .infractions
@@ -480,9 +503,7 @@ pub fn update_config() {
                     max_activity_influx: config_data["global"]["max_activity_influx"]
                         .as_integer()
                         .unwrap() as u16,
-                    allow_shutdown: config_data["global"]["allow_shutdown"]
-                        .as_bool()
-                        .unwrap(),
+                    allow_shutdown: config_data["global"]["allow_shutdown"].as_bool().unwrap(),
                 },
                 servers: HashMap::new(),
             };
@@ -505,29 +526,31 @@ pub fn update_config() {
 
                 //convert block_phrases
                 for (key, value) in value["block_phrases"].as_table().unwrap() {
-                    server_options.block_phrases.insert(
-                        key.to_string(),
-                        general_purpose::STANDARD_NO_PAD
-                            .encode(value.as_str().unwrap()),
-                    );
+                    server_options
+                        .block_phrases
+                        .insert(key.to_string(), value.to_string());
                 }
 
                 //convert staff
                 for value in value["staff"].as_array().unwrap() {
-                    server_options.staff.push(value.as_integer().unwrap() as u64);
+                    server_options
+                        .staff
+                        .push(value.as_integer().unwrap() as u64);
                 }
 
-                converted_config_data.servers.insert(key.to_string(), server_options);
+                converted_config_data
+                    .servers
+                    .insert(key.to_string(), server_options);
             }
 
             let config = PrettyConfig::new()
                 .depth_limit(4)
                 .separate_tuple_members(true)
                 .enumerate_arrays(true);
-            let new_config = to_string_pretty(&converted_config_data, config).expect("Serialization failed");
+            let new_config =
+                to_string_pretty(&converted_config_data, config).expect("Serialization failed");
 
             std::fs::write("config.ron", new_config).unwrap();
-
         } else {
             log_this(LogData {
                 importance: LogImportance::Error,
@@ -537,5 +560,4 @@ pub fn update_config() {
             std::process::exit(0);
         }
     }
-    
 }
