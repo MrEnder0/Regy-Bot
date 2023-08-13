@@ -58,7 +58,7 @@ pub fn gen_config() {
 
     //Write base config to file
     let config = PrettyConfig::new()
-        .depth_limit(3)
+        .depth_limit(4)
         .separate_tuple_members(true)
         .enumerate_arrays(true);
 
@@ -115,7 +115,7 @@ pub fn gen_server(guid_id: String, log_channel: u64) {
     );
 
     let config = PrettyConfig::new()
-        .depth_limit(3)
+        .depth_limit(4)
         .separate_tuple_members(true)
         .enumerate_arrays(true);
 
@@ -156,7 +156,7 @@ pub fn add_regex(server_id: String, phrase: String) -> bool {
         .insert(id.to_string(), general_purpose::STANDARD_NO_PAD.encode(&phrase));
 
     let config = PrettyConfig::new()
-        .depth_limit(3)
+        .depth_limit(4)
         .separate_tuple_members(true)
         .enumerate_arrays(true);
 
@@ -192,7 +192,7 @@ pub fn remove_regex(server_id: String, id: Uuid) -> bool {
             .remove(&id.to_string());
 
         let config = PrettyConfig::new()
-            .depth_limit(3)
+            .depth_limit(4)
             .separate_tuple_members(true)
             .enumerate_arrays(true);
 
@@ -248,7 +248,7 @@ pub fn add_infraction(server_id: String, id: u64) -> bool {
     *infractions += 1;
 
     let config = PrettyConfig::new()
-        .depth_limit(3)
+        .depth_limit(4)
         .separate_tuple_members(true)
         .enumerate_arrays(true);
 
@@ -292,7 +292,7 @@ pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
         }
 
         let config = PrettyConfig::new()
-            .depth_limit(3)
+            .depth_limit(4)
             .separate_tuple_members(true)
             .enumerate_arrays(true);
 
@@ -346,7 +346,7 @@ pub fn add_staff(server_id: String, id: u64) -> bool {
         data.servers.get_mut(&server_id).unwrap().staff.push(id);
         
         let config = PrettyConfig::new()
-            .depth_limit(3)
+            .depth_limit(4)
             .separate_tuple_members(true)
             .enumerate_arrays(true);
 
@@ -373,7 +373,7 @@ pub fn remove_staff(server_id: String, id: u64) -> bool {
         data.servers.get_mut(&server_id).unwrap().staff.retain(|&x| x != id);
 
         let config = PrettyConfig::new()
-            .depth_limit(3)
+            .depth_limit(4)
             .separate_tuple_members(true)
             .enumerate_arrays(true);
 
@@ -446,7 +446,7 @@ pub fn delete_user(server_id: String, id: u64) {
     }
 
     let config = PrettyConfig::new()
-        .depth_limit(3)
+        .depth_limit(4)
         .separate_tuple_members(true)
         .enumerate_arrays(true);
 
@@ -521,7 +521,7 @@ pub fn update_config() {
             }
 
             let config = PrettyConfig::new()
-                .depth_limit(3)
+                .depth_limit(4)
                 .separate_tuple_members(true)
                 .enumerate_arrays(true);
             let new_config = to_string_pretty(&converted_config_data, config).expect("Serialization failed");
