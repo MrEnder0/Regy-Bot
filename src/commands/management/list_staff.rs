@@ -1,7 +1,7 @@
 use poise::serenity_prelude::UserId;
 use scorched::*;
 
-use crate::{utils::toml, Data};
+use crate::{utils::config, Data};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -14,14 +14,14 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().0.to_string();
 
-    if !toml::server_exists(server_id.clone()) {
+    if !config::server_exists(server_id.clone()) {
         ctx.say("Server does not exist in config")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
-    let staff = toml::list_staff(server_id);
+    let staff = config::list_staff(server_id);
 
     match staff {
         Some(staff) => {

@@ -5,7 +5,10 @@ use poise::{
 use regex::Regex;
 use scorched::*;
 
-use crate::{utils::{toml::*, word_prep::*}, IpmStruct};
+use crate::{
+    utils::{config::*, word_prep::*},
+    IpmStruct,
+};
 
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
     let updated_message = event.content.clone().log_expect(

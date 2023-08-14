@@ -1,4 +1,4 @@
-use super::toml;
+use super::config;
 
 pub enum PermissionLevel {
     User,
@@ -13,7 +13,7 @@ const DEVELOPERS: [&str; 1] = [
 pub async fn has_perm(server_id: String, userid: u64, permission_level: PermissionLevel) -> bool {
     match permission_level {
         PermissionLevel::User => true,
-        PermissionLevel::Staff => toml::read_config()
+        PermissionLevel::Staff => config::read_config()
             .servers
             .get(&server_id)
             .unwrap()
@@ -26,7 +26,7 @@ pub async fn has_perm(server_id: String, userid: u64, permission_level: Permissi
 pub async fn highest_unlocked_perm(server_id: String, userid: u64) -> PermissionLevel {
     if DEVELOPERS.contains(&&userid.to_string()[..]) {
         PermissionLevel::Developer
-    } else if toml::read_config()
+    } else if config::read_config()
         .servers
         .get(&server_id)
         .unwrap()

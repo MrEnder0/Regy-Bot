@@ -4,7 +4,7 @@ use poise::{
 };
 use scorched::*;
 
-use crate::utils::toml::*;
+use crate::utils::config::*;
 
 pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity::Reaction) {
     let server_id = add_reaction.guild_id.unwrap().to_string();

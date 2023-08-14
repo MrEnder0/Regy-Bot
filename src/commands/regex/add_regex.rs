@@ -1,6 +1,6 @@
 use scorched::*;
 
-use crate::{utils::toml, Data};
+use crate::{utils::config, Data};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -25,7 +25,7 @@ pub async fn add_regex(
     let server_id = ctx.guild_id().unwrap().0.to_string();
     let phrase = regex_phrase.clone();
 
-    toml::add_regex(server_id, phrase + " ");
+    config::add_regex(server_id, phrase + " ");
 
     let status_message = format!("Added the regex phrase:\n||```{}```||", regex_phrase);
     ctx.say(status_message)

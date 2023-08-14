@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, sync::Mutex};
 
-use crate::utils::toml::read_config;
+use crate::utils::config::read_config;
 
 static IPM: Mutex<BTreeMap<u64, u16>> = Mutex::new(BTreeMap::new());
 

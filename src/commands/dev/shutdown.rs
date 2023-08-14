@@ -2,8 +2,8 @@ use scorched::*;
 
 use crate::{
     utils::{
+        config::read_config,
         perm_check::{has_perm, PermissionLevel::Developer},
-        toml::read_config,
     },
     Data,
 };

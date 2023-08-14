@@ -3,8 +3,8 @@ use scorched::*;
 
 use crate::{
     utils::{
+        config,
         perm_check::{has_perm, PermissionLevel::Staff},
-        toml,
         type_conversions::userid_to_u64,
     },
     Data,
@@ -40,14 +40,14 @@ pub async fn dismiss_infraction(
     let server_id = ctx.guild_id().unwrap().0.to_string();
     let userid = user.clone().id;
 
-    if !toml::server_exists(server_id.clone()) {
+    if !config::server_exists(server_id.clone()) {
         ctx.say("Server does not exist in config")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
-    toml::dismiss_infraction(server_id, userid_to_u64(userid));
+    config::dismiss_infraction(server_id, userid_to_u64(userid));
     ctx.say(format!("Dismissed a infraction from {}", user.clone().name))
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");

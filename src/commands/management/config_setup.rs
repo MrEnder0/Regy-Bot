@@ -2,7 +2,7 @@ use poise::serenity_prelude::Channel;
 use scorched::*;
 
 use crate::{
-    utils::toml::{gen_server, server_exists},
+    utils::config::{gen_server, server_exists},
     Data,
 };
 

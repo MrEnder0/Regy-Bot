@@ -6,7 +6,7 @@ use scorched::*;
 use std::net::TcpStream;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use crate::{utils::toml::read_config, IpmStruct};
+use crate::{utils::config::read_config, IpmStruct};
 
 static OFFLINE_TIME: AtomicUsize = AtomicUsize::new(0);
 
@@ -53,7 +53,9 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                     embed.field("Possible raid detected due to IPM influx.", "", false);
                     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/denied.png");
                     embed.footer(|f| {
-                        f.text("False detection? Try increasing the min influx in the config.toml file")
+                        f.text(
+                            "False detection? Request a increase the min influx in the ron config.",
+                        )
                     });
                     log_channel
                         .send_message(&ctx_clone.http, |m| {

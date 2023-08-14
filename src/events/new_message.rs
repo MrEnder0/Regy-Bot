@@ -5,7 +5,10 @@ use poise::{
 use regex::Regex;
 use scorched::*;
 
-use crate::{utils::{toml::*, word_prep::*}, IpmStruct};
+use crate::{
+    utils::{config::*, word_prep::*},
+    IpmStruct,
+};
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
     //ignore messages from bots
