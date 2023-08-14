@@ -1,20 +1,7 @@
-<img src=".github/assets/regy_banner.png">
+# RTI
 
-# Regy-Bot
+Regex Template Index
 
-Seamless automation using regex moderation.
+## Purpose
 
-## Important info
-
-* MSRV Policy 1.67.1 (Last checked 8/5/23)
-* Built to run on Windows; Linux is untested
-* Made for IrwinTechs discord server
-
-## Features
-
-* Regex moderation
-* Infraction system
-* Infraction logging
-* Server template cloning
-* Auto raid detection
-* Auto-mod integration
+This allows users to easily share and get regex phrases with simple commands with the ability to update regex phrases on the fly with the lastest patches and enhancements.
