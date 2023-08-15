@@ -6,9 +6,7 @@ pub enum PermissionLevel {
     Developer,
 }
 
-const DEVELOPERS: [&str; 1] = [
-    "687897073047306270",
-];
+const DEVELOPERS: [&str; 1] = ["687897073047306270"];
 
 pub async fn has_perm(server_id: String, userid: u64, permission_level: PermissionLevel) -> bool {
     match permission_level {
