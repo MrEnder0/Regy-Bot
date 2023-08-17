@@ -10,7 +10,7 @@ use std::{collections::HashMap, fs::File, path::Path};
 use toml;
 use uuid::Uuid;
 
-static CONFIG_VERSION: u16 = 5;
+static CONFIG_VERSION: u16 = 6;
 
 #[derive(Serialize, Deserialize)]
 struct MetaData {
@@ -23,12 +23,22 @@ pub struct GlobalOptions {
     pub user_delete_on_ban: bool,
     pub max_activity_influx: u16,
     pub allow_shutdown: bool,
+    pub rti_download_frequency: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct BlockPhrase {
+    pub uuid: String,
+    pub phrase: String,
+    pub is_rti: bool,
+    pub description: String,
+    pub version: u32
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct ServerOptions {
     pub infractions: HashMap<String, u64>,
-    pub block_phrases: HashMap<String, String>,
+    pub block_phrases: Vec<BlockPhrase>,
     pub staff: Vec<u64>,
     pub log_channel: u64,
 }
@@ -56,6 +66,7 @@ pub fn gen_config() {
             user_delete_on_ban: true,
             max_activity_influx: 10,
             allow_shutdown: true,
+            rti_download_frequency: 8,
         },
         servers: HashMap::new(),
     };
@@ -83,7 +94,7 @@ pub fn read_config() -> Config {
         Err(e) => {
             log_this(LogData {
                 importance: LogImportance::Error,
-                message: format!("Unable to read config file, shutting down: {}", e),
+                message: format!("Unable to read config file, shutting down:\n{}", e),
             });
 
             std::process::exit(0);
@@ -93,19 +104,6 @@ pub fn read_config() -> Config {
     config
 }
 
-pub fn check_config() {
-    let config = read_config();
-    if config.meta.version != CONFIG_VERSION {
-        log_this(LogData {
-            importance: LogImportance::Info,
-            message: "Config file is out of date, updating config.".to_string(),
-        });
-        update_config();
-
-        std::process::exit(0);
-    }
-}
-
 pub fn gen_server(guid_id: String, log_channel: u64) {
     let mut data = read_config();
     let guild_id = guid_id.clone();
@@ -113,7 +111,7 @@ pub fn gen_server(guid_id: String, log_channel: u64) {
         guild_id,
         ServerOptions {
             infractions: HashMap::new(),
-            block_phrases: HashMap::new(),
+            block_phrases: Vec::new(),
             staff: Vec::new(),
             log_channel: log_channel,
         },
@@ -141,7 +139,7 @@ pub fn server_exists(guid_id: String) -> bool {
     data.servers.contains_key(&guid_id)
 }
 
-pub fn add_regex(server_id: String, phrase: String) -> bool {
+pub fn add_regex(server_id: String, phrase: String, is_rti: bool, description: String, version: u32) -> bool {
     let mut data = read_config();
 
     //Checks if server exists
@@ -153,15 +151,32 @@ pub fn add_regex(server_id: String, phrase: String) -> bool {
         return false;
     }
 
+    //Checks if phrase already exists
+    for current_phrase in &data.servers.get(&server_id).unwrap().block_phrases {
+        if current_phrase.phrase == phrase {
+            log_this(LogData {
+                importance: LogImportance::Warning,
+                message: format!(
+                    "A phrase with the value '{}' already exists.",
+                    current_phrase.phrase
+                ),
+            });
+            return false;
+        }
+    }
+
     let id = Uuid::new_v4();
     data.servers
         .get_mut(&server_id)
         .unwrap()
         .block_phrases
-        .insert(
-            id.to_string(),
-            general_purpose::STANDARD_NO_PAD.encode(&phrase),
-        );
+        .push(BlockPhrase {
+            uuid: id.to_string(),
+            phrase: general_purpose::STANDARD_NO_PAD.encode(&phrase),
+            is_rti: is_rti,
+            description: description,
+            version: version
+        });
 
     let config = PrettyConfig::new()
         .depth_limit(4)
@@ -191,13 +206,14 @@ pub fn remove_regex(server_id: String, id: Uuid) -> bool {
         .get(&server_id)
         .unwrap()
         .block_phrases
-        .contains_key(&id.to_string())
+        .iter()
+        .any(|x| x.uuid == id.to_string())
     {
         data.servers
             .get_mut(&server_id)
             .unwrap()
             .block_phrases
-            .remove(&id.to_string());
+            .retain(|x| x.uuid != id.to_string());
 
         let config = PrettyConfig::new()
             .depth_limit(4)
@@ -229,18 +245,15 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
     }
 
     let mut phrases: HashMap<Uuid, String> = HashMap::new();
-    for (key, value) in &data.servers.get(&server_id).unwrap().block_phrases {
-        let phrase = String::from_utf8(
+    
+    for phrase in &data.servers.get(&server_id).unwrap().block_phrases {
+        let decoded_phrase = String::from_utf8(
             general_purpose::STANDARD_NO_PAD
-                .decode(&value)
+                .decode(&phrase.phrase)
                 .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
-        )
-        .unwrap();
+        ).unwrap();
 
-        phrases.insert(
-            Uuid::parse_str(key).unwrap(),
-            phrase[..phrase.len() - 1].to_owned(),
-        );
+        phrases.insert(Uuid::parse_str(&phrase.uuid).unwrap(), decoded_phrase[1..decoded_phrase.len() - 1].to_string());
     }
 
     Some(phrases)
@@ -490,7 +503,6 @@ pub fn update_config() {
             let old_config_file = std::fs::read_to_string("config.toml.bak").unwrap();
             let config_data: toml::Value = toml::from_str(&old_config_file).unwrap();
 
-            //convert config_data to new config format
             let mut converted_config_data = Config {
                 meta: MetaData {
                     version: CONFIG_VERSION,
@@ -504,36 +516,37 @@ pub fn update_config() {
                         .as_integer()
                         .unwrap() as u16,
                     allow_shutdown: config_data["global"]["allow_shutdown"].as_bool().unwrap(),
+                    rti_download_frequency: 8,
                 },
                 servers: HashMap::new(),
             };
 
-            //convert servers
             for (key, value) in config_data["servers"].as_table().unwrap() {
                 let mut server_options = ServerOptions {
                     infractions: HashMap::new(),
-                    block_phrases: HashMap::new(),
+                    block_phrases: Vec::new(),
                     staff: Vec::new(),
                     log_channel: value["log_channel"].as_integer().unwrap() as u64,
                 };
 
-                //convert infractions
                 for (key, value) in value["infractions"].as_table().unwrap() {
                     server_options
                         .infractions
                         .insert(key.to_string(), value.as_integer().unwrap() as u64);
                 }
 
-                //convert block_phrases
                 for (key, value) in value["block_phrases"].as_table().unwrap() {
                     let cleaned_value = &value.to_string()[1..value.to_string().len() - 1];
 
-                    server_options
-                        .block_phrases
-                        .insert(key.to_string(), cleaned_value.to_string());
+                    let mut phrase = BlockPhrase {
+                        uuid: Uuid::new_v4().to_string(),
+                        phrase: general_purpose::STANDARD_NO_PAD.encode(cleaned_value),
+                        is_rti: false,
+                        description: "No description provided.".to_string(),
+                        version: 0
+                    };
                 }
 
-                //convert staff
                 for value in value["staff"].as_array().unwrap() {
                     server_options
                         .staff
@@ -561,42 +574,5 @@ pub fn update_config() {
             gen_config();
             std::process::exit(0);
         }
-    } else {
-        log_this(LogData {
-            importance: LogImportance::Info,
-            message: "Updating ron based config version, this is necessary to implement new features into Regy, it may take a few updates to get up to date.".to_string(),
-        });
-
-        //Commented due to lack of any ron based config updates
-
-        /*
-        while read_config().meta.version < CONFIG_VERSION {
-            match read_config().meta.version {
-                5 => {
-                    log_this(LogData {
-                        importance: LogImportance::Info,
-                        message: "Updating config version 5 to 6, this config patch adds support for rti packages.".to_string(),
-                    });
-
-                    //TODO: Add rti package support
-                }
-                6 => {
-                    log_this(LogData {
-                        importance: LogImportance::Info,
-                        message: "Updating config version 6 to 7, this config patch adds support for staff roles.".to_string(),
-                    });
-
-                    //TODO: Add staff role support
-                }
-                _ => {
-                    log_this(LogData {
-                        importance: LogImportance::Error,
-                        message: "Unknown/Invalid config version, unable to update config, please resolve conflict manually.".to_string(),
-                    });
-                    std::process::exit(0);
-                }
-            }
-        }
-        */
     }
 }

@@ -25,7 +25,7 @@ pub async fn add_regex(
     let server_id = ctx.guild_id().unwrap().0.to_string();
     let phrase = regex_phrase.clone();
 
-    config::add_regex(server_id, phrase + " ");
+    config::add_regex(server_id, phrase + " ", false, "No description provided.".to_string(), 0);
 
     let status_message = format!("Added the regex phrase:\n||```{}```||", regex_phrase);
     ctx.say(status_message)

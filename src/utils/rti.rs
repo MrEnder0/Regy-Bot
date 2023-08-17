@@ -1,19 +1,33 @@
-use std::{collections::BTreeMap, sync::Mutex};
+use reqwest::blocking::get;
+use ron::{self, de::from_reader};
+use serde::{Deserialize, Serialize};
+use std::error::Error;
+use std::fs::File;
 
-static RTI: Mutex<BTreeMap<String, String>> = Mutex::new(BTreeMap::new());
+#[derive(Serialize, Deserialize)]
 
-pub struct RtiStruct {}
+pub struct RtiObject {
+    uuid: String,
+    version: u32,
+    phrase: String,
+    description: String,
+}
 
-impl RtiStruct {
-    pub fn load() {
-        let binding = &RTI;
-        let mut guard = binding.lock().unwrap();
+pub async fn download_rti() {
+    let url = "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/rti_packages/rti_packages.ron";
+    let mut response = get(url).unwrap();
 
-        //TODO: Fetch rti (regex template index) file from github and parse it into the BTreeMap
+    let mut file = File::create("rti_packages.ron").unwrap();
+    response.copy_to(&mut file).unwrap();
+}
+
+pub fn load_rti() -> Result<Vec<RtiObject>, Box<dyn Error>> {
+    let mut return_vec = Vec::new();
+    let rti: Vec<RtiObject> = from_reader(File::open("rti_packages.ron")?)?;
+
+    for rti_object in rti {
+        return_vec.push(rti_object);
     }
 
-    pub fn reload() {
-        RTI.lock().unwrap().clear();
-        RtiStruct::load();
-    }
+    Ok(return_vec)
 }

@@ -6,7 +6,7 @@ use scorched::*;
 use std::net::TcpStream;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use crate::{utils::config::read_config, IpmStruct};
+use crate::{utils::{config::read_config, rti::download_rti}, IpmStruct};
 
 static OFFLINE_TIME: AtomicUsize = AtomicUsize::new(0);
 
@@ -20,6 +20,11 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     });
 
     let ctx_clone = ctx.clone();
+
+    // Downloads RTI on startup
+    tokio::spawn(async move {
+        download_rti().await;
+    });
 
     // Resets IPM every min
     tokio::spawn(async move {
