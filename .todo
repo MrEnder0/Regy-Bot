@@ -83,8 +83,8 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Message character cleaning
 [x] Ron config language support
 [o] Regex template index (rti)
-    [o] Rti core util
-    [ ] Rti package config support
+    [x] Rti core util
+    [x] Rti package config support
     [ ] Rti management commands
         [ ] Add rti package
         [ ] Remove rti package
