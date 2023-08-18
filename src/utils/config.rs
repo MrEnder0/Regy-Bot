@@ -32,7 +32,7 @@ pub struct BlockPhrase {
     pub phrase: String,
     pub is_rti: bool,
     pub description: String,
-    pub version: u32
+    pub version: u32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -139,7 +139,13 @@ pub fn server_exists(guid_id: String) -> bool {
     data.servers.contains_key(&guid_id)
 }
 
-pub fn add_regex(server_id: String, phrase: String, is_rti: bool, description: String, version: u32) -> bool {
+pub fn add_regex(
+    server_id: String,
+    phrase: String,
+    is_rti: bool,
+    description: String,
+    version: u32,
+) -> bool {
     let mut data = read_config();
 
     //Checks if server exists
@@ -175,7 +181,7 @@ pub fn add_regex(server_id: String, phrase: String, is_rti: bool, description: S
             phrase: general_purpose::STANDARD_NO_PAD.encode(&phrase),
             is_rti: is_rti,
             description: description,
-            version: version
+            version: version,
         });
 
     let config = PrettyConfig::new()
@@ -245,15 +251,19 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
     }
 
     let mut phrases: HashMap<Uuid, String> = HashMap::new();
-    
+
     for phrase in &data.servers.get(&server_id).unwrap().block_phrases {
         let decoded_phrase = String::from_utf8(
             general_purpose::STANDARD_NO_PAD
                 .decode(&phrase.phrase)
                 .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
-        ).unwrap();
+        )
+        .unwrap();
 
-        phrases.insert(Uuid::parse_str(&phrase.uuid).unwrap(), decoded_phrase[1..decoded_phrase.len() - 1].to_string());
+        phrases.insert(
+            Uuid::parse_str(&phrase.uuid).unwrap(),
+            decoded_phrase[1..decoded_phrase.len() - 1].to_string(),
+        );
     }
 
     Some(phrases)
@@ -543,7 +553,7 @@ pub fn update_config() {
                         phrase: general_purpose::STANDARD_NO_PAD.encode(cleaned_value),
                         is_rti: false,
                         description: "No description provided.".to_string(),
-                        version: 0
+                        version: 0,
                     };
                 }
 

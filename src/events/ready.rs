@@ -6,7 +6,10 @@ use scorched::*;
 use std::net::TcpStream;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use crate::{utils::{config::read_config, rti::download_rti}, IpmStruct};
+use crate::{
+    utils::{config::read_config, rti::download_rti},
+    IpmStruct,
+};
 
 static OFFLINE_TIME: AtomicUsize = AtomicUsize::new(0);
 

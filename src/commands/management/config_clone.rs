@@ -37,7 +37,13 @@ pub async fn config_clone_regex(
 
         for item in target_block_phrases.as_ref().unwrap().iter() {
             let phrase = item.1.to_string();
-            add_regex(ctx.guild_id().unwrap().0.to_string(), phrase, false, "No description provided.".to_string(), 0);
+            add_regex(
+                ctx.guild_id().unwrap().0.to_string(),
+                phrase,
+                false,
+                "No description provided.".to_string(),
+                0,
+            );
         }
 
         ctx.say("Regex phrases cloned.")
