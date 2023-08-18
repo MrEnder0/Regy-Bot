@@ -262,7 +262,7 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
 
         phrases.insert(
             Uuid::parse_str(&phrase.uuid).unwrap(),
-            decoded_phrase[1..decoded_phrase.len() - 1].to_string(),
+            decoded_phrase[..decoded_phrase.len() - 1].to_string(),
         );
     }
 
