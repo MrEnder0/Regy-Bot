@@ -149,7 +149,7 @@ pub fn add_regex(
     let mut data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -199,7 +199,7 @@ pub fn remove_regex(server_id: String, id: Uuid) -> bool {
     let mut data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -239,7 +239,7 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
     let data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!(
@@ -273,7 +273,7 @@ pub fn add_infraction(server_id: String, id: u64) -> bool {
     let mut data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -305,7 +305,7 @@ pub fn dismiss_infraction(server_id: String, id: u64) -> bool {
     let mut data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -352,7 +352,7 @@ pub fn list_infractions(server_id: String, id: u64) -> Option<u64> {
     let mut config = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -375,7 +375,7 @@ pub fn add_staff(server_id: String, id: u64) -> bool {
     let mut data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -404,7 +404,7 @@ pub fn remove_staff(server_id: String, id: u64) -> bool {
     let mut data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -437,7 +437,7 @@ pub fn list_staff(server_id: String) -> Option<Vec<u64>> {
     let config = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
@@ -457,7 +457,7 @@ pub fn delete_user(server_id: String, id: u64) {
     let mut data = read_config();
 
     //Checks if server exists
-    if server_exists(server_id.clone()) == false {
+    if !server_exists(server_id.clone()) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
