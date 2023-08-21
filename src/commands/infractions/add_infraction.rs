@@ -25,7 +25,7 @@ pub async fn add_infraction(
     let server_id = ctx.guild_id().unwrap().to_string();
 
     if !has_perm(
-        server_id,
+        server_id.clone(),
         ctx.author().id.to_string().parse::<u64>().unwrap(),
         Staff,
     )
@@ -37,7 +37,6 @@ pub async fn add_infraction(
         return Ok(());
     }
 
-    let server_id = ctx.guild_id().unwrap().0.to_string();
     let userid = user.clone().id;
 
     if !config::server_exists(server_id.clone()) {
