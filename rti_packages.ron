@@ -2,21 +2,9 @@
     meta: (
         version: 1,
     ),
-    packages: {
-        "a7db0ec0-bb83-413c-b7f3-ff093e3ad1b8": (
-            version: 1,
-            phrase: "*Example Package*",
-            description: "This is an example package.",
-        ),
-        "27ed8e11-905f-4c3b-ab31-2275289ee591": (
-            version: 2,
-            phrase: "\d{1,5}\s(?:\w+\.?\s?)+?(?:Road|Street|Avenue|Boulevard|Drive|Court|Place|Lane|Circle|Way|Parkway|Trace|Ave|Rd|St|Blvd|Dr|Ct)\b(?:\s(?:Suite|Apt\.?\s?)\s*\w+)?\s*,?\s*(?:(?:[A-Z]{2})|(?:[A-Z][a-z]+))(?:\s*\d{5})?",
-            description: "Blocks common address formats.",
-        ),
-        "c7f6cd57-c70e-4c32-b23c-3dc6077fc215": (
-            version: 4,
-            phrase: "(?i)\b(bitcoin|btc|eth|ethereum|etherium|crypto|cryptocurrency|money|free)\b.{0,50}(phishing|scam|hack|hackers|wallet|account|deposit|withdraw|exchange|airdrop|airdropping|opportunity|investment|scam|money back|virus|crypto|ethereum|bitcoin|cryptocurrency)\b.{0,165}(?:(https?:)?(www\.)?)?[\S\s]{0,100}(com|org|net|tl|gq|io|cf|tk|me)\b",
-            description: "Blocks common crypto and investment scams.",
-        ),
-    }
+    packages: [
+        /*[0]*/ (uuid: "a7db0ec0-bb83-413c-b7f3-ff093e3ad1b8", phrase: "*Example Package*", description: "This is an example package.", version: 1),
+        /*[1]*/ (uuid: "27ed8e11-905f-4c3b-ab31-2275289ee591", phrase: "\d{1,5}\s(?:\w+\.?\s?)+?(?:Road|Street|Avenue|Boulevard|Drive|Court|Place|Lane|Circle|Way|Parkway|Trace|Ave|Rd|St|Blvd|Dr|Ct)\b(?:\s(?:Suite|Apt\.?\s?)\s*\w+)?\s*,?\s*(?:(?:[A-Z]{2})|(?:[A-Z][a-z]+))(?:\s*\d{5})?", description: "Blocks common address formats.", version: 2),
+        /*[2]*/ (uuid: "c7f6cd57-c70e-4c32-b23c-3dc6077fc215", phrase: "(?i)\b(bitcoin|btc|eth|ethereum|etherium|crypto|cryptocurrency|money|free)\b.{0,50}(phishing|scam|hack|hackers|wallet|account|deposit|withdraw|exchange|airdrop|airdropping|opportunity|investment|scam|money back|virus|crypto|ethereum|bitcoin|cryptocurrency)\b.{0,165}(?:(https?:)?(www\.)?)?[\S\s]{0,100}(com|org|net|tl|gq|io|cf|tk|me)\b", description: "Blocks common crypto and investment scams.", version: 4),
+    ]
 )
