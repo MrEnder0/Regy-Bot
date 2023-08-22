@@ -3,14 +3,16 @@ use ron::{self, de::from_reader};
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
+use fuzzy_matcher::FuzzyMatcher;
+use fuzzy_matcher::skim::SkimMatcherV2;
 
 #[derive(Serialize, Deserialize)]
 
 pub struct RtiObject {
-    uuid: String,
-    version: u32,
-    phrase: String,
-    description: String,
+    pub uuid: String,
+    pub version: u32,
+    pub phrase: String,
+    pub description: String,
 }
 
 pub async fn download_rti() {
@@ -30,4 +32,37 @@ pub fn load_rti() -> Result<Vec<RtiObject>, Box<dyn Error>> {
     }
 
     Ok(return_vec)
+}
+
+fn read_rti() -> Vec<RtiObject> {
+    let rti: Vec<RtiObject> = from_reader(File::open("rti_packages.ron").unwrap()).unwrap();
+
+    let mut return_vec = Vec::new();
+
+    for rti_object in rti {
+        return_vec.push(rti_object);
+    }
+
+    return_vec
+}
+
+pub fn fuzzy_search_rti(input_phrase: String) -> Vec<RtiObject> {
+    let rti_objects = read_rti();
+
+    //find the 3 most relevant results from the description
+    let matcher = SkimMatcherV2::default();
+
+    let query = format!("{} ", input_phrase);
+
+    let mut return_vec = {
+        let mut return_vec = Vec::new();
+
+        for rti_object in rti_objects {
+            if matcher.fuzzy_match(&rti_object.description, &query).is_some() {
+                return_vec.push(rti_object);
+            }
+        }
+
+        return_vec
+    };
 }

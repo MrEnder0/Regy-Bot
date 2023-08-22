@@ -53,6 +53,7 @@ async fn main() {
                 dev::echo::echo(),
                 dev::shutdown::shutdown(),
                 dev::local_update::update(),
+                rti::search_rti::search_rti(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
