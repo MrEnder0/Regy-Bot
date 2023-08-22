@@ -15,15 +15,15 @@ pub struct MetaData {
 #[derive(Serialize, Deserialize)]
 pub struct RtiObject {
     pub uuid: String,
-    pub version: u32,
     pub phrase: String,
     pub description: String,
+    pub version: u32,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct RtiPackages {
-    pub meta_data: MetaData,
-    pub rti_objects: Vec<RtiObject>,
+    pub meta: MetaData,
+    pub packages: Vec<RtiObject>,
 }
 
 pub async fn download_rti() {
@@ -45,10 +45,10 @@ pub fn load_rti() -> Result<Vec<RtiObject>, Box<dyn Error>> {
     Ok(return_vec)
 }
 
-fn read_rti() -> RtiObjectList {
+fn read_rti() -> RtiPackages {
     let rti_packages_file =
         File::open("rti_packages.ron").log_expect(LogImportance::Error, "RTI file not found");
-    let rti_packages: RtiObjectList = match from_reader(rti_packages_file) {
+    let rti_packages: RtiPackages = match from_reader(rti_packages_file) {
         Ok(x) => x,
         Err(e) => {
             log_this(LogData {
@@ -56,8 +56,9 @@ fn read_rti() -> RtiObjectList {
                 message: format!("Unable to read rti packages file:\n{}", e),
             });
 
-            RtiObjectList {
-                rti_objects: Vec::new(),
+            RtiPackages {
+                meta: MetaData { version: 0 },
+                packages: Vec::new(),
             }
         }
     };
@@ -66,7 +67,7 @@ fn read_rti() -> RtiObjectList {
 }
 
 pub fn fuzzy_search_rti(input_phrase: String) -> Vec<RtiObject> {
-    let rti_objects = read_rti();
+    let rti_packages = read_rti();
 
     //find the 3 most relevant results from the description
     let matcher = SkimMatcherV2::default();
@@ -75,7 +76,7 @@ pub fn fuzzy_search_rti(input_phrase: String) -> Vec<RtiObject> {
 
     let mut return_vec = Vec::new();
 
-    for rti_object in rti_objects.rti_objects {
+    for rti_object in rti_packages.packages {
         if matcher.fuzzy_match(&rti_object.description, &query).is_some() {
             return_vec.push(rti_object);
         }
