@@ -8,8 +8,8 @@ use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
 
 #[derive(Serialize, Deserialize)]
-struct RtiObjectList {
-    rti_objects: Vec<RtiObject>,
+pub struct MetaData {
+    pub version: u32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -18,6 +18,12 @@ pub struct RtiObject {
     pub version: u32,
     pub phrase: String,
     pub description: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct RtiPackages {
+    pub meta_data: MetaData,
+    pub rti_objects: Vec<RtiObject>,
 }
 
 pub async fn download_rti() {
