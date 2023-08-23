@@ -548,13 +548,15 @@ pub fn update_config() {
                 for (key, value) in value["block_phrases"].as_table().unwrap() {
                     let cleaned_value = &value.to_string()[1..value.to_string().len() - 1];
 
-                    let mut phrase = BlockPhrase {
+                    let phrase = BlockPhrase {
                         uuid: Uuid::new_v4().to_string(),
                         phrase: general_purpose::STANDARD_NO_PAD.encode(cleaned_value),
                         is_rti: false,
                         description: "No description provided.".to_string(),
                         version: 0,
                     };
+
+                    server_options.block_phrases.push(phrase);
                 }
 
                 for value in value["staff"].as_array().unwrap() {
