@@ -1,3 +1,5 @@
+use base64::Engine;
+use base64::engine::general_purpose;
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use reqwest::blocking::get;
@@ -70,11 +72,18 @@ pub fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
     let rti_packages = read_rti();
     let matcher = SkimMatcherV2::default();
 
+    let search_phrase = input_phrase.to_lowercase();
     let mut return_vec = Vec::new();
 
     for rti_object in rti_packages.packages {
+        let decoded_regex = String::from_utf8(
+            general_purpose::STANDARD_NO_PAD
+                .decode(rti_object.phrase.as_bytes())
+                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
+        ).unwrap();
+
         if matcher
-            .fuzzy_match(&rti_object.description, &input_phrase)
+            .fuzzy_match(&rti_object.description, &decoded_regex[..decoded_regex.len() - 1])
             .is_some()
         {
             return_vec.push(rti_object);
