@@ -97,7 +97,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             embed.color(0xFFA500);
             embed.title("Message blocked due to matching a set regex pattern");
             embed.field(
-                "The user who broke a regx pattern is below:",
+                "The user who broke a regex pattern is below:",
                 format!("<@{}>", new_message.author.id),
                 false,
             );
