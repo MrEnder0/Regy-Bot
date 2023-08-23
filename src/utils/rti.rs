@@ -1,11 +1,11 @@
+use fuzzy_matcher::skim::SkimMatcherV2;
+use fuzzy_matcher::FuzzyMatcher;
 use reqwest::blocking::get;
 use ron::{self, de::from_reader};
-use scorched::{LogExpect, LogImportance, log_this, LogData};
+use scorched::{log_this, LogData, LogExpect, LogImportance};
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
-use fuzzy_matcher::FuzzyMatcher;
-use fuzzy_matcher::skim::SkimMatcherV2;
 
 #[derive(Serialize, Deserialize)]
 pub struct MetaData {
@@ -47,7 +47,7 @@ pub fn load_rti() -> Result<Vec<RtiObject>, Box<dyn Error>> {
 
 fn read_rti() -> RtiPackages {
     let rti_packages_file =
-        File::open("rti_packages.ron").log_expect(LogImportance::Error, "RTI file not found");
+        File::open("rti_packages.ron").log_expect(LogImportance::Warning, "RTI file not found");
     let rti_packages: RtiPackages = match from_reader(rti_packages_file) {
         Ok(x) => x,
         Err(e) => {
@@ -66,21 +66,24 @@ fn read_rti() -> RtiPackages {
     rti_packages
 }
 
-pub fn fuzzy_search_rti(input_phrase: String) -> Vec<RtiObject> {
+pub fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
     let rti_packages = read_rti();
-
-    //find the 3 most relevant results from the description
     let matcher = SkimMatcherV2::default();
-
-    let query = format!("{} ", input_phrase);
 
     let mut return_vec = Vec::new();
 
     for rti_object in rti_packages.packages {
-        if matcher.fuzzy_match(&rti_object.description, &query).is_some() {
+        if matcher
+            .fuzzy_match(&rti_object.description, &input_phrase)
+            .is_some()
+        {
             return_vec.push(rti_object);
         }
     }
 
-    return_vec
+    if return_vec.len() == 0 {
+        return None;
+    }
+
+    Some(return_vec)
 }

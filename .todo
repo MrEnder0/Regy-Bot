@@ -86,11 +86,13 @@ Note none of these plans are guaranteed and also there may be other changes that
     [x] Rti core util
     [x] Rti package config support
     [ ] Rti management commands
+        [o] Search rti packages
         [ ] Add rti package
         [ ] Remove rti package
         [ ] Update rti packages
 
 # Release 15
+[ ] Command rewrites & config rewrites
 [ ] Config auto cleaning
 [ ] Make more replies embeds
 [ ] Make dm messages embeds

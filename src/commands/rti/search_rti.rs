@@ -2,7 +2,6 @@ use scorched::*;
 
 use crate::{
     utils::{
-        config,
         perm_check::{has_perm, PermissionLevel::Staff},
         rti::fuzzy_search_rti,
     },
@@ -39,20 +38,35 @@ pub async fn search_rti(
         return Ok(());
     }
 
-    let relevant_objects = fuzzy_search_rti(search_phrase);
+    let relevant_objects = fuzzy_search_rti(search_phrase.clone());
 
-    let mut return_string = String::new();
+    if relevant_objects.is_none() {
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("No results found").color(0xFFA500).field(
+                    "The search phrase you entered did not match any results",
+                    format!("Search phrase: {}", search_phrase),
+                    false,
+                )
+            })
+        })
+        .await?;
 
-    for rti_object in relevant_objects {
-        return_string.push_str(&format!(
-            "```Version: {}\nDescription: {}\nPhrase: {}```",
-            rti_object.version, rti_object.description, rti_object.phrase
-        ));
+        return Ok(());
+    } else {
+        for rti_object in relevant_objects.unwrap() {
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Results found")
+                        .color(0x556B2F)
+                        .field("Version", rti_object.version, false)
+                        .field("Description", rti_object.description, false)
+                        .field("Phrase", rti_object.phrase, false)
+                })
+            })
+            .await?;
+        }
     }
-
-    ctx.say(return_string)
-        .await
-        .log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }
