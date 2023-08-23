@@ -76,17 +76,24 @@ pub fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
     let mut return_vec = Vec::new();
 
     for rti_object in rti_packages.packages {
-        let decoded_regex = String::from_utf8(
-            general_purpose::STANDARD_NO_PAD
-                .decode(rti_object.phrase.as_bytes())
-                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
-        ).unwrap();
-
         if matcher
-            .fuzzy_match(&rti_object.description, &decoded_regex[..decoded_regex.len() - 1])
+            .fuzzy_match(&rti_object.description, &search_phrase)
             .is_some()
         {
-            return_vec.push(rti_object);
+            let decoded_regex = String::from_utf8(
+                general_purpose::STANDARD_NO_PAD
+                    .decode(rti_object.phrase.as_bytes())
+                    .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
+            ).unwrap();
+
+            let decoded_rti_object = RtiObject {
+                uuid: rti_object.uuid,
+                phrase: decoded_regex,
+                description: rti_object.description,
+                version: rti_object.version,
+            };
+
+            return_vec.push(decoded_rti_object);
         }
     }
 
