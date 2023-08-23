@@ -41,7 +41,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
             let overflow = IpmStruct::get_overflow();
-            if overflow.len() > 0 {
+            if !overflow.is_empty() {
                 for server in overflow {
                     log_this(LogData {
                         importance: LogImportance::Info,

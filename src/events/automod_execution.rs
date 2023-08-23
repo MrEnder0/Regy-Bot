@@ -118,7 +118,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
 
     //TODO: Change message to embed
 
-    let dm_msg = format!("You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.");
+    let dm_msg = "You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.";
 
     user.dm(&ctx.http, |m| m.content(dm_msg))
         .await
