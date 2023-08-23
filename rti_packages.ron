@@ -3,8 +3,8 @@
         version: 1,
     ),
     packages: [
-        /*[0]*/ (uuid: "a7db0ec0-bb83-413c-b7f3-ff093e3ad1b8", phrase: "*Example Package*", description: "This is an example package.", version: 1),
-        /*[1]*/ (uuid: "27ed8e11-905f-4c3b-ab31-2275289ee591", phrase: "\d{1,5}\s(?:\w+\.?\s?)+?(?:Road|Street|Avenue|Boulevard|Drive|Court|Place|Lane|Circle|Way|Parkway|Trace|Ave|Rd|St|Blvd|Dr|Ct)\b(?:\s(?:Suite|Apt\.?\s?)\s*\w+)?\s*,?\s*(?:(?:[A-Z]{2})|(?:[A-Z][a-z]+))(?:\s*\d{5})?", description: "Blocks common address formats.", version: 2),
-        /*[2]*/ (uuid: "c7f6cd57-c70e-4c32-b23c-3dc6077fc215", phrase: "(?i)\b(bitcoin|btc|eth|ethereum|etherium|crypto|cryptocurrency|money|free)\b.{0,50}(phishing|scam|hack|hackers|wallet|account|deposit|withdraw|exchange|airdrop|airdropping|opportunity|investment|scam|money back|virus|crypto|ethereum|bitcoin|cryptocurrency)\b.{0,165}(?:(https?:)?(www\.)?)?[\S\s]{0,100}(com|org|net|tl|gq|io|cf|tk|me)\b", description: "Blocks common crypto and investment scams.", version: 4),
+        /*[0]*/ (uuid: "731cb502-0bcc-489d-9c5d-ecb2d05dca82", phrase: "KD9pKSg8QFx3Kz4uezAsMjV9KXs1LH0g", description: "Prevents mention spam, mass pinging, unwanted mentions.", version: 0),
+        /*[1]*/ (uuid: "27ed8e11-905f-4c3b-ab31-2275289ee591", phrase: "XGR7MSw1fVxzKD86XHcrXC4/XHM/KSs/KD86Um9hZHxTdHJlZXR8QXZlbnVlfEJvdWxldmFyZHxEcml2ZXxDb3VydHxQbGFjZXxMYW5lfENpcmNsZXxXYXl8UGFya3dheXxUcmFjZXxBdmV8UmR8U3R8Qmx2ZHxEcnxDdClcYig/OlxzKD86U3VpdGV8QXB0XC4/XHM/KVxzKlx3Kyk/XHMqLD9ccyooPzooPzpbQS1aXXsyfSl8KD86W0EtWl1bYS16XSspKSg/OlxzKlxkezV9KT8g", description: "Blocks common address formats.", version: 2),
+        /*[2]*/ (uuid: "c7f6cd57-c70e-4c32-b23c-3dc6077fc215", phrase: "KD9pKVxiKGJpdGNvaW58YnRjfGV0aHxldGhlcmV1bXxldGhlcml1bXxjcnlwdG98Y3J5cHRvY3VycmVuY3l8bW9uZXl8ZnJlZSlcYi57MCw1MH0ocGhpc2hpbmd8c2NhbXxoYWNrfGhhY2tlcnN8d2FsbGV0fGFjY291bnR8ZGVwb3NpdHx3aXRoZHJhd3xleGNoYW5nZXxhaXJkcm9wfGFpcmRyb3BwaW5nfG9wcG9ydHVuaXR5fGludmVzdG1lbnR8c2NhbXxtb25leSBiYWNrfHZpcnVzfGNyeXB0b3xldGhlcmV1bXxiaXRjb2lufGNyeXB0b2N1cnJlbmN5KVxiLnswLDE2NX0oPzooaHR0cHM/Oik/KHd3d1wuKT8pP1tcU1xzXXswLDEwMH0oY29tfG9yZ3xuZXR8dGx8Z3F8aW98Y2Z8dGt8bWUpXGIg", description: "Blocks common crypto and investment scams.", version: 4),
     ]
 )
