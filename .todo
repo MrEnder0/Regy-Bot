@@ -89,6 +89,7 @@ Note none of these plans are guaranteed and also there may be other changes that
         [o] Search rti packages
         [ ] Add rti package
         [ ] Remove rti package
+        [ ] List installed rti packages
         [ ] Update rti packages
 
 # Release 15

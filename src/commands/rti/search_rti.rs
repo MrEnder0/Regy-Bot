@@ -27,21 +27,24 @@ pub async fn search_rti(
     {
         ctx.send(|cr| {
             cr.embed(|ce| {
-                ce.title("You do not have permission to use this command.").field(
-                    "Lacking permissions:",
-                    "Staff",
-                    false,
-                )
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Staff", false)
             })
-        }).await.log_expect(LogImportance::Warning, "Unable to send message");
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
         return Ok(());
     }
 
     if search_phrase.is_empty() || search_phrase == " " || search_phrase.len() < 3 {
-        ctx.say("You need to specify a search phrase to search; it cant be empty and it also must be at least 3 characters long.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You need to specify a search phrase to search").description(
+                    "The search query cant be empty and it also must be at least 3 characters long.",
+                )
+            })
+        }).await.log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
@@ -50,11 +53,18 @@ pub async fn search_rti(
     if relevant_objects.is_none() {
         ctx.send(|cr| {
             cr.embed(|ce| {
-                ce.title("No results found").color(0xFFA500).field(
-                    "The search phrase you entered did not match any results",
-                    format!("Search phrase: {}", search_phrase),
-                    false,
-                )
+                ce.title("No results found")
+                    .color(0xFFA500)
+                    .field(
+                        "The search phrase you entered did not match any results",
+                        format!("Search phrase: {}", search_phrase),
+                        false,
+                    )
+                    .footer(|fe| {
+                        fe.text(
+                            "If there is a package you want to add create a PR on our github repo",
+                        )
+                    })
             })
         })
         .await?;
@@ -69,6 +79,7 @@ pub async fn search_rti(
                         .field("Version", rti_object.version, false)
                         .field("Description", rti_object.description, false)
                         .field("Phrase", rti_object.phrase, false)
+                        .footer(|fe| fe.text("React with ✅ to add this package to your server"))
                 })
             })
             .await?;
