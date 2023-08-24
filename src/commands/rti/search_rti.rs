@@ -1,3 +1,4 @@
+use poise::serenity_prelude::CreateEmbed;
 use scorched::*;
 
 use crate::{
@@ -71,19 +72,34 @@ pub async fn search_rti(
 
         return Ok(());
     } else {
-        for rti_object in relevant_objects.unwrap() {
-            ctx.send(|cr| {
-                cr.embed(|ce| {
-                    ce.title("Results found")
-                        .color(0x556B2F)
-                        .field("Version", rti_object.version, false)
-                        .field("Description", rti_object.description, false)
-                        .field("Phrase", rti_object.phrase, false)
-                        .footer(|fe| fe.text("React with ✅ to add this package to your server"))
-                })
-            })
-            .await?;
+        for rti_object in relevant_objects.clone().unwrap() {
+            let mut embed = CreateEmbed::default();
+            embed.title("Results found".to_string());
+            embed.color(0x556B2F);
+            embed.field("Version", rti_object.version, false);
+            embed.field("UUID", rti_object.uuid, false);
+            embed.field("Description", rti_object.description, false);
+            embed.field("Phrase", rti_object.phrase, false);
+            embed.footer(|fe| fe.text("React with ✅ to add this package to your server"));
+
+            let channel_id = ctx.channel_id();
+            let embed_msg = channel_id
+                .send_message(&ctx, |m| m.set_embed(embed))
+                .await?;
+
+            embed_msg.react(&ctx, '✅').await?;
         }
+
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Results found".to_string())
+                    .color(0x556B2F)
+                    .description(format!(
+                        "The search phrase you entered matched {} results",
+                        relevant_objects.unwrap().len()
+                    ))
+            })
+        }).await.log_expect(LogImportance::Warning, "Unable to send message");
     }
 
     Ok(())
