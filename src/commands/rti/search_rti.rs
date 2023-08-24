@@ -34,6 +34,8 @@ pub async fn search_rti(
                 )
             })
         }).await.log_expect(LogImportance::Warning, "Unable to send message");
+
+        return Ok(());
     }
 
     if search_phrase.is_empty() || search_phrase == " " || search_phrase.len() < 3 {
