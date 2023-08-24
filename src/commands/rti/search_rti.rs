@@ -11,7 +11,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 10)]
+#[poise::command(prefix_command, slash_command, user_cooldown = 5)]
 pub async fn search_rti(
     ctx: Context<'_>,
     #[description = "Search Phrase"] search_phrase: String,
@@ -25,10 +25,15 @@ pub async fn search_rti(
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
-        return Ok(());
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.").field(
+                    "Lacking permissions:",
+                    "Staff",
+                    false,
+                )
+            })
+        }).await.log_expect(LogImportance::Warning, "Unable to send message");
     }
 
     if search_phrase.is_empty() || search_phrase == " " || search_phrase.len() < 3 {
