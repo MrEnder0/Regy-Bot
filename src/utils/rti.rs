@@ -1,13 +1,10 @@
-use base64::Engine;
-use base64::engine::general_purpose;
-use fuzzy_matcher::skim::SkimMatcherV2;
-use fuzzy_matcher::FuzzyMatcher;
+use base64::{engine::general_purpose, Engine};
+use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
 use reqwest::blocking::get;
 use ron::{self, de::from_reader};
 use scorched::{log_this, LogData, LogExpect, LogImportance};
 use serde::{Deserialize, Serialize};
-use std::error::Error;
-use std::fs::File;
+use std::{error::Error, fs::File};
 
 #[derive(Serialize, Deserialize)]
 pub struct MetaData {
@@ -84,7 +81,8 @@ pub fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
                 general_purpose::STANDARD_NO_PAD
                     .decode(rti_object.phrase.as_bytes())
                     .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
-            ).unwrap();
+            )
+            .unwrap();
 
             let decoded_rti_object = RtiObject {
                 uuid: rti_object.uuid,
