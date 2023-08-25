@@ -140,11 +140,11 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         //edit embed
         let mut embed = CreateEmbed::default();
         embed.color(0x556B2F);
-        embed.title("Regex pattern added to server");
+        embed.title("RTI package added to server");
         embed.field("Version", phrase_ver, false);
         embed.field("Description", phrase_desc, false);
         embed.field("Phrase", phrase_phrase, false);
-        embed.footer(|f| f.text("This regex pattern has been added to your server"));
+        embed.footer(|f| f.text("This RTI package has been added to your server"));
         embed.thumbnail(
             "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
         );
