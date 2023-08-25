@@ -104,6 +104,51 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             }*/
         });
     } else {
-        //TODO: Add reactions for rti search results (✅, ❌)
+        if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
+            return;
+        }
+
+        let ctx_clone = ctx.clone();
+        let reaction_clone = add_reaction.clone();
+
+        let mut msg = reaction_clone
+            .channel_id
+            .message(&ctx_clone.http, reaction_clone.message_id)
+            .await
+            .unwrap();
+
+        let phrase_ver = &msg.embeds[0].fields[0].value;
+        let phrase_desc = &msg.embeds[0].fields[2].value;
+        let phrase_phrase = &msg.embeds[0].fields[3].value;
+
+        add_regex(
+            server_id,
+            format!("{}#", phrase_phrase),
+            true,
+            phrase_desc.to_string(),
+            phrase_ver.parse().unwrap(),
+        );
+
+        log_this(LogData {
+            importance: LogImportance::Info,
+            message: format!(
+                "{} Has added a regex pattern to their server",
+                reaction_clone.user_id.unwrap()
+            ),
+        });
+
+        //edit embed
+        let mut embed = CreateEmbed::default();
+        embed.color(0x556B2F);
+        embed.title("Regex pattern added to server");
+        embed.field("Version", phrase_ver, false);
+        embed.field("Description", phrase_desc, false);
+        embed.field("Phrase", phrase_phrase, false);
+        embed.footer(|f| f.text("This regex pattern has been added to your server"));
+        embed.thumbnail(
+            "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+        );
+
+        msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
     }
 }
