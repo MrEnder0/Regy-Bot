@@ -235,7 +235,7 @@ pub fn remove_regex(server_id: String, id: Uuid) -> bool {
     true
 }
 
-pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
+pub fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
     let data = read_config();
 
     //Checks if server exists
@@ -250,23 +250,18 @@ pub fn list_regex(server_id: String) -> Option<HashMap<Uuid, String>> {
         return None;
     }
 
-    let mut phrases: HashMap<Uuid, String> = HashMap::new();
-
+    let mut block_phrases: Vec<BlockPhrase> = Vec::new();
     for phrase in &data.servers.get(&server_id).unwrap().block_phrases {
-        let decoded_phrase = String::from_utf8(
-            general_purpose::STANDARD_NO_PAD
-                .decode(&phrase.phrase)
-                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
-        )
-        .unwrap();
-
-        phrases.insert(
-            Uuid::parse_str(&phrase.uuid).unwrap(),
-            decoded_phrase[..decoded_phrase.len() - 1].to_string(),
-        );
+        block_phrases.push(BlockPhrase {
+            uuid: phrase.uuid.clone(),
+            phrase: phrase.phrase.clone(),
+            is_rti: phrase.is_rti,
+            description: phrase.description.clone(),
+            version: phrase.version,
+        });
     }
 
-    Some(phrases)
+    Some(block_phrases)
 }
 
 pub fn add_infraction(server_id: String, id: u64) -> bool {

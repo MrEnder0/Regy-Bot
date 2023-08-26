@@ -62,9 +62,20 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
     let filtered_message = filter_characters(&new_message.content.to_lowercase());
 
-    let block_phrases_hashmap = list_regex(server_id);
-    for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
-        let re = Regex::new(&phrase).unwrap();
+    let block_phrases = match { list_regex(server_id.clone()) } {
+        Some(phrases) => phrases,
+        None => {
+            log_this(LogData {
+                importance: LogImportance::Warning,
+                message: format!("Unable to get regex phrases for server {}", server_id),
+            });
+
+            return;
+        }
+    };
+
+    for phrase in block_phrases {
+        let re = Regex::new(&phrase.phrase).unwrap();
         if re.is_match(&filtered_message) {
             if let Err(why) = new_message.delete(&ctx.http).await {
                 println!("Error deleting message: {:?}", why);

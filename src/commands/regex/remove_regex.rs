@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::{
     utils::{
-        config,
+        config::{self, list_regex},
         perm_check::{has_perm, PermissionLevel::Staff},
     },
     Data,
@@ -43,8 +43,26 @@ pub async fn remove_regex(
 
     //Check if regex with specified id exists in server in config
     let server_id = ctx.guild_id().unwrap().0.to_string();
-    let block_phrases_hashmap = config::list_regex(server_id);
-    if !block_phrases_hashmap.as_ref().unwrap().contains_key(&id) {
+    let block_phrases = {
+        let phrases = list_regex(server_id.clone());
+        match phrases {
+            Some(phrases) => phrases,
+            None => {
+                log_this(LogData {
+                    importance: LogImportance::Warning,
+                    message: format!("Unable to get regex phrases for server {}", server_id),
+                });
+
+                ctx.say("This server does not exist in the database, please run `config_setup` first; if you have already done this please add a regex phrase before trying to list them.")
+                    .await
+                    .log_expect(LogImportance::Warning, "Unable to send message");
+
+                return Ok(());
+            }
+        }
+    };
+
+    if !block_phrases.iter().any(|x| x.uuid == id.to_string()) {
         ctx.say("A regex phrase with that UUID does not exist.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");

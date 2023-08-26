@@ -33,20 +33,36 @@ pub async fn config_clone_regex(
             return Ok(());
         }
 
-        let target_block_phrases = list_regex(target_server_id);
+        let target_block_phrases = match { list_regex(target_server_id.clone()) } {
+            Some(phrases) => phrases,
+            None => {
+                log_this(LogData {
+                    importance: LogImportance::Warning,
+                    message: format!(
+                        "Unable to get regex phrases for server {}",
+                        target_server_id
+                    ),
+                });
 
-        for item in target_block_phrases.as_ref().unwrap().iter() {
-            let phrase = item.1.to_string();
+                ctx.say(format!("Unable to get regex phrases for server {} double check the id and make sure they have phrases to clone.", target_server_id))
+                    .await
+                    .log_expect(LogImportance::Warning, "Unable to send message");
+
+                return Ok(());
+            }
+        };
+
+        for phrase in target_block_phrases.iter() {
             add_regex(
                 ctx.guild_id().unwrap().0.to_string(),
-                phrase,
+                phrase.phrase.clone(),
                 false,
                 "No description provided.".to_string(),
                 0,
             );
         }
 
-        ctx.say("Regex phrases cloned.")
+        ctx.say("Regex phrases cloned successfully.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
     }

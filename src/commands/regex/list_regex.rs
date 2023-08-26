@@ -14,6 +14,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 struct Regex {
     id: String,
     phrase: String,
+    is_rt: bool,
 }
 
 #[poise::command(
@@ -56,14 +57,18 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
     let mut formatted_blocked_phrases = String::new();
     for item in block_phrases.iter() {
         let regex = Regex {
-            id: item.0.to_string(),
-            phrase: item.1.to_string(),
+            id: item.uuid.clone(),
+            phrase: item.phrase.clone(),
+            is_rt: item.is_rti,
         };
 
-        formatted_blocked_phrases.push_str(&format!("{} | {}\n", regex.id, regex.phrase));
+        formatted_blocked_phrases.push_str(&format!(
+            "{} | {} | {}\n",
+            regex.id, regex.is_rt, regex.phrase
+        ));
     }
 
-    let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | REGEX\n{}```||", formatted_blocked_phrases);
+    let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | RTI | REGEX\n{}```||", formatted_blocked_phrases);
     let channel_id = ctx.channel_id();
 
     if status_message.len() > 2000 {

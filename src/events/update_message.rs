@@ -61,9 +61,26 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     let filtered_message = filter_characters(&updated_message.to_lowercase());
 
-    let block_phrases_hashmap = list_regex(guild_id.unwrap().to_string());
-    for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
-        let re = Regex::new(&phrase).unwrap();
+    let block_phrases = {
+        let phrases = list_regex(guild_id.unwrap().to_string());
+
+        match phrases {
+            Some(phrases) => phrases,
+            None => {
+                log_this(LogData {
+                    importance: LogImportance::Warning,
+                    message: format!(
+                        "Unable to get regex phrases for server {}",
+                        guild_id.unwrap()
+                    ),
+                });
+                return;
+            }
+        }
+    };
+
+    for phrase in block_phrases {
+        let re = Regex::new(&phrase.phrase).unwrap();
         if re.is_match(&filtered_message) {
             if let Err(why) = channel_id.delete_message(&ctx.http, message_id).await {
                 println!("Error deleting message: {:?}", why);
