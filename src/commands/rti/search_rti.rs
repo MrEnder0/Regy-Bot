@@ -99,7 +99,9 @@ pub async fn search_rti(
                         relevant_objects.unwrap().len()
                     ))
             })
-        }).await.log_expect(LogImportance::Warning, "Unable to send message");
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
     }
 
     Ok(())
