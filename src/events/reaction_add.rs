@@ -6,6 +6,11 @@ use scorched::*;
 
 use crate::utils::config::*;
 
+enum EmbedType {
+    Add,
+    Update,
+}
+
 pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity::Reaction) {
     let server_id = add_reaction.guild_id.unwrap().to_string();
     let user_id = add_reaction.user_id.unwrap().to_string();
@@ -104,10 +109,6 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             }*/
         });
     } else {
-        if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
-            return;
-        }
-
         let ctx_clone = ctx.clone();
         let reaction_clone = add_reaction.clone();
 
@@ -117,38 +118,81 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             .await
             .unwrap();
 
-        let phrase_ver = &msg.embeds[0].fields[0].value;
-        let phrase_desc = &msg.embeds[0].fields[2].value;
-        let phrase_phrase = &msg.embeds[0].fields[3].value;
+        let embed_type = match msg.embeds[0].title.as_mut().unwrap().to_string().as_str() {
+            "Are you sure you want to update the RTI package?" => EmbedType::Update,
+            "Results found" => EmbedType::Add,
+            _ => return,
+        };
 
-        add_regex(
-            server_id,
-            format!("{}#", phrase_phrase),
-            true,
-            phrase_desc.to_string(),
-            phrase_ver.parse().unwrap(),
-        );
+        match embed_type {
+            EmbedType::Add => {
+                if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
+                    return;
+                }
 
-        log_this(LogData {
-            importance: LogImportance::Info,
-            message: format!(
-                "{} Has added a regex pattern to their server",
-                reaction_clone.user_id.unwrap()
-            ),
-        });
+                let phrase_ver = &msg.embeds[0].fields[0].value;
+                let phrase_desc = &msg.embeds[0].fields[2].value;
+                let phrase_phrase = &msg.embeds[0].fields[3].value;
 
-        //edit embed
-        let mut embed = CreateEmbed::default();
-        embed.color(0x556B2F);
-        embed.title("RTI package added to server");
-        embed.field("Version", phrase_ver, false);
-        embed.field("Description", phrase_desc, false);
-        embed.field("Phrase", phrase_phrase, false);
-        embed.footer(|f| f.text("This RTI package has been added to your server"));
-        embed.thumbnail(
-            "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
-        );
+                add_regex(
+                    server_id,
+                    format!("{}#", phrase_phrase),
+                    true,
+                    phrase_desc.to_string(),
+                    phrase_ver.parse().unwrap(),
+                );
 
-        msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
+                log_this(LogData {
+                    importance: LogImportance::Info,
+                    message: format!(
+                        "{} Has added a regex pattern to their server",
+                        reaction_clone.user_id.unwrap()
+                    ),
+                });
+
+                //edit embed
+                let mut embed = CreateEmbed::default();
+                embed.color(0x556B2F);
+                embed.title("RTI package added to server");
+                embed.field("Version", phrase_ver, false);
+                embed.field("Description", phrase_desc, false);
+                embed.field("Phrase", phrase_phrase, false);
+                embed.footer(|f| f.text("This RTI package has been added to your server"));
+                embed.thumbnail(
+                    "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+                );
+
+                msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
+            }
+            EmbedType::Update => {
+                if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
+                    update_regexes(server_id);
+
+                    let mut embed = CreateEmbed::default();
+                    embed.color(0x556B2F);
+                    embed.title("RTI package updated");
+                    embed.description("All RTI packages have been updated to the latest version");
+                    embed.footer(|f| {
+                        f.text("This RTI package has been updated to the latest version")
+                    });
+                    embed.thumbnail(
+                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+                    );
+
+                    msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
+                } else if add_reaction.emoji != ReactionType::Unicode("❌".to_string()) {
+                    let mut embed = CreateEmbed::default();
+                    embed.color(0xFFA500);
+                    embed.title("RTI package update cancelled");
+                    embed.description("The RTI package update has been cancelled");
+                    embed.footer(|f| f.text("This RTI package update has been cancelled"));
+                    embed.thumbnail(
+                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+                    );
+
+                    msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
+                }
+            }
+        }
     }
 }
