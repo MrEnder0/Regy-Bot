@@ -257,7 +257,8 @@ pub fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
             general_purpose::STANDARD_NO_PAD
                 .decode(phrase.phrase.as_bytes())
                 .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
-        ).unwrap();
+        )
+        .unwrap();
 
         block_phrases.push(BlockPhrase {
             uuid: phrase.uuid.clone(),
