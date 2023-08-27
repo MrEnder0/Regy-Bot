@@ -86,17 +86,15 @@ Note none of these plans are guaranteed and also there may be other changes that
     [x] Rti core util
     [x] Rti package config support
     [ ] Rti management commands
-        [o] Search rti packages
-        [ ] List installed rti packages
-        [ ] Update rti packages
+        [x] Search rti packages
+        [o] Update rti packages
 
 # Release 15
 [ ] Command rewrites & config rewrites
-[ ] Add regex command say uuid
-[ ] Config auto cleaning
-[ ] Make more replies embeds
+[ ] Make more commands messages embeds
 [ ] Make dm messages embeds
-[ ] Staff roles
 
 # Release 16
 [ ] Automatic build and deploy off main branch option
+[ ] Config auto cleaning
+[ ] Staff roles
