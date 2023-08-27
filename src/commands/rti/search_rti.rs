@@ -55,7 +55,6 @@ pub async fn search_rti(
         ctx.send(|cr| {
             cr.embed(|ce| {
                 ce.title("No results found")
-                    .color(0xFFA500)
                     .field(
                         "The search phrase you entered did not match any results",
                         format!("Search phrase: {}", search_phrase),

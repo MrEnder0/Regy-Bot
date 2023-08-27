@@ -1,3 +1,4 @@
+use super::rti::read_rti;
 use base64::{engine::general_purpose, Engine as _};
 use ron::{
     self,
@@ -252,9 +253,15 @@ pub fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
 
     let mut block_phrases: Vec<BlockPhrase> = Vec::new();
     for phrase in &data.servers.get(&server_id).unwrap().block_phrases {
+        let decoded_phrase = String::from_utf8(
+            general_purpose::STANDARD_NO_PAD
+                .decode(phrase.phrase.as_bytes())
+                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
+        ).unwrap();
+
         block_phrases.push(BlockPhrase {
             uuid: phrase.uuid.clone(),
-            phrase: phrase.phrase.clone(),
+            phrase: decoded_phrase,
             is_rti: phrase.is_rti,
             description: phrase.description.clone(),
             version: phrase.version,
@@ -580,6 +587,28 @@ pub fn update_config() {
             });
             gen_config();
             std::process::exit(0);
+        }
+    }
+}
+
+pub fn update_regexes(server_id: String) {
+    let mut data = read_config();
+
+    for phrase in &mut data.servers.get_mut(&server_id).unwrap().block_phrases {
+        if phrase.is_rti {
+            let rti_objects = read_rti();
+
+            let rti_object = rti_objects
+                .packages
+                .iter()
+                .find(|rti_object| rti_object.uuid == phrase.uuid)
+                .filter(|rti_object| rti_object.version > phrase.version);
+
+            if rti_object.is_some() {
+                phrase.phrase = rti_object.unwrap().phrase.clone();
+                phrase.description = rti_object.unwrap().description.clone();
+                phrase.version = rti_object.unwrap().version;
+            }
         }
     }
 }

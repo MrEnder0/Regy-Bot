@@ -33,7 +33,7 @@ pub async fn download_rti() {
     response.copy_to(&mut file).unwrap();
 }
 
-fn read_rti() -> RtiPackages {
+pub fn read_rti() -> RtiPackages {
     let rti_packages_file =
         File::open("rti_packages.ron").log_expect(LogImportance::Warning, "RTI file not found");
     let rti_packages: RtiPackages = match from_reader(rti_packages_file) {
