@@ -75,12 +75,20 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     };
 
     for regex_phrase in block_phrases {
-        if Regex::new(&regex_phrase.phrase).unwrap().is_match(&format!("{} #", filtered_message)) {
+        if Regex::new(&regex_phrase.phrase)
+            .unwrap()
+            .is_match(&format!("{} #", filtered_message))
+        {
             println!("Message blocked");
-            new_message.delete(&ctx.http).await.log_expect(LogImportance::Warning, "Unable to delete message");
+            new_message
+                .delete(&ctx.http)
+                .await
+                .log_expect(LogImportance::Warning, "Unable to delete message");
 
-            let server_id = new_message.guild_id.unwrap().to_string();
-            add_infraction(server_id, new_message.author.id.into());
+            add_infraction(
+                new_message.guild_id.unwrap().to_string(),
+                new_message.author.id.into(),
+            );
 
             IpmStruct::increment_server(
                 new_message
@@ -169,9 +177,17 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             .ok();
 
                         let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
-                        user.unwrap().dm(&ctx.http, |m| m.content(dm_msg)).await.log_expect(LogImportance::Warning, "Unable to dm user");
+                        user.unwrap()
+                            .dm(&ctx.http, |m| m.content(dm_msg))
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to dm user");
 
-                        new_message.guild(&ctx).unwrap().ban(&ctx, new_message.author.id, 0).await.log_expect(LogImportance::Warning, "Unable to ban user");
+                        new_message
+                            .guild(&ctx)
+                            .unwrap()
+                            .ban(&ctx, new_message.author.id, 0)
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to ban user");
 
                         return;
                     }
@@ -209,10 +225,17 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                         new_message.guild_id.unwrap().to_string(),
                         true,
                     );
-                    embed.footer(|f| f.text("Think this is a mistake? Contact the specified server staff for help"));
+                    embed.footer(|f| {
+                        f.text(
+                            "Think this is a mistake? Contact the specified server staff for help",
+                        )
+                    });
                     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
 
-                    user.unwrap().dm(&ctx.http, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to dm user");
+                    user.unwrap()
+                        .dm(&ctx.http, |m| m.set_embed(embed))
+                        .await
+                        .log_expect(LogImportance::Warning, "Unable to dm user");
                 }
                 _ => {}
             }
@@ -230,7 +253,10 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             let ctx_clone = ctx.clone();
             tokio::spawn(async move {
                 std::thread::sleep(std::time::Duration::from_secs(5));
-                temp_msg.delete(&ctx_clone.http).await.log_expect(LogImportance::Warning, "Unable to delete message");
+                temp_msg
+                    .delete(&ctx_clone.http)
+                    .await
+                    .log_expect(LogImportance::Warning, "Unable to delete message");
             });
 
             //TODO: Change message to embed

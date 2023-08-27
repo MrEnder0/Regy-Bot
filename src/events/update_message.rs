@@ -61,33 +61,32 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     let filtered_message = filter_characters(&updated_message.to_lowercase());
 
-    let block_phrases = {
-        let phrases = list_regex(guild_id.unwrap().to_string());
+    let block_phrases = match { list_regex(guild_id.unwrap().to_string()) } {
+        Some(phrases) => phrases,
+        None => {
+            log_this(LogData {
+                importance: LogImportance::Warning,
+                message: format!(
+                    "Unable to get regex phrases for server {}",
+                    guild_id.unwrap()
+                ),
+            });
 
-        match phrases {
-            Some(phrases) => phrases,
-            None => {
-                log_this(LogData {
-                    importance: LogImportance::Warning,
-                    message: format!(
-                        "Unable to get regex phrases for server {}",
-                        guild_id.unwrap()
-                    ),
-                });
-                return;
-            }
+            return;
         }
     };
 
-    for phrase in block_phrases {
-        let re = Regex::new(&phrase.phrase).unwrap();
-        if re.is_match(&filtered_message) {
-            if let Err(why) = channel_id.delete_message(&ctx.http, message_id).await {
-                println!("Error deleting message: {:?}", why);
-            }
+    for regex_phrase in block_phrases {
+        if Regex::new(&regex_phrase.phrase)
+            .unwrap()
+            .is_match(&format!("{} #", filtered_message))
+        {
+            channel_id
+                .delete_message(&ctx.http, message_id)
+                .await
+                .log_expect(LogImportance::Warning, "Unable to delete message");
 
-            let server_id = guild_id.unwrap().to_string();
-            add_infraction(server_id, author.id.into());
+            add_infraction(guild_id.unwrap().to_string(), author.id.into());
 
             IpmStruct::increment_server(guild_id.unwrap().to_string().parse::<u64>().unwrap());
 
@@ -141,27 +140,83 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
             match (user_infractions >= 10, user_infractions % 5) {
                 (true, 0) => {
+                    if user_infractions >= 20 {
+                        let mut embed = CreateEmbed::default();
+                        embed.color(0x556B2F);
+                        embed.title("User banned");
+                        embed.description("User was banned for reaching 20 infractions");
+                        embed.field(
+                            "The user who was terminated from the server is:",
+                            format!("<@{}>", author.id),
+                            true,
+                        );
+                        embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png");
+                        log_channel
+                            .send_message(&ctx.http, |m| m.set_embed(embed))
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to send embed");
+
+                        let user = UserId(author.id.into()).to_user(&ctx.http).await.ok();
+
+                        let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
+                        user.unwrap()
+                            .dm(&ctx.http, |m| m.content(dm_msg))
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to dm user");
+
+                        //get guild
+                        let guild = guild_id.unwrap().to_guild_cached(&ctx);
+
+                        guild
+                            .unwrap()
+                            .ban(&ctx, author.id, 0)
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to ban user");
+
+                        return;
+                    }
+
                     let mut embed = CreateEmbed::default();
                     embed.color(0x8B0000);
                     embed.title(":warning: High infraction count");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
                     embed.field(
-                        "The user with the high infractions warning is below:",
+                        "The user with the high infractions warning is:",
                         format!("<@{}>", author.id),
-                        false,
+                        true,
                     );
                     embed.field(
-                        "The amount of infractions they have is below:",
+                        "The user has the following amount of infractions:",
                         format!("{}", user_infractions),
-                        false,
+                        true,
                     );
-                    embed.footer(|f| {
-                        f.text("This message will appear for users with high infraction counts")
-                    });
                     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
                     log_channel
                         .send_message(&ctx.http, |m| m.set_embed(embed))
                         .await
                         .log_expect(LogImportance::Warning, "Unable to send embed");
+
+                    let user = UserId(author.id.into()).to_user(&ctx.http).await.ok();
+
+                    let mut embed = CreateEmbed::default();
+                    embed.title("High infraction count");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
+                    embed.field(
+                        "You have these infractions in:",
+                        guild_id.unwrap().to_string(),
+                        true,
+                    );
+                    embed.footer(|f| {
+                        f.text(
+                            "Think this is a mistake? Contact the specified server staff for help",
+                        )
+                    });
+                    embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+
+                    user.unwrap()
+                        .dm(&ctx.http, |m| m.set_embed(embed))
+                        .await
+                        .log_expect(LogImportance::Warning, "Unable to dm user");
                 }
                 _ => {}
             }
