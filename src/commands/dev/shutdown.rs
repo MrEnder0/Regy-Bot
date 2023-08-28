@@ -33,12 +33,9 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    let msg_author = ctx.author().id;
-    println!("Shutdown from dev commands sent from {}", msg_author);
-
     log_this(LogData {
         importance: LogImportance::Info,
-        message: format!("Shutdown from dev commands sent from {}", msg_author),
+        message: format!("Shutdown from dev commands sent from {}", ctx.author().id),
     })
     .await;
 
