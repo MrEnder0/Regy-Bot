@@ -20,7 +20,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
             "{} has started and connected to discord.",
             data_about_bot.user.name
         ),
-    });
+    }).await;
 
     let ctx_clone = ctx.clone();
 
@@ -29,6 +29,19 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
         download_rti().await;
     });
 
+    // Sets bot activity
+    let bot_activity_ctx = ctx.clone();
+    tokio::spawn(async move {
+        loop {
+            std::thread::sleep(std::time::Duration::from_secs(60));
+            let guild_count = bot_activity_ctx.cache.guilds().len();
+            let activity_msg =
+                format!("over with powerful regex in {} servers.", guild_count);
+            bot_activity_ctx
+                .set_activity(serenity::Activity::watching(&activity_msg))
+                .await;
+        }
+    });
     // Resets IPM every min
     tokio::spawn(async move {
         loop {
@@ -46,10 +59,11 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                     log_this(LogData {
                         importance: LogImportance::Info,
                         message: "Possible raid detected due to IPM influx.".to_string(),
-                    });
+                    }).await;
 
                     let log_channel = ChannelId(
                         read_config()
+                            .await
                             .servers
                             .get(&server.to_string())
                             .unwrap()
@@ -78,7 +92,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
             }
         }
     });
-    // Checks if bot is online
+    // Checks if bot is online or offline
     tokio::spawn(async move {
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
@@ -90,7 +104,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                         log_this(LogData {
                             importance: LogImportance::Info,
                             message: format!("The bot has reconnected to Discord after being offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)+1),
-                        });
+                        }).await;
                         OFFLINE_TIME.store(0, Ordering::SeqCst);
                     }
                 }
@@ -101,7 +115,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                             "The bot has lost connection, and has been offline for {} minutes.",
                             OFFLINE_TIME.load(Ordering::SeqCst) + 1
                         ),
-                    });
+                    }).await;
                 }
             }
         }

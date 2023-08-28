@@ -16,7 +16,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     let user_id = add_reaction.user_id.unwrap().to_string();
 
     //Check if server exists in config
-    if !read_config().servers.contains_key(&server_id) {
+    if !read_config().await.servers.contains_key(&server_id) {
         return;
     }
 
@@ -27,6 +27,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
 
     //ignore events except for staff
     if !read_config()
+        .await
         .servers
         .get(&server_id)
         .unwrap()
@@ -38,7 +39,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
 
     //Check if the reaction is a dismiss reaction
     if add_reaction.channel_id
-        == ChannelId(read_config().servers.get(&server_id).unwrap().log_channel)
+        == ChannelId(read_config().await.servers.get(&server_id).unwrap().log_channel)
     {
         //ignore events except for the 🚫 reaction
         if add_reaction.emoji != ReactionType::Unicode("🚫".to_string()) {
@@ -59,7 +60,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
-            });
+            }).await;
 
             dismiss_infraction(server_id, user_id.parse::<u64>().unwrap());
 
@@ -148,7 +149,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                         "{} Has added a regex pattern to their server",
                         reaction_clone.user_id.unwrap()
                     ),
-                });
+                }).await;
 
                 //edit embed
                 let mut embed = CreateEmbed::default();

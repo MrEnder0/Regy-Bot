@@ -49,7 +49,7 @@ pub async fn search_rti(
         return Ok(());
     }
 
-    let relevant_objects = fuzzy_search_rti(search_phrase.clone());
+    let relevant_objects = fuzzy_search_rti(search_phrase.clone()).await;
 
     if relevant_objects.is_none() {
         ctx.send(|cr| {

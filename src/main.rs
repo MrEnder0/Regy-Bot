@@ -100,22 +100,10 @@ async fn main() {
             },
             ..Default::default()
         })
-        .token(read_config().global.token)
+        .token(read_config().await.global.token)
         .intents(serenity::GatewayIntents::all())
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
-                let ctx_clone = ctx.clone();
-                tokio::spawn(async move {
-                    loop {
-                        std::thread::sleep(std::time::Duration::from_secs(60));
-                        let guild_count = ctx_clone.cache.guilds().len();
-                        let activity_msg =
-                            format!("over with powerful regex in {} servers.", guild_count);
-                        ctx_clone
-                            .set_activity(serenity::Activity::watching(&activity_msg))
-                            .await;
-                    }
-                });
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })

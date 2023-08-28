@@ -34,6 +34,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     //Check if server exists in config
     if guild_id.is_some() {
         if !read_config()
+            .await
             .servers
             .contains_key(&guild_id.unwrap().to_string())
         {
@@ -48,6 +49,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     //Ignores moderation from staff
     for user in read_config()
+        .await
         .servers
         .get(&guild_id.unwrap().to_string())
         .unwrap()
@@ -61,7 +63,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     let filtered_message = filter_characters(&updated_message.to_lowercase());
 
-    let block_phrases = match { list_regex(guild_id.unwrap().to_string()) } {
+    let block_phrases = match { list_regex(guild_id.unwrap().to_string()).await } {
         Some(phrases) => phrases,
         None => {
             log_this(LogData {
@@ -70,7 +72,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     "Unable to get regex phrases for server {}",
                     guild_id.unwrap()
                 ),
-            });
+            }).await;
 
             return;
         }
@@ -93,10 +95,10 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
-            });
+            }).await;
 
             let server_id = guild_id.unwrap().to_string();
-            let log_channel = ChannelId(read_config().servers.get(&server_id).unwrap().log_channel);
+            let log_channel = ChannelId(read_config().await.servers.get(&server_id).unwrap().log_channel);
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);
@@ -125,7 +127,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 .await
                 .ok();
 
-            let user_infractions = list_infractions(server_id, author.id.into());
+            let user_infractions = list_infractions(server_id, author.id.into()).await;
 
             let user_infractions = match user_infractions {
                 Some(infractions) => infractions,
@@ -133,8 +135,9 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     log_this(LogData {
                         importance: LogImportance::Warning,
                         message: format!("Unable to get infractions for user {}", author.id),
-                    });
-                    return;
+                    }).await;
+
+                    return
                 }
             };
 

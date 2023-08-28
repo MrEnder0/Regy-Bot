@@ -25,7 +25,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     let server_id = new_message.guild_id.unwrap().to_string();
 
     //Poll detection
-    let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|opinion poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
+    let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
     if poll_re.is_match(&new_message.content) {
         new_message
             .react(&ctx.http, ReactionType::Unicode("👍".to_string()))
@@ -44,31 +44,31 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     //Check if server exists in config
-    if !read_config().servers.contains_key(&server_id) {
-        return;
+    if !read_config().await.servers.contains_key(&server_id) {
+        return
     }
 
     //Ignores moderation from devs
     if new_message.author.id == 687897073047306270 || new_message.author.id == 598280691066732564 {
-        return;
+        return
     }
 
     //Ignores moderation from staff
-    for user in read_config().servers.get(&server_id).unwrap().staff.iter() {
+    for user in read_config().await.servers.get(&server_id).unwrap().staff.iter() {
         if new_message.author.id == UserId(*user) {
-            return;
+            return
         }
     }
 
     let filtered_message = filter_characters(&new_message.content.to_lowercase());
 
-    let block_phrases = match { list_regex(server_id.clone()) } {
+    let block_phrases = match { list_regex(server_id.clone()).await } {
         Some(phrases) => phrases,
         None => {
             log_this(LogData {
                 importance: LogImportance::Warning,
                 message: format!("Unable to get regex phrases for server {}", server_id),
-            });
+            }).await;
 
             return;
         }
@@ -79,7 +79,6 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             .unwrap()
             .is_match(&format!("{} #", filtered_message))
         {
-            println!("Message blocked");
             new_message
                 .delete(&ctx.http)
                 .await
@@ -105,10 +104,10 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     "{} Has sent a message which is not allowed due to the set regex patterns",
                     new_message.author.id
                 ),
-            });
+            }).await;
 
             let server_id = new_message.guild_id.unwrap().to_string();
-            let log_channel = ChannelId(read_config().servers.get(&server_id).unwrap().log_channel);
+            let log_channel = ChannelId(read_config().await.servers.get(&server_id).unwrap().log_channel);
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);
@@ -137,7 +136,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 .await
                 .ok();
 
-            let user_infractions = list_infractions(server_id, new_message.author.id.into());
+            let user_infractions = list_infractions(server_id, new_message.author.id.into()).await;
 
             let user_infractions = match user_infractions {
                 Some(infractions) => infractions,
@@ -148,7 +147,8 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             "Unable to get infractions for user {}",
                             new_message.author.id
                         ),
-                    });
+                    }).await;
+
                     return;
                 }
             };
@@ -185,11 +185,11 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                         new_message
                             .guild(&ctx)
                             .unwrap()
-                            .ban(&ctx, new_message.author.id, 0)
+                            .ban_with_reason(&ctx, new_message.author.id, 0, "20 infractions")
                             .await
                             .log_expect(LogImportance::Warning, "Unable to ban user");
 
-                        return;
+                        return
                     }
 
                     let mut embed = CreateEmbed::default();
@@ -271,7 +271,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 .await
                 .log_expect(LogImportance::Warning, "Unable to dm user");
 
-            return;
+            return
         }
     }
 }

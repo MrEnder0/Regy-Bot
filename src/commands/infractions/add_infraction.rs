@@ -39,7 +39,7 @@ pub async fn add_infraction(
 
     let userid = user.clone().id;
 
-    if !config::server_exists(server_id.clone()) {
+    if !config::server_exists(server_id.clone()).await {
         ctx.say("Server does not exist in config")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");

@@ -19,13 +19,13 @@ pub async fn config_clone_regex(
     #[description = "Guild ID"] target_server_id: String,
 ) -> Result<(), Error> {
     //check if server exists in database
-    if !server_exists(target_server_id.clone()) {
+    if !server_exists(target_server_id.clone()).await {
         ctx.say("This server does not exist in the database.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
     } else {
         //check if current server exists in database
-        if !server_exists(ctx.guild_id().unwrap().0.to_string()) {
+        if !server_exists(ctx.guild_id().unwrap().0.to_string()).await {
             ctx.say("This server does not exist in the database, please run `config_setup` first.")
                 .await
                 .log_expect(LogImportance::Warning, "Unable to send message");
@@ -33,7 +33,7 @@ pub async fn config_clone_regex(
             return Ok(());
         }
 
-        let target_block_phrases = match { list_regex(target_server_id.clone()) } {
+        let target_block_phrases = match { list_regex(target_server_id.clone()).await } {
             Some(phrases) => phrases,
             None => {
                 log_this(LogData {
@@ -42,7 +42,7 @@ pub async fn config_clone_regex(
                         "Unable to get regex phrases for server {}",
                         target_server_id
                     ),
-                });
+                }).await;
 
                 ctx.say(format!("Unable to get regex phrases for server {} double check the id and make sure they have phrases to clone.", target_server_id))
                     .await

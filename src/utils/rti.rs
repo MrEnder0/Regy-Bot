@@ -33,7 +33,7 @@ pub async fn download_rti() {
     response.copy_to(&mut file).unwrap();
 }
 
-pub fn read_rti() -> RtiPackages {
+pub async fn read_rti() -> RtiPackages {
     let rti_packages_file =
         File::open("rti_packages.ron").log_expect(LogImportance::Warning, "RTI file not found");
     let rti_packages: RtiPackages = match from_reader(rti_packages_file) {
@@ -42,7 +42,7 @@ pub fn read_rti() -> RtiPackages {
             log_this(LogData {
                 importance: LogImportance::Warning,
                 message: format!("Unable to read rti packages file:\n{}", e),
-            });
+            }).await;
 
             RtiPackages {
                 meta: MetaData { version: 0 },
@@ -54,14 +54,14 @@ pub fn read_rti() -> RtiPackages {
     rti_packages
 }
 
-pub fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
+pub async fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
     let rti_packages = read_rti();
     let matcher = SkimMatcherV2::default();
 
     let search_phrase = input_phrase.to_lowercase();
     let mut return_vec = Vec::new();
 
-    for rti_object in rti_packages.packages {
+    for rti_object in rti_packages.await.packages {
         if matcher
             .fuzzy_match(&rti_object.description, &search_phrase)
             .is_some()

@@ -44,7 +44,7 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
-    let block_phrases = match { config::list_regex(server_id) } {
+    let block_phrases = match { config::list_regex(server_id).await } {
         Some(block_phrases) => block_phrases,
         None => {
             ctx.say("This server does not exist in the database, please run `config_setup` first; if you have already done this please add a regex phrase before trying to list them.")

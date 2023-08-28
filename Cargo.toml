@@ -1,6 +1,6 @@
 [package]
 name = "regy_bot"
-version = "1.13.8"
+version = "1.13.9"
 edition = "2021"
 
 [dependencies]
@@ -13,7 +13,7 @@ base64 = "0.21.3"
 uuid = { version = "1.4.1", features = ["v4", "serde"] }
 self-replace = "1.3.6"
 owo-colors = "3.5.0"
-scorched = "<0.2.3"
+scorched = "0.2.3"
 ron = "0.8.1"
 reqwest = { version = "0.11.20", features = ["blocking", "json"] }
 fuzzy-matcher = "0.3.7"

@@ -85,12 +85,14 @@ Note none of these plans are guaranteed and also there may be other changes that
 [o] Regex template index (rti)
     [x] Rti core util
     [x] Rti package config support
-    [ ] Rti management commands
+    [o] Rti management commands
         [x] Search rti packages
         [o] Update rti packages
+[x] Support scorched async
 
 # Release 15
-[ ] Command rewrites & config rewrites
+[ ] Command rewrites (link all inside mod.rs instead of main.rs)
+[ ] Make config.rs a sub catagory of utils
 [ ] Make more commands messages embeds
 [ ] Make dm messages embeds
 
