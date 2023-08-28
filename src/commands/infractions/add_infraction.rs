@@ -46,7 +46,7 @@ pub async fn add_infraction(
         return Ok(());
     }
 
-    config::add_infraction(server_id, userid_to_u64(userid));
+    config::add_infraction(server_id, userid_to_u64(userid)).await;
 
     ctx.say(format!("Added an infraction to {}", user.clone().name))
         .await

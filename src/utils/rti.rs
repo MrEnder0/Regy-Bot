@@ -42,7 +42,8 @@ pub async fn read_rti() -> RtiPackages {
             log_this(LogData {
                 importance: LogImportance::Warning,
                 message: format!("Unable to read rti packages file:\n{}", e),
-            }).await;
+            })
+            .await;
 
             RtiPackages {
                 meta: MetaData { version: 0 },

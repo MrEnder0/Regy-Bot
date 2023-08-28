@@ -42,7 +42,8 @@ pub async fn config_clone_regex(
                         "Unable to get regex phrases for server {}",
                         target_server_id
                     ),
-                }).await;
+                })
+                .await;
 
                 ctx.say(format!("Unable to get regex phrases for server {} double check the id and make sure they have phrases to clone.", target_server_id))
                     .await
@@ -59,7 +60,8 @@ pub async fn config_clone_regex(
                 false,
                 "No description provided.".to_string(),
                 0,
-            );
+            )
+            .await;
         }
 
         ctx.say("Regex phrases cloned successfully.")

@@ -39,7 +39,14 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
 
     //Check if the reaction is a dismiss reaction
     if add_reaction.channel_id
-        == ChannelId(read_config().await.servers.get(&server_id).unwrap().log_channel)
+        == ChannelId(
+            read_config()
+                .await
+                .servers
+                .get(&server_id)
+                .unwrap()
+                .log_channel,
+        )
     {
         //ignore events except for the 🚫 reaction
         if add_reaction.emoji != ReactionType::Unicode("🚫".to_string()) {
@@ -60,9 +67,10 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
-            }).await;
+            })
+            .await;
 
-            dismiss_infraction(server_id, user_id.parse::<u64>().unwrap());
+            dismiss_infraction(server_id, user_id.parse::<u64>().unwrap()).await;
 
             let user = UserId(user_id.parse::<u64>().unwrap())
                 .to_user(&ctx_clone.http)
@@ -135,21 +143,25 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                 let phrase_desc = &msg.embeds[0].fields[2].value;
                 let phrase_phrase = &msg.embeds[0].fields[3].value;
 
+                println!("{}", server_id);
+
                 add_regex(
                     server_id,
-                    format!("{}#", phrase_phrase),
+                    format!("{} ", phrase_phrase),
                     true,
                     phrase_desc.to_string(),
                     phrase_ver.parse().unwrap(),
-                );
+                )
+                .await;
 
                 log_this(LogData {
                     importance: LogImportance::Info,
                     message: format!(
-                        "{} Has added a regex pattern to their server",
+                        "{} Has added a RTI package to their server",
                         reaction_clone.user_id.unwrap()
                     ),
-                }).await;
+                })
+                .await;
 
                 //edit embed
                 let mut embed = CreateEmbed::default();
@@ -167,7 +179,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             }
             EmbedType::Update => {
                 if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
-                    update_regexes(server_id);
+                    update_regexes(server_id).await;
 
                     let mut embed = CreateEmbed::default();
                     embed.color(0x556B2F);

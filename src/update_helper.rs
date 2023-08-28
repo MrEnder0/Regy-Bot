@@ -9,7 +9,8 @@ async fn main() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "[Update Helper] Waiting for Regy to fully shutdown.".to_string(),
-    }).await;
+    })
+    .await;
 
     std::thread::sleep(Duration::from_secs(2));
 
@@ -20,24 +21,27 @@ async fn main() {
             importance: LogImportance::Error,
             message: "[Update Helper] Updated Regy binary does not exist, shutting down."
                 .to_string(),
-        }).await;
+        })
+        .await;
 
-        return
+        return;
     }
 
     if !Path::new("updated").exists() {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: "[Update Helper] Regy is not in update state, shutting down.".to_string(),
-        }).await;
+        })
+        .await;
 
-        return
+        return;
     }
 
     log_this(LogData {
         importance: LogImportance::Info,
         message: "[Update Helper] Regy has finished updating restarting Regy.".to_string(),
-    }).await;
+    })
+    .await;
 
     std::fs::remove_file("updated")
         .log_expect(LogImportance::Error, "Failed to remove updated file");
@@ -48,7 +52,8 @@ async fn main() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "[Update Helper] Update helper has finished, closing update helper.".to_string(),
-    }).await;
+    })
+    .await;
 
     std::process::exit(0);
 }

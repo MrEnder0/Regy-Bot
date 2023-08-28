@@ -47,7 +47,8 @@ pub async fn dismiss_infraction(
         return Ok(());
     }
 
-    config::dismiss_infraction(server_id, userid_to_u64(userid));
+    config::dismiss_infraction(server_id, userid_to_u64(userid)).await;
+
     ctx.say(format!("Dismissed a infraction from {}", user.clone().name))
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");

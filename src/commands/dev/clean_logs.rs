@@ -36,7 +36,8 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
         log_this(LogData {
             importance: LogImportance::Info,
             message: "Log folder does not exist".to_string(),
-        }).await;
+        })
+        .await;
 
         ctx.say("Log folder does not exist")
             .await

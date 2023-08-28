@@ -63,7 +63,8 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
             log_this(LogData {
                 importance: LogImportance::Error,
                 message: "Update has failed, bot will return to normal operation.".to_string(),
-            }).await;
+            })
+            .await;
 
             Ok(())
         }
@@ -111,7 +112,8 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: "Update has been successful, bot will restart.".to_string(),
-            }).await;
+            })
+            .await;
 
             std::process::Command::new("regy_bot_update_helper.exe")
                 .spawn()

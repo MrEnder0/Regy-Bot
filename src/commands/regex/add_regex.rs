@@ -47,11 +47,12 @@ pub async fn add_regex(
 
     config::add_regex(
         server_id,
-        phrase + " ",
+        format!("{} ", phrase),
         false,
         "No description provided.".to_string(),
         0,
-    );
+    )
+    .await;
 
     let status_message = format!("Added the regex phrase:\n||```{}```||", regex_phrase);
     ctx.say(status_message)

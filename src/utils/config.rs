@@ -82,7 +82,8 @@ pub async fn gen_config() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "Config file has been generated.".to_string(),
-    }).await;
+    })
+    .await;
 }
 
 pub async fn read_config() -> Config {
@@ -93,8 +94,12 @@ pub async fn read_config() -> Config {
         Err(e) => {
             log_this(LogData {
                 importance: LogImportance::Error,
-                message: format!("Unable to read config file because of the following error:\n{}", e),
-            }).await;
+                message: format!(
+                    "Unable to read config file because of the following error:\n{}",
+                    e
+                ),
+            })
+            .await;
 
             std::process::exit(0);
         }
@@ -130,7 +135,8 @@ pub async fn gen_server(guid_id: String, log_channel: u64) {
             "A server with the id {} has been added to the config file.",
             guid_id
         ),
-    }).await;
+    })
+    .await;
 }
 
 pub async fn server_exists(guid_id: String) -> bool {
@@ -152,9 +158,10 @@ pub async fn add_regex(
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return false
+        return false;
     }
 
     //Checks if phrase already exists
@@ -166,9 +173,10 @@ pub async fn add_regex(
                     "A phrase with the value '{}' already exists.",
                     current_phrase.phrase
                 ),
-            }).await;
+            })
+            .await;
 
-            return false
+            return false;
         }
     }
 
@@ -180,9 +188,9 @@ pub async fn add_regex(
         .push(BlockPhrase {
             uuid: id.to_string(),
             phrase: general_purpose::STANDARD_NO_PAD.encode(&phrase),
-            is_rti: is_rti,
-            description: description,
-            version: version,
+            is_rti,
+            description,
+            version,
         });
 
     let config = PrettyConfig::new()
@@ -204,9 +212,10 @@ pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return false
+        return false;
     }
 
     if data
@@ -231,7 +240,7 @@ pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
         let config_str = to_string_pretty(&data, config).expect("Serialization failed");
         std::fs::write("config.ron", config_str).unwrap();
     } else {
-        return false
+        return false;
     }
 
     true
@@ -248,9 +257,10 @@ pub async fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
                 "A server with the id '{}' does not exist or does not have any regex phrases.",
                 server_id
             ),
-        }).await;
+        })
+        .await;
 
-        return None
+        return None;
     }
 
     let mut block_phrases: Vec<BlockPhrase> = Vec::new();
@@ -282,9 +292,10 @@ pub async fn add_infraction(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return false
+        return false;
     }
 
     let infractions = data
@@ -315,9 +326,10 @@ pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return false
+        return false;
     }
 
     if data
@@ -349,7 +361,7 @@ pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
         let config_str = to_string_pretty(&data, config).expect("Serialization failed");
         std::fs::write("config.ron", config_str).unwrap();
     } else {
-        return false
+        return false;
     }
 
     true
@@ -363,9 +375,10 @@ pub async fn list_infractions(server_id: String, id: u64) -> Option<u64> {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return None
+        return None;
     }
 
     let infractions = config
@@ -387,9 +400,10 @@ pub async fn add_staff(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return false
+        return false;
     }
 
     if data.servers.get(&server_id).unwrap().staff.contains(&id) {
@@ -417,9 +431,10 @@ pub async fn remove_staff(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return false
+        return false;
     }
 
     if data.servers.get(&server_id).unwrap().staff.contains(&id) {
@@ -451,9 +466,10 @@ pub async fn list_staff(server_id: String) -> Option<Vec<u64>> {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
 
-        return None
+        return None;
     }
 
     let mut staff: Vec<u64> = Vec::new();
@@ -472,7 +488,8 @@ pub async fn delete_user(server_id: String, id: u64) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        }).await;
+        })
+        .await;
     }
 
     //Checks if user is on infraction list and removes them if they are
@@ -517,7 +534,8 @@ pub async fn update_config() {
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: "Legacy Toml config found, updating to ron config format.".to_string(),
-            }).await;
+            })
+            .await;
 
             std::fs::rename("config.toml", "config.toml.bak").unwrap();
 
@@ -590,7 +608,8 @@ pub async fn update_config() {
             log_this(LogData {
                 importance: LogImportance::Error,
                 message: "Config file not found, generating default.".to_string(),
-            }).await;
+            })
+            .await;
             gen_config().await;
 
             std::process::exit(0);
@@ -605,9 +624,8 @@ pub async fn update_regexes(server_id: String) {
         if phrase.is_rti {
             let rti_objects = read_rti();
 
-            let rti_objects = rti_objects
-                .await;
-            
+            let rti_objects = rti_objects.await;
+
             let filtered_rti_objects = rti_objects
                 .packages
                 .iter()

@@ -17,9 +17,9 @@ async fn main() {
     //check for config file
     if !Path::new("config.ron").exists() {
         if Path::new("config.toml").exists() {
-            update_config();
+            update_config().await;
         } else {
-            gen_config();
+            gen_config().await;
         }
     }
 

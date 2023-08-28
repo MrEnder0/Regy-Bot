@@ -29,7 +29,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         .to_user(&ctx.http)
         .await
         .log_expect(LogImportance::Warning, "Unable to get user");
-    add_infraction(execution.guild_id.to_string(), user.id.into());
+    add_infraction(execution.guild_id.to_string(), user.id.into()).await;
 
     IpmStruct::increment_server(execution.guild_id.into());
 
@@ -39,7 +39,8 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
             "{} Has sent a message which breaks an auto-mod rule.",
             user.id
         ),
-    }).await;
+    })
+    .await;
 
     let log_channel = ChannelId(
         read_config()
@@ -79,16 +80,18 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         .await
         .ok();
 
-    let user_infractions = match list_infractions(execution.guild_id.to_string(), user.id.into()).await {
-        Some(infractions) => infractions,
-        None => {
-            log_this(LogData {
-                importance: LogImportance::Warning,
-                message: format!("Unable to get infractions for user {}", user.id),
-            }).await;
-            return;
-        }
-    };
+    let user_infractions =
+        match list_infractions(execution.guild_id.to_string(), user.id.into()).await {
+            Some(infractions) => infractions,
+            None => {
+                log_this(LogData {
+                    importance: LogImportance::Warning,
+                    message: format!("Unable to get infractions for user {}", user.id),
+                })
+                .await;
+                return;
+            }
+        };
 
     match (user_infractions >= 10, user_infractions % 5) {
         (true, 0) => {
@@ -109,8 +112,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     .log_expect(LogImportance::Warning, "Unable to send embed");
 
                 let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
-                user
-                    .dm(&ctx.http, |m| m.content(dm_msg))
+                user.dm(&ctx.http, |m| m.content(dm_msg))
                     .await
                     .log_expect(LogImportance::Warning, "Unable to dm user");
 
@@ -124,7 +126,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     .await
                     .log_expect(LogImportance::Warning, "Unable to ban user");
 
-                return
+                return;
             }
 
             let mut embed = CreateEmbed::default();

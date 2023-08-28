@@ -72,7 +72,8 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     "Unable to get regex phrases for server {}",
                     guild_id.unwrap()
                 ),
-            }).await;
+            })
+            .await;
 
             return;
         }
@@ -88,7 +89,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 .await
                 .log_expect(LogImportance::Warning, "Unable to delete message");
 
-            add_infraction(guild_id.unwrap().to_string(), author.id.into());
+            add_infraction(guild_id.unwrap().to_string(), author.id.into()).await;
 
             IpmStruct::increment_server(guild_id.unwrap().to_string().parse::<u64>().unwrap());
 
@@ -98,7 +99,14 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             }).await;
 
             let server_id = guild_id.unwrap().to_string();
-            let log_channel = ChannelId(read_config().await.servers.get(&server_id).unwrap().log_channel);
+            let log_channel = ChannelId(
+                read_config()
+                    .await
+                    .servers
+                    .get(&server_id)
+                    .unwrap()
+                    .log_channel,
+            );
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);
@@ -135,9 +143,10 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     log_this(LogData {
                         importance: LogImportance::Warning,
                         message: format!("Unable to get infractions for user {}", author.id),
-                    }).await;
+                    })
+                    .await;
 
-                    return
+                    return;
                 }
             };
 

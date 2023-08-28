@@ -51,7 +51,8 @@ pub async fn remove_regex(
                 log_this(LogData {
                     importance: LogImportance::Warning,
                     message: format!("Unable to get regex phrases for server {}", server_id),
-                }).await;
+                })
+                .await;
 
                 ctx.say("This server does not exist in the database, please run `config_setup` first; if you have already done this please add a regex phrase before trying to list them.")
                     .await
@@ -70,7 +71,7 @@ pub async fn remove_regex(
     }
 
     let server_id = ctx.guild_id().unwrap().0.to_string();
-    config::remove_regex(server_id, id);
+    config::remove_regex(server_id, id).await;
 
     let status_message = format!("Removed the regex phrase with UUID: {}", id);
     ctx.say(status_message)

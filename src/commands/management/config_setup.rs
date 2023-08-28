@@ -29,7 +29,7 @@ pub async fn config_setup(
         return Ok(());
     }
 
-    gen_server(guild_id, log_channel_id);
+    gen_server(guild_id, log_channel_id).await;
 
     ctx.say("Server added to database.")
         .await
