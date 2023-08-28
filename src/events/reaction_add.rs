@@ -128,7 +128,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             .unwrap();
 
         let embed_type = match msg.embeds[0].title.as_mut().unwrap().to_string().as_str() {
-            "Are you sure you want to update the RTI package?" => EmbedType::Update,
+            "Are you sure you want to update your RTI package?" => EmbedType::Update,
             "Results found" => EmbedType::Add,
             _ => return,
         };
@@ -142,8 +142,6 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                 let phrase_ver = &msg.embeds[0].fields[0].value;
                 let phrase_desc = &msg.embeds[0].fields[2].value;
                 let phrase_phrase = &msg.embeds[0].fields[3].value;
-
-                println!("{}", server_id);
 
                 add_regex(
                     server_id,
