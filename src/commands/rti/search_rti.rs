@@ -73,7 +73,7 @@ pub async fn search_rti(
     } else {
         for rti_object in relevant_objects.clone().unwrap() {
             let mut embed = CreateEmbed::default();
-            embed.title("Results found".to_string());
+            embed.title("RTI Package Found".to_string());
             embed.color(0x556B2F);
             embed.field("Version", rti_object.version, false);
             embed.field("UUID", rti_object.uuid, false);

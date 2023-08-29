@@ -129,14 +129,14 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
 
         let embed_type = match msg.embeds[0].title.as_mut().unwrap().to_string().as_str() {
             "Are you sure you want to update your RTI package?" => EmbedType::Update,
-            "Results found" => EmbedType::Add,
+            "RTI Package Found" => EmbedType::Add,
             _ => return,
         };
 
         match embed_type {
             EmbedType::Add => {
                 if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
-                    return;
+                    return
                 }
 
                 let phrase_ver = &msg.embeds[0].fields[0].value;
@@ -176,27 +176,27 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                 msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
             }
             EmbedType::Update => {
-                if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
+                if add_reaction.emoji == ReactionType::Unicode("✅".to_string()) {
                     update_regexes(server_id).await;
 
                     let mut embed = CreateEmbed::default();
                     embed.color(0x556B2F);
                     embed.title("RTI package updated");
-                    embed.description("All RTI packages have been updated to the latest version");
+                    embed.description("All RTI packages are being updated to the latest version");
                     embed.footer(|f| {
-                        f.text("This RTI package has been updated to the latest version")
+                        f.text("This may take a moment to apply to all your outdates RTI packages")
                     });
                     embed.thumbnail(
                         "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
                     );
 
                     msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
-                } else if add_reaction.emoji != ReactionType::Unicode("❌".to_string()) {
+                } else if add_reaction.emoji == ReactionType::Unicode("❌".to_string()) {
                     let mut embed = CreateEmbed::default();
                     embed.color(0xFFA500);
                     embed.title("RTI package update cancelled");
                     embed.description("The RTI package update has been cancelled");
-                    embed.footer(|f| f.text("This RTI package update has been cancelled"));
+                    embed.footer(|f| f.text("No RTI packages will be modified from this action"));
                     embed.thumbnail(
                         "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
                     );
