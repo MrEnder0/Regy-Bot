@@ -54,6 +54,7 @@ async fn main() {
                 dev::local_update::update(),
                 rti::search_rti::search_rti(),
                 rti::update_rti::update_rti(),
+                rti::reload_rti::reload_rti(),
             ],
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {

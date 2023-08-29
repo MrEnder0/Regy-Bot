@@ -136,7 +136,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         match embed_type {
             EmbedType::Add => {
                 if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
-                    return
+                    return;
                 }
 
                 let phrase_ver = &msg.embeds[0].fields[0].value;
@@ -184,7 +184,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                     embed.title("RTI package updated");
                     embed.description("All RTI packages are being updated to the latest version");
                     embed.footer(|f| {
-                        f.text("This may take a moment to apply to all your outdates RTI packages")
+                        f.text("This may take a moment to apply to all your outdated RTI packages")
                     });
                     embed.thumbnail(
                         "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",

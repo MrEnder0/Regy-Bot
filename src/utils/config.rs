@@ -11,11 +11,11 @@ use std::{collections::HashMap, fs::File, path::Path};
 use toml;
 use uuid::Uuid;
 
-static CONFIG_VERSION: u16 = 6;
+static CONFIG_VERSION: u8 = 6;
 
 #[derive(Serialize, Deserialize)]
 struct MetaData {
-    version: u16,
+    version: u8,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -619,18 +619,14 @@ pub async fn update_config() {
 
 pub async fn update_regexes(server_id: String) {
     let mut data = read_config().await;
+    let rti = read_rti().await;
 
     for phrase in &mut data.servers.get_mut(&server_id).unwrap().block_phrases {
         if phrase.is_rti {
-            let rti_objects = read_rti();
-
-            let rti_objects = rti_objects.await;
-
-            let filtered_rti_objects = rti_objects
+            let filtered_rti_objects = rti
                 .packages
                 .iter()
-                .find(|rti_object| rti_object.uuid == phrase.uuid)
-                .filter(|rti_object| rti_object.version > phrase.version);
+                .find(|rti_object| rti_object.description == phrase.description);
 
             if filtered_rti_objects.is_some() {
                 phrase.phrase = filtered_rti_objects.unwrap().phrase.clone();
@@ -639,4 +635,12 @@ pub async fn update_regexes(server_id: String) {
             }
         }
     }
+
+    let config = PrettyConfig::new()
+        .depth_limit(4)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
 }
