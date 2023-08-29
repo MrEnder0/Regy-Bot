@@ -95,6 +95,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [ ] Make config.rs a sub catagory of utils
 [ ] Make more commands messages embeds
 [ ] Make dm messages embeds
+[ ] Username and nickname scanning
 
 # Release 16
 [ ] Automatic build and deploy off main branch option
