@@ -89,7 +89,8 @@ Note none of these plans are guaranteed and also there may be other changes that
         [x] Search rti packages
         [x] Update rti packages
         [x] Force reload index
-    [ ] Update help command to include rti commands
+    [x] Update help command to include rti commands
+    [ ] Logging to rti utils
 [x] Support scorched async
 
 # Release 15
