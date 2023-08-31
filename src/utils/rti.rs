@@ -27,7 +27,24 @@ pub struct RtiPackages {
 
 pub async fn download_rti() {
     let url = "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/rti_packages/rti_packages.ron";
-    let mut response = get(url).unwrap();
+    let mut response = match get(url) {
+        Ok(x) => {
+            log_this(LogData {
+                importance: LogImportance::Info,
+                message: format!("Successfully downloaded RTI packages from {}", url),
+            })
+            .await;
+            x
+        }
+        Err(e) => {
+            log_this(LogData {
+                importance: LogImportance::Warning,
+                message: format!("Unable to download RTI packages file:\n{}", e),
+            })
+            .await;
+            return;
+        }
+    };
 
     let mut file = File::create("rti_packages.ron").unwrap();
     response.copy_to(&mut file).unwrap();
