@@ -82,7 +82,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 14
 [x] Message character cleaning
 [x] Ron config language support
-[o] Regex template index (rti)
+[x] Regex template index (rti)
     [x] Rti core util
     [x] Rti package config support
     [x] Rti management commands
@@ -90,7 +90,7 @@ Note none of these plans are guaranteed and also there may be other changes that
         [x] Update rti packages
         [x] Force reload index
     [x] Update help command to include rti commands
-    [ ] Logging to rti utils
+    [x] Logging to rti utils
 [x] Support scorched async
 
 # Release 15
