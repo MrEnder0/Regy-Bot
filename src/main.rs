@@ -37,6 +37,7 @@ async fn main() {
                 infractions::dismiss_infraction::dismiss_infraction(),
                 infractions::list_infractions::list_infractions(),
                 moderation::grab_pfp::grab_pfp(),
+                moderation::nuke::nuke(),
                 regex::add_regex::add_regex(),
                 regex::remove_regex::remove_regex(),
                 regex::list_regex::list_regex(),
