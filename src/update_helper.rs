@@ -27,7 +27,7 @@ async fn main() {
         return;
     }
 
-    if !Path::new("updated").exists() {
+    if !Path::new("update.lock").exists() {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: "[Update Helper] Regy is not in update state, shutting down.".to_string(),
@@ -43,8 +43,8 @@ async fn main() {
     })
     .await;
 
-    std::fs::remove_file("updated")
-        .log_expect(LogImportance::Error, "Failed to remove updated file");
+    std::fs::remove_file("update.lock")
+        .log_expect(LogImportance::Error, "Failed to remove update.lock file");
     Command::new("regy_bot.exe")
         .spawn()
         .log_expect(LogImportance::Error, "Failed to start regy_bot.exe");
