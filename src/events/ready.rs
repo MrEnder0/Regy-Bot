@@ -85,10 +85,9 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                             m.content("<@&1009589625230213200>").set_embed(embed)
                         })
                         .await
-                        .log_expect(LogImportance::Warning, "Unable to send embed")
-                        .id;
+                        .log_expect(LogImportance::Warning, "Unable to send embed");
 
-                    IpmStruct::set_server(server.try_into().unwrap(), 0);
+                    IpmStruct::set_server(server, 0);
                 }
             }
         }

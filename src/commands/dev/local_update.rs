@@ -40,8 +40,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
     ctx.channel_id()
         .send_message(&ctx, |m| m.set_embed(embed))
         .await
-        .log_expect(LogImportance::Warning, "Unable to send update embed")
-        .id;
+        .log_expect(LogImportance::Warning, "Unable to send update embed");
 
     let update = local_update("regy_update.exe");
 
@@ -57,8 +56,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
             ctx.channel_id()
                 .send_message(&ctx, |m| m.set_embed(embed))
                 .await
-                .log_expect(LogImportance::Warning, "Unable to send failed update embed")
-                .id;
+                .log_expect(LogImportance::Warning, "Unable to send failed update embed");
 
             log_this(LogData {
                 importance: LogImportance::Error,
@@ -80,8 +78,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
                 .log_expect(
                     LogImportance::Warning,
                     "Unable to send partial update embed",
-                )
-                .id;
+                );
 
             log_this(LogData {
                 importance: LogImportance::Warning,
@@ -102,8 +99,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
                 .log_expect(
                     LogImportance::Warning,
                     "Unable to send successful update embed",
-                )
-                .id;
+                );
 
             ctx.say("Update has been successful, bot will restart.")
                 .await
@@ -132,8 +128,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
                 .log_expect(
                     LogImportance::Warning,
                     "Unable to send unknown update status embed",
-                )
-                .id;
+                );
 
             log_this(LogData {
                 importance: LogImportance::Error,

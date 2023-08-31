@@ -20,7 +20,7 @@ pub enum HelpEnum {
     #[name = "Regex commands help"]
     Regex,
     #[name = "RTI commands help"]
-    RTI,
+    Rti,
     #[name = "Developer commands help"]
     Developer,
 }
@@ -93,7 +93,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         }
-        HelpEnum::RTI => {
+        HelpEnum::Rti => {
             ctx.say(
                 "The RTI commands are:\n\
                 `/search_rti <rti>` - Searches the RTI packages given a specified search\n\

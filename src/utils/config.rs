@@ -108,7 +108,7 @@ pub async fn read_config() -> Config {
     config
 }
 
-pub async fn gen_server(guid_id: String, log_channel: u64) {
+pub async fn gen_server(guid_id: String, log_channel_id: u64) {
     let mut data = read_config().await;
     let guild_id = guid_id.clone();
     data.servers.insert(
@@ -117,7 +117,7 @@ pub async fn gen_server(guid_id: String, log_channel: u64) {
             infractions: HashMap::new(),
             block_phrases: Vec::new(),
             staff: Vec::new(),
-            log_channel: log_channel,
+            log_channel: log_channel_id,
         },
     );
 

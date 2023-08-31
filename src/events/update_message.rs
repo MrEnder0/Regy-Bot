@@ -32,14 +32,12 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     }
 
     //Check if server exists in config
-    if guild_id.is_some() {
-        if !read_config()
-            .await
-            .servers
-            .contains_key(&guild_id.unwrap().to_string())
-        {
-            return;
-        }
+    if !read_config()
+        .await
+        .servers
+        .contains_key(&guild_id.unwrap().to_string())
+    {
+        return;
     }
 
     //Ignores moderation from devs
@@ -170,14 +168,13 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
                         let user = UserId(author.id.into()).to_user(&ctx.http).await.ok();
 
-                        let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
+                        let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
                         user.unwrap()
                             .dm(&ctx.http, |m| m.content(dm_msg))
                             .await
                             .log_expect(LogImportance::Warning, "Unable to dm user");
 
-                        //get guild
-                        let guild = guild_id.unwrap().to_guild_cached(&ctx);
+                        let guild = guild_id.unwrap().to_guild_cached(ctx);
 
                         guild
                             .unwrap()

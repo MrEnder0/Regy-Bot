@@ -102,7 +102,7 @@ pub async fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
         }
     }
 
-    if return_vec.len() == 0 {
+    if return_vec.is_empty() {
         return None;
     }
 

@@ -111,7 +111,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     .await
                     .log_expect(LogImportance::Warning, "Unable to send embed");
 
-                let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
+                let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
                 user.dm(&ctx.http, |m| m.content(dm_msg))
                     .await
                     .log_expect(LogImportance::Warning, "Unable to dm user");

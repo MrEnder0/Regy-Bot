@@ -69,5 +69,5 @@ pub async fn config_clone_regex(
             .log_expect(LogImportance::Warning, "Unable to send message");
     }
 
-    return Ok(());
+    Ok(())
 }

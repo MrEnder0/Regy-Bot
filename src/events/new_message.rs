@@ -194,14 +194,14 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             .await
                             .ok();
 
-                        let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
+                        let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
                         user.unwrap()
                             .dm(&ctx.http, |m| m.content(dm_msg))
                             .await
                             .log_expect(LogImportance::Warning, "Unable to dm user");
 
                         new_message
-                            .guild(&ctx)
+                            .guild(ctx)
                             .unwrap()
                             .ban_with_reason(&ctx, new_message.author.id, 0, "20 infractions")
                             .await
