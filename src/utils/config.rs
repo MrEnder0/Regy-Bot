@@ -575,7 +575,7 @@ pub async fn update_config() {
                     let cleaned_value = &value.to_string()[1..value.to_string().len() - 1];
 
                     let phrase = BlockPhrase {
-                        uuid: Uuid::new_v4().to_string(),
+                        uuid: key.to_string(),
                         phrase: general_purpose::STANDARD_NO_PAD.encode(cleaned_value),
                         is_rti: false,
                         description: "No description provided.".to_string(),
