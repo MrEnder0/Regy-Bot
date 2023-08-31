@@ -22,14 +22,14 @@ pub async fn config_setup(
     let guild_id = ctx.guild_id().unwrap().to_string();
     let log_channel_id = log_channel.id().to_string().parse::<u64>().unwrap();
 
-    if server_exists(guild_id.clone()) {
+    if server_exists(guild_id.clone()).await {
         ctx.say("This server already exists in the database.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
-    gen_server(guild_id, log_channel_id);
+    gen_server(guild_id, log_channel_id).await;
 
     ctx.say("Server added to database.")
         .await

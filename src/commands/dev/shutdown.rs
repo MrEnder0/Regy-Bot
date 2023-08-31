@@ -28,18 +28,16 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    if !read_config().global.allow_shutdown {
+    if !read_config().await.global.allow_shutdown {
         ctx.say("Remote shutdown is not enabled on host.").await?;
         return Ok(());
     }
 
-    let msg_author = ctx.author().id;
-    println!("Shutdown from dev commands sent from {}", msg_author);
-
     log_this(LogData {
         importance: LogImportance::Info,
-        message: format!("Shutdown from dev commands sent from {}", msg_author),
-    });
+        message: format!("Shutdown from dev commands sent from {}", ctx.author().id),
+    })
+    .await;
 
     ctx.say("Shutting down...")
         .await
@@ -51,5 +49,6 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
         .await
         .shutdown_all()
         .await;
+
     std::process::exit(0);
 }

@@ -25,7 +25,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     let server_id = new_message.guild_id.unwrap().to_string();
 
     //Poll detection
-    let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|opinion poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
+    let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
     if poll_re.is_match(&new_message.content) {
         new_message
             .react(&ctx.http, ReactionType::Unicode("👍".to_string()))
@@ -44,7 +44,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     //Check if server exists in config
-    if !read_config().servers.contains_key(&server_id) {
+    if !read_config().await.servers.contains_key(&server_id) {
         return;
     }
 
@@ -54,7 +54,14 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     //Ignores moderation from staff
-    for user in read_config().servers.get(&server_id).unwrap().staff.iter() {
+    for user in read_config()
+        .await
+        .servers
+        .get(&server_id)
+        .unwrap()
+        .staff
+        .iter()
+    {
         if new_message.author.id == UserId(*user) {
             return;
         }
@@ -62,16 +69,34 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
     let filtered_message = filter_characters(&new_message.content.to_lowercase());
 
-    let block_phrases_hashmap = list_regex(server_id);
-    for phrase in block_phrases_hashmap.as_ref().unwrap().values() {
-        let re = Regex::new(&phrase).unwrap();
-        if re.is_match(&filtered_message) {
-            if let Err(why) = new_message.delete(&ctx.http).await {
-                println!("Error deleting message: {:?}", why);
-            }
+    let block_phrases = match { list_regex(server_id.clone()).await } {
+        Some(phrases) => phrases,
+        None => {
+            log_this(LogData {
+                importance: LogImportance::Warning,
+                message: format!("Unable to get regex phrases for server {}", server_id),
+            })
+            .await;
 
-            let server_id = new_message.guild_id.unwrap().to_string();
-            add_infraction(server_id, new_message.author.id.into());
+            return;
+        }
+    };
+
+    for regex_phrase in block_phrases {
+        if Regex::new(&regex_phrase.phrase)
+            .unwrap()
+            .is_match(&format!("{} #", filtered_message))
+        {
+            new_message
+                .delete(&ctx.http)
+                .await
+                .log_expect(LogImportance::Warning, "Unable to delete message");
+
+            add_infraction(
+                new_message.guild_id.unwrap().to_string(),
+                new_message.author.id.into(),
+            )
+            .await;
 
             IpmStruct::increment_server(
                 new_message
@@ -88,16 +113,24 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     "{} Has sent a message which is not allowed due to the set regex patterns",
                     new_message.author.id
                 ),
-            });
+            })
+            .await;
 
             let server_id = new_message.guild_id.unwrap().to_string();
-            let log_channel = ChannelId(read_config().servers.get(&server_id).unwrap().log_channel);
+            let log_channel = ChannelId(
+                read_config()
+                    .await
+                    .servers
+                    .get(&server_id)
+                    .unwrap()
+                    .log_channel,
+            );
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);
             embed.title("Message blocked due to matching a set regex pattern");
             embed.field(
-                "The user who broke a regx pattern is below:",
+                "The user who broke a regex pattern is below:",
                 format!("<@{}>", new_message.author.id),
                 false,
             );
@@ -120,7 +153,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 .await
                 .ok();
 
-            let user_infractions = list_infractions(server_id, new_message.author.id.into());
+            let user_infractions = list_infractions(server_id, new_message.author.id.into()).await;
 
             let user_infractions = match user_infractions {
                 Some(infractions) => infractions,
@@ -131,34 +164,96 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             "Unable to get infractions for user {}",
                             new_message.author.id
                         ),
-                    });
+                    })
+                    .await;
+
                     return;
                 }
             };
 
             match (user_infractions >= 10, user_infractions % 5) {
                 (true, 0) => {
+                    if user_infractions >= 20 {
+                        let mut embed = CreateEmbed::default();
+                        embed.color(0x556B2F);
+                        embed.title("User banned");
+                        embed.description("User was banned for reaching 20 infractions");
+                        embed.field(
+                            "The user who was terminated from the server is:",
+                            format!("<@{}>", new_message.author.id),
+                            true,
+                        );
+                        embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png");
+                        log_channel
+                            .send_message(&ctx.http, |m| m.set_embed(embed))
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to send embed");
+
+                        let user = UserId(new_message.author.id.into())
+                            .to_user(&ctx.http)
+                            .await
+                            .ok();
+
+                        let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
+                        user.unwrap()
+                            .dm(&ctx.http, |m| m.content(dm_msg))
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to dm user");
+
+                        new_message
+                            .guild(&ctx)
+                            .unwrap()
+                            .ban_with_reason(&ctx, new_message.author.id, 0, "20 infractions")
+                            .await
+                            .log_expect(LogImportance::Warning, "Unable to ban user");
+
+                        return;
+                    }
+
                     let mut embed = CreateEmbed::default();
                     embed.color(0x8B0000);
                     embed.title(":warning: High infraction count");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
                     embed.field(
-                        "The user with the high infractions warning is below:",
+                        "The user with the high infractions warning is:",
                         format!("<@{}>", new_message.author.id),
-                        false,
+                        true,
                     );
                     embed.field(
-                        "The amount of infractions they have is below:",
+                        "The user has the following amount of infractions:",
                         format!("{}", user_infractions),
-                        false,
+                        true,
                     );
-                    embed.footer(|f| {
-                        f.text("This message will appear for users with high infraction counts")
-                    });
                     embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
                     log_channel
                         .send_message(&ctx.http, |m| m.set_embed(embed))
                         .await
                         .log_expect(LogImportance::Warning, "Unable to send embed");
+
+                    let user = UserId(new_message.author.id.into())
+                        .to_user(&ctx.http)
+                        .await
+                        .ok();
+
+                    let mut embed = CreateEmbed::default();
+                    embed.title("High infraction count");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
+                    embed.field(
+                        "You have these infractions in:",
+                        new_message.guild_id.unwrap().to_string(),
+                        true,
+                    );
+                    embed.footer(|f| {
+                        f.text(
+                            "Think this is a mistake? Contact the specified server staff for help",
+                        )
+                    });
+                    embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+
+                    user.unwrap()
+                        .dm(&ctx.http, |m| m.set_embed(embed))
+                        .await
+                        .log_expect(LogImportance::Warning, "Unable to dm user");
                 }
                 _ => {}
             }
@@ -172,10 +267,14 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 .say(&ctx.http, temp_msg_content)
                 .await
                 .log_expect(LogImportance::Warning, "Unable to send message");
+
             let ctx_clone = ctx.clone();
             tokio::spawn(async move {
                 std::thread::sleep(std::time::Duration::from_secs(5));
-                temp_msg.delete(&ctx_clone.http).await.ok();
+                temp_msg
+                    .delete(&ctx_clone.http)
+                    .await
+                    .log_expect(LogImportance::Warning, "Unable to delete message");
             });
 
             //TODO: Change message to embed

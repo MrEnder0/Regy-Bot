@@ -1,6 +1,12 @@
 use scorched::*;
 
-use crate::{utils::config, Data};
+use crate::{
+    utils::{
+        config,
+        perm_check::{has_perm, PermissionLevel::Staff},
+    },
+    Data,
+};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -8,6 +14,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 struct Regex {
     id: String,
     phrase: String,
+    is_rt: bool,
 }
 
 #[poise::command(
@@ -17,13 +24,27 @@ struct Regex {
     channel_cooldown = 30
 )]
 pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
+    let server_id = ctx.guild_id().unwrap().to_string();
+
+    if !has_perm(
+        server_id.clone(),
+        ctx.author().id.to_string().parse::<u64>().unwrap(),
+        Staff,
+    )
+    .await
+    {
+        ctx.say("You do not have permission to use this command.")
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+        return Ok(());
+    }
+
     let status_msg = ctx
         .say("Sending regex phrases this may take a few seconds...")
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
-    let server_id = ctx.guild_id().unwrap().0.to_string();
-    let block_phrases = match { config::list_regex(server_id) } {
+    let block_phrases = match { config::list_regex(server_id).await } {
         Some(block_phrases) => block_phrases,
         None => {
             ctx.say("This server does not exist in the database, please run `config_setup` first; if you have already done this please add a regex phrase before trying to list them.")
@@ -36,14 +57,18 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
     let mut formatted_blocked_phrases = String::new();
     for item in block_phrases.iter() {
         let regex = Regex {
-            id: item.0.to_string(),
-            phrase: item.1.to_string(),
+            id: item.uuid.clone(),
+            phrase: item.phrase.clone(),
+            is_rt: item.is_rti,
         };
 
-        formatted_blocked_phrases.push_str(&format!("{} | {}\n", regex.id, regex.phrase));
+        formatted_blocked_phrases.push_str(&format!(
+            "{} | {} | {}\n",
+            regex.id, regex.is_rt, regex.phrase
+        ));
     }
 
-    let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | REGEX\n{}```||", formatted_blocked_phrases);
+    let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | RTI | REGEX\n{}```||", formatted_blocked_phrases);
     let channel_id = ctx.channel_id();
 
     if status_message.len() > 2000 {

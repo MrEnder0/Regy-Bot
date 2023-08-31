@@ -1,7 +1,5 @@
 use std::{collections::BTreeMap, sync::Mutex};
 
-use crate::utils::config::read_config;
-
 static IPM: Mutex<BTreeMap<u64, u16>> = Mutex::new(BTreeMap::new());
 
 pub struct IpmStruct {}
@@ -25,7 +23,7 @@ impl IpmStruct {
         let binding = &IPM;
         let guard = binding.lock().unwrap();
         for (key, value) in guard.iter() {
-            if value > &read_config().global.max_activity_influx {
+            if value > &12 {
                 overflow.push(*key);
             }
         }

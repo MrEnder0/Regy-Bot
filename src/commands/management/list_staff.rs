@@ -14,14 +14,15 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().0.to_string();
 
-    if !config::server_exists(server_id.clone()) {
+    if !config::server_exists(server_id.clone()).await {
         ctx.say("Server does not exist in config")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
-    let staff = config::list_staff(server_id);
+    let staff = config::list_staff(server_id).await;
 
     match staff {
         Some(staff) => {

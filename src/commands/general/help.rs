@@ -19,11 +19,13 @@ pub enum HelpEnum {
     Management,
     #[name = "Regex commands help"]
     Regex,
+    #[name = "RTI commands help"]
+    RTI,
     #[name = "Developer commands help"]
     Developer,
 }
 
-#[poise::command(slash_command, prefix_command, user_cooldown = 25, ephemeral = true)]
+#[poise::command(slash_command, prefix_command, user_cooldown = 20, ephemeral = true)]
 pub async fn help(
     ctx: Context<'_>,
     #[description = "Help Type"] help_type: HelpEnum,
@@ -91,6 +93,16 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         }
+        HelpEnum::RTI => {
+            ctx.say(
+                "The RTI commands are:\n\
+                `/search_rti <rti>` - Searches the RTI packages given a specified search\n\
+                `/update_rti` - Updates the RTI packages in the current server\n\
+                `/reload_rti` - Re-downloads the online RTI package list (Global Cool-down: 120 seconds)",
+            )
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+        }
         HelpEnum::Developer => {
             ctx.say(
                 "The dev commands are:\n\
@@ -115,6 +127,7 @@ pub async fn help(
                 `Infraction` - Infraction commands\n\
                 `Management` - Management commands\n\
                 `Regex` - Regex commands\n\
+                `RTI` - RTI commands\n\
                 `Developer` - Developer commands",
             )
             .await

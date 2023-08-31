@@ -21,14 +21,14 @@ pub async fn add_staff(
     let server_id = ctx.guild_id().unwrap().0.to_string();
     let userid = user.clone().id;
 
-    if !config::server_exists(server_id.clone()) {
+    if !config::server_exists(server_id.clone()).await {
         ctx.say("Server does not exist in config")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
-    let add_staff_status = config::add_staff(server_id, userid_to_u64(userid));
+    let add_staff_status = config::add_staff(server_id, userid_to_u64(userid)).await;
 
     match add_staff_status {
         true => {

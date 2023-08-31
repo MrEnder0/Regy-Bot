@@ -6,14 +6,13 @@ pub enum PermissionLevel {
     Developer,
 }
 
-const DEVELOPERS: [&str; 1] = [
-    "687897073047306270",
-];
+const DEVELOPERS: [&str; 1] = ["687897073047306270"];
 
 pub async fn has_perm(server_id: String, userid: u64, permission_level: PermissionLevel) -> bool {
     match permission_level {
         PermissionLevel::User => true,
         PermissionLevel::Staff => config::read_config()
+            .await
             .servers
             .get(&server_id)
             .unwrap()
@@ -27,6 +26,7 @@ pub async fn highest_unlocked_perm(server_id: String, userid: u64) -> Permission
     if DEVELOPERS.contains(&&userid.to_string()[..]) {
         PermissionLevel::Developer
     } else if config::read_config()
+        .await
         .servers
         .get(&server_id)
         .unwrap()
