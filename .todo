@@ -96,7 +96,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 15
 [x] Command rewrites (link all inside mod.rs instead of main.rs)
 [ ] Make config.rs a sub catagory of utils
-[ ] Make more commands messages embeds
+[o] Make more commands messages embeds
 [ ] Make dm messages embeds
 [ ] Username and nickname scanning
 
