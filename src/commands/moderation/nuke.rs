@@ -31,10 +31,18 @@ pub async fn nuke(
 
     let nuke_size = match nuke_size {
         Some(nuke_size) => {
-            if nuke_size > 100 {
-                100
-            } else if nuke_size < 3 {
-                3
+            if nuke_size > 100 || nuke_size < 3 {
+                ctx.send(|cr| {
+                    cr.embed(|ce| {
+                        ce.title("Invalid nuke size")
+                            .description("The nuke size must be between 3 and 100")
+                            .field("Defined nuke size:", nuke_size, true)
+                    })
+                })
+                .await
+                .log_expect(LogImportance::Warning, "Unable to send message");
+
+                return Ok(());
             } else {
                 nuke_size
             }
@@ -54,9 +62,13 @@ pub async fn nuke(
 
     ctx.channel_id().delete_messages(&ctx, message_ids).await?;
 
-    ctx.say(format!("Nuked {} messages!", nuke_size))
-        .await
-        .log_expect(LogImportance::Warning, "Unable to send message");
+    ctx.send(|cr| {
+        cr.embed(|ce| {
+            ce.title(format!("Nuked {} messages!", nuke_size))
+        })
+    })
+    .await
+    .log_expect(LogImportance::Warning, "Unable to send message");
 
     let mut embed = CreateEmbed::default();
     embed.title("Nuked Deployed!".to_string());
