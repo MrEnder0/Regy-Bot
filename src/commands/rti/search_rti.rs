@@ -42,7 +42,7 @@ pub async fn search_rti(
         ctx.send(|cr| {
             cr.embed(|ce| {
                 ce.title("You need to specify a search phrase to search").description(
-                    "The search query cant be empty and it also must be at least 2 characters long.",
+                    "The search query cant be empty and it also must be at least 2 characters long, do note though that shorter searches that are for example 3 characters long will have more irrelevant results.",
                 )
             })
         }).await.log_expect(LogImportance::Warning, "Unable to send message");
