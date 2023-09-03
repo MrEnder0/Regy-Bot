@@ -55,7 +55,7 @@ pub async fn help(
             ctx.say(
                 "The moderation commands are:\n\
                 `/grab_pfp <user>` - Grabs the profile picture of the specified user\n\
-                `/nuke <Optional: size (max 20)> ` - Deletes the specified amount of messages (Default is 20)",
+                `/nuke <size> ` - Deletes the specified amount of messages (If larger than 100 it will be split into multiple deletions, note the max size is 300)",
             )
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
