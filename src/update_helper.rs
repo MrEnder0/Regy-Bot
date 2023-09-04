@@ -45,6 +45,7 @@ async fn main() {
 
     std::fs::remove_file("update.lock")
         .log_expect(LogImportance::Error, "Failed to remove update.lock file");
+
     Command::new("regy_bot.exe")
         .spawn()
         .log_expect(LogImportance::Error, "Failed to start regy_bot.exe");
