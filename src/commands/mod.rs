@@ -1,8 +1,8 @@
 pub mod dev;
 
 // User
+pub mod fun;
 pub mod general;
-pub mod info;
 
 // Staff
 pub mod infractions;
@@ -20,10 +20,11 @@ pub fn commands() -> Vec<poise::Command<super::Data, Error>> {
     vec![
         general::help::help(),
         general::permission_level::permission_level(),
-        info::about::about(),
-        info::why_rust::why_rust(),
-        info::what_is_regex::what_is_regex(),
-        info::skid::skid(),
+        fun::about::about(),
+        fun::why_rust::why_rust(),
+        fun::what_is_regex::what_is_regex(),
+        fun::skid::skid(),
+        fun::random_word::random_word(),
         infractions::my_infractions::my_infractions(),
         infractions::add_infraction::add_infraction(),
         infractions::dismiss_infraction::dismiss_infraction(),
