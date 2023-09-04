@@ -187,7 +187,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                         f.text("This may take a moment to apply to all your outdated RTI packages")
                     });
                     embed.thumbnail(
-                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/download.png",
                     );
 
                     msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
@@ -198,7 +198,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                     embed.description("The RTI package update has been cancelled");
                     embed.footer(|f| f.text("No RTI packages will be modified from this action"));
                     embed.thumbnail(
-                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/cancel.png",
                     );
 
                     msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
