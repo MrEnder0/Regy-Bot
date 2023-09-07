@@ -25,12 +25,14 @@ pub async fn permission_level(
         PermissionLevel::Developer => "Developer",
     };
 
-    //reply with the users highest unlocked permission level
-    ctx.say(format!(
-        "The highest permission **{}** has is **{}**",
-        user.clone().name,
-        perm
-    ))
+    // Reply with the users highest unlocked permission level
+    ctx.send(|cr| {
+        cr.embed(|ce| {
+            ce.title("Permission Level")
+                .field("Username", user.clone().name, false)
+                .field("Permission Level", perm, false)
+        })
+    })
     .await
     .log_expect(LogImportance::Warning, "Unable to send message");
 
