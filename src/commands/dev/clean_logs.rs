@@ -19,9 +19,14 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Developer", false)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
         return Ok(());
     }
@@ -29,9 +34,16 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
     if std::path::Path::new("logs").exists() {
         std::fs::remove_dir_all("logs")
             .log_expect(LogImportance::Warning, "Unable to delete log folder");
-        ctx.say("Log folder deleted")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Log folder")
+                    .description("Found and deleted log folder")
+                    .thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/trashcan.png")
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
     } else {
         log_this(LogData {
             importance: LogImportance::Info,
@@ -39,17 +51,29 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
         })
         .await;
 
-        ctx.say("Log folder does not exist")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Log folder")
+                    .description("Log folder does not exist, unable to delete")
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
     }
 
     if std::path::Path::new("logs.zip").exists() {
         std::fs::remove_file("logs.zip")
             .log_expect(LogImportance::Warning, "Unable to delete found log archive");
-        ctx.say("Found and deleted log archive")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Log archive")
+                    .description("Found and deleted log archive")
+                    .thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/trashcan.png")
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
     }
 
     Ok(())
