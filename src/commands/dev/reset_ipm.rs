@@ -30,24 +30,36 @@ pub async fn reset_ipm(
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Developer", false)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
     match reset_level {
         ResetEnum::Global => {
             IpmStruct::global_reset();
-            ctx.say("Reset global IPM")
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+
+            ctx.send(|cr| {
+                cr.embed(|ce| ce.title("IPM Reset").description("Reset global IPM to 0"))
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
         ResetEnum::Server => {
             IpmStruct::set_server(ctx.guild_id().unwrap().into(), 0);
-            ctx.say("Reset server IPM to 0")
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+
+            ctx.send(|cr| {
+                cr.embed(|ce| ce.title("IPM Reset").description("Reset server IPM to 0"))
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
     }
 

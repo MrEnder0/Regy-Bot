@@ -22,14 +22,31 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Developer", false)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
     if !read_config().await.global.allow_shutdown {
-        ctx.say("Remote shutdown is not enabled on host.").await?;
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Unable to remote shutdown").field(
+                    "Reason:",
+                    "Remote shutdown is not enabled on host",
+                    false,
+                )
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
@@ -39,7 +56,7 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
     })
     .await;
 
-    ctx.say("Shutting down...")
+    ctx.send(|cr| cr.embed(|ce| ce.title("Shutting down...")))
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
