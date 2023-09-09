@@ -7,7 +7,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(prefix_command, slash_command)]
 pub async fn random_word(ctx: Context<'_>) -> Result<(), Error> {
-    //send api request to https://random-word-api.herokuapp.com/word?lang=en
+    // Sends api request to https://random-word-api.herokuapp.com/word?lang=en for a random word
     let word = reqwest::get("https://random-word-api.herokuapp.com/word?lang=en")
         .await
         .log_expect(LogImportance::Warning, "Unable to get random word")

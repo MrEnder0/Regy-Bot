@@ -11,12 +11,12 @@ use crate::{
 };
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
-    //ignore messages from bots
+    // Ignores messages from bots
     if new_message.author.bot {
         return;
     }
 
-    //Reply to dm messages
+    // Reply to dm messages
     if new_message.guild_id.is_none() {
         new_message.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of love to you :heart:").await.log_expect(LogImportance::Warning, "Unable to reply to dm");
         return;
@@ -24,7 +24,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
     let server_id = new_message.guild_id.unwrap().to_string();
 
-    //Poll detection
+    // Poll detection
     let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
     if poll_re.is_match(&new_message.content) {
         new_message
@@ -37,23 +37,24 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             .ok();
     }
 
-    //Reply to pings
-    if new_message.mentions_user_id(ctx.cache.current_user_id()) {
-        let ctx = ctx.clone();
-        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/help' to setup server run '/config_setup'").await.log_expect(LogImportance::Warning, "Unable to reply to ping");
-    }
-
-    //Check if server exists in config
+    // Check if server exists in config
     if !read_config().await.servers.contains_key(&server_id) {
         return;
     }
 
-    //Ignores moderation from devs
+    // Ignores moderation from devs
     if new_message.author.id == 687897073047306270 || new_message.author.id == 598280691066732564 {
+        if new_message.mentions_user_id(ctx.cache.current_user_id()) {
+            let ctx = ctx.clone();
+            new_message
+                .reply(ctx, "OMG ITS A SUPER COOL REGY DEV!!!")
+                .await
+                .log_expect(LogImportance::Warning, "Unable to reply to ping");
+        }
         return;
     }
 
-    //Ignores moderation from staff
+    // Ignores moderation from staff
     for user in read_config()
         .await
         .servers
@@ -65,6 +66,12 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
         if new_message.author.id == UserId(*user) {
             return;
         }
+    }
+
+    // Reply standard to pings
+    if new_message.mentions_user_id(ctx.cache.current_user_id()) {
+        let ctx = ctx.clone();
+        new_message.reply(ctx, "To use Regy please use the slash commands, ex '/help' to setup server run '/config_setup'").await.log_expect(LogImportance::Warning, "Unable to reply to ping");
     }
 
     let filtered_message = filter_characters(&new_message.content.to_lowercase());

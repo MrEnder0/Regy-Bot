@@ -20,18 +20,18 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     let channel_id = event.channel_id;
     let message_id = event.id;
 
-    //ignore messages from bots
+    // Ignore messages from bots
     if author.bot {
         return;
     }
 
-    //Reply to dm messages
+    // Reply to dm messages
     if guild_id.is_none() {
         channel_id.send_message(&ctx.http, |m| m.content("I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:")).await.log_expect(LogImportance::Warning, "Unable to send message");
         return;
     }
 
-    //Check if server exists in config
+    // Checks if server exists in config
     if !read_config()
         .await
         .servers
@@ -40,12 +40,12 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
         return;
     }
 
-    //Ignores moderation from devs
+    // Ignores moderation from devs
     if author.id == 687897073047306270 || author.id == 598280691066732564 {
         return;
     }
 
-    //Ignores moderation from staff
+    // Ignores moderation from staff
     for user in read_config()
         .await
         .servers
@@ -241,7 +241,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 temp_msg.delete(&ctx_clone.http).await.ok();
             });
 
-            //TODO: Change message to embed
+            // TODO: Change message to embed
 
             let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
                                         The message which has been blocked is below:\n\

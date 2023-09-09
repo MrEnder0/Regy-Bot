@@ -28,7 +28,6 @@ pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
         Some(staff) => {
             let mut staff_list = String::new();
             for staff_member in staff.clone() {
-                //userid to username
                 let staff_member_user = UserId(staff_member)
                     .to_user(&ctx)
                     .await

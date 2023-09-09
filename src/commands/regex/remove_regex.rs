@@ -41,7 +41,7 @@ pub async fn remove_regex(
 
     let id = id.parse::<Uuid>().unwrap();
 
-    //Check if regex with specified id exists in server in config
+    // Checks if regex with specified id exists in server in config
     let server_id = ctx.guild_id().unwrap().0.to_string();
     let block_phrases = {
         let phrases = list_regex(server_id.clone()).await;

@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
-    //Check if server exists in config
+    // Checks if server exists in config
     if !read_config()
         .await
         .servers
@@ -154,7 +154,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         _ => {}
     }
 
-    //TODO: Change message to embed
+    // TODO: Change message to embed
 
     let dm_msg = "You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.";
 

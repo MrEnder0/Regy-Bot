@@ -5,7 +5,7 @@ use std::{path::Path, process::Command, time::Duration};
 
 #[tokio::main]
 async fn main() {
-    //Wait for Regy to fully shutdown
+    // Wait for Regy to fully shutdown
     log_this(LogData {
         importance: LogImportance::Info,
         message: "[Update Helper] Waiting for Regy to fully shutdown.".to_string(),

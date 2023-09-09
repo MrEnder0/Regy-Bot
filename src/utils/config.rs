@@ -70,7 +70,7 @@ pub async fn gen_config() {
         servers: HashMap::new(),
     };
 
-    //Write base config to file
+    // Writes base config to file
     let config = PrettyConfig::new()
         .depth_limit(4)
         .separate_tuple_members(true)
@@ -153,7 +153,7 @@ pub async fn add_regex(
 ) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -164,7 +164,7 @@ pub async fn add_regex(
         return false;
     }
 
-    //Checks if phrase already exists
+    // Checks if phrase already exists
     for current_phrase in &data.servers.get(&server_id).unwrap().block_phrases {
         if current_phrase.phrase == phrase {
             log_this(LogData {
@@ -207,7 +207,7 @@ pub async fn add_regex(
 pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -249,7 +249,7 @@ pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
 pub async fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
     let data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -287,7 +287,7 @@ pub async fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
 pub async fn add_infraction(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -321,7 +321,7 @@ pub async fn add_infraction(server_id: String, id: u64) -> bool {
 pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -370,7 +370,7 @@ pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
 pub async fn list_infractions(server_id: String, id: u64) -> Option<u64> {
     let mut config = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -426,7 +426,7 @@ pub async fn add_staff(server_id: String, id: u64) -> bool {
 pub async fn remove_staff(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -461,7 +461,7 @@ pub async fn remove_staff(server_id: String, id: u64) -> bool {
 pub async fn list_staff(server_id: String) -> Option<Vec<u64>> {
     let config = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -483,7 +483,7 @@ pub async fn list_staff(server_id: String) -> Option<Vec<u64>> {
 pub async fn delete_user(server_id: String, id: u64) {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -492,7 +492,7 @@ pub async fn delete_user(server_id: String, id: u64) {
         .await;
     }
 
-    //Checks if user is on infraction list and removes them if they are
+    // Checks if user is on infraction list and removes them if they are
     if data
         .servers
         .get(&server_id)
@@ -507,7 +507,7 @@ pub async fn delete_user(server_id: String, id: u64) {
             .remove(&id.to_string());
     }
 
-    //Checks if user is on staff list and removes them if they are
+    // Checks if user is on staff list and removes them if they are
     if data
         .servers
         .get(&server_id)

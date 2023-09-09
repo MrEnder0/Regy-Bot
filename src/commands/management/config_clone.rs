@@ -18,13 +18,13 @@ pub async fn config_clone_regex(
     ctx: Context<'_>,
     #[description = "Guild ID"] target_server_id: String,
 ) -> Result<(), Error> {
-    //check if server exists in database
+    // Checks if server exists in database
     if !server_exists(target_server_id.clone()).await {
         ctx.say("This server does not exist in the database.")
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
     } else {
-        //check if current server exists in database
+        // Checks if current server exists in database
         if !server_exists(ctx.guild_id().unwrap().0.to_string()).await {
             ctx.say("This server does not exist in the database, please run `config_setup` first.")
                 .await
