@@ -79,9 +79,8 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
             )
             .await?;
         let mut split_status_message = String::new();
-        //remove the warning message
-        let status_message = status_message[75..status_message.len()].to_string();
-        let status_message = status_message[5..status_message.len() - 5].to_string();
+        // Removes the warning message
+        let status_message = status_message[80..status_message.len() - 5].to_string();
         let mut line_count = 0;
         for line in status_message.lines() {
             split_status_message.push_str(line);
