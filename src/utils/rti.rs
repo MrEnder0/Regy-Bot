@@ -13,7 +13,6 @@ pub struct MetaData {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct RtiObject {
-    pub uuid: String,
     pub phrase: String,
     pub description: String,
     pub version: u32,
@@ -92,7 +91,6 @@ pub async fn fuzzy_search_rti(input_phrase: String) -> Option<Vec<RtiObject>> {
             .unwrap();
 
             let decoded_rti_object = RtiObject {
-                uuid: rti_object.uuid,
                 phrase: decoded_regex,
                 description: rti_object.description,
                 version: rti_object.version,

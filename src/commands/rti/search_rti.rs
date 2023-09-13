@@ -76,7 +76,6 @@ pub async fn search_rti(
             embed.title("RTI Package Found".to_string());
             embed.color(0x556B2F);
             embed.field("Version", rti_object.version, false);
-            embed.field("UUID", rti_object.uuid, false);
             embed.field("Description", rti_object.description, false);
             embed.field("Phrase", rti_object.phrase, false);
             embed.footer(|fe| fe.text("React with ✅ to add this package to your server"));

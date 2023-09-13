@@ -147,15 +147,6 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                 )
                 .await;
 
-                log_this(LogData {
-                    importance: LogImportance::Info,
-                    message: format!(
-                        "{} Has added a RTI package to their server",
-                        reaction_clone.user_id.unwrap()
-                    ),
-                })
-                .await;
-
                 let mut embed = CreateEmbed::default();
                 embed.color(0x556B2F);
                 embed.title("RTI package added to server");
