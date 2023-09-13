@@ -38,33 +38,44 @@ pub async fn add_regex(
         return Ok(());
     }
 
-    if regex_phrase.is_empty()
-        || regex_phrase == " "
-        || regex_phrase.len() < 3
+    if regex_phrase.len() < 3
         || regex_phrase.len() > 350
+        || regex_phrase == ".*"
         || regex_phrase == ".*+"
+        || regex_phrase == "[a-zA-Z0-9]"
     {
-        ctx.say("You need to specify a regex phrase to add; it cant be empty and it also must be between 3 and 350 characters long.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Invalid regex phrase")
+                    .description("You need to specify a regex phrase to add; it cant be empty and it also must be between 3 and 350 characters long.")
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
-    let phrase = regex_phrase.clone();
-
     config::add_regex(
         server_id,
-        format!("{} ", phrase),
+        format!("{} ", regex_phrase.clone()),
         false,
         "No description provided.".to_string(),
         0,
     )
     .await;
 
-    let status_message = format!("Added the regex phrase:\n||```{}```||", regex_phrase);
-    ctx.say(status_message)
-        .await
-        .log_expect(LogImportance::Warning, "Unable to send message");
+    ctx.send(|cr| {
+        cr.embed(|ce| {
+            ce.title("Regex phrase added").description(format!(
+                "Added the regex phrase:\n||```{}```||",
+                regex_phrase
+            ))
+        })
+    })
+    .await
+    .log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }
