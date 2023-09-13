@@ -23,6 +23,7 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
             cr.embed(|ce| {
                 ce.title("You do not have permission to use this command.")
                     .field("Lacking permissions:", "Developer", false)
+                    .color(0x8B0000)
             })
         })
         .await

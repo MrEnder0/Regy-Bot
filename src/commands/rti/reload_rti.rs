@@ -26,6 +26,7 @@ pub async fn reload_rti(ctx: Context<'_>) -> Result<(), Error> {
             cr.embed(|ce| {
                 ce.title("You do not have permission to use this command.")
                     .field("Lacking permissions:", "Staff", false)
+                    .color(0x8B0000)
             })
         })
         .await
