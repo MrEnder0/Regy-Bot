@@ -69,7 +69,7 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
         }
     };
     
-    //Create embed
+    // TODO: Create paging system for regex phrases
     let mut embed = CreateEmbed::default();
     embed.title("Regex phrases");
     embed.description("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**");
