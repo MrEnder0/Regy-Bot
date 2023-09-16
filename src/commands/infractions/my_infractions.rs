@@ -37,7 +37,6 @@ pub async fn my_infractions(ctx: Context<'_>) -> Result<(), Error> {
                 cr.embed(|ce| {
                     ce.title("Infractions")
                         .description(format!("You have {} infraction(s).", user_infractions))
-                        .color(0x8B0000)
                 })
             })
             .await
@@ -48,7 +47,6 @@ pub async fn my_infractions(ctx: Context<'_>) -> Result<(), Error> {
                 cr.embed(|ce| {
                     ce.title("Infractions")
                         .description("You have no infractions.")
-                        .color(0x8B0000)
                 })
             })
             .await

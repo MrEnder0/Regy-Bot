@@ -72,7 +72,6 @@ pub async fn dismiss_infraction(
                     "You have dismissed a infraction from {}.",
                     user.name
                 ))
-                .color(0x8B0000)
         })
     })
     .await
@@ -84,7 +83,6 @@ pub async fn dismiss_infraction(
                     m.embed(|me| {
                         me.title("You have been dismissed from a infraction")
                             .description(format!("You have dismissed from a infraction from a staff member inside {}. Please contact the server for more information.", ctx.guild_id().unwrap().name(ctx).unwrap()))
-                            .color(0x8B0000)
                     })
                 })
                 .await
@@ -97,7 +95,6 @@ pub async fn dismiss_infraction(
                         .description(
                             "You have dismissed from a infraction inside an unknown sever.",
                         )
-                        .color(0x8B0000)
                 })
             })
             .await

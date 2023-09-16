@@ -75,7 +75,6 @@ pub async fn list_infractions(
                             user.clone().name,
                             infraction_count
                         ))
-                        .color(0x8B0000)
                 })
             })
             .await
@@ -86,7 +85,6 @@ pub async fn list_infractions(
                 cr.embed(|ce| {
                     ce.title("Infractions")
                         .description(format!("User {} has no infractions.", user.clone().name))
-                        .color(0x8B0000)
                 })
             })
             .await
