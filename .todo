@@ -96,12 +96,12 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 15
 [x] Command rewrites (link all inside mod.rs instead of main.rs)
 [x] Nuke command used to mass purge messages
-[ ] Make config.rs a sub catagory of utils
 [o] Make more commands messages embeds
 [ ] Make dm messages embeds
 [ ] Username and nickname scanning
 
 # Release 16
 [ ] Automatic build and deploy off main branch option
+[ ] Make config.rs a sub catagory of utils
 [ ] Config auto cleaning
 [ ] Staff roles
