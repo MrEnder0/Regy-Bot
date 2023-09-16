@@ -68,7 +68,7 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
             return Ok(());
         }
     };
-    
+
     // TODO: Create paging system for regex phrases
     let mut embed = CreateEmbed::default();
     embed.title("Regex phrases");
@@ -85,15 +85,16 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
             format!("||{}||", regex.phrase),
             false,
         );
-    };
+    }
 
-    ctx.channel_id().send_message(&ctx, |m| m.set_embed(embed)).await.log_expect(LogImportance::Warning, "Unable to send message");
+    ctx.channel_id()
+        .send_message(&ctx, |m| m.set_embed(embed))
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
     status_msg
         .edit(ctx, |m| {
-            m.embed(|e| {
-                e.title("Finished sending regex phrases to the channel.")
-            })
+            m.embed(|e| e.title("Finished sending regex phrases to the channel."))
         })
         .await
         .log_expect(LogImportance::Warning, "Unable to edit message");
