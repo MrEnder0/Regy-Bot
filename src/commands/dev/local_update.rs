@@ -108,9 +108,9 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
                     "Unable to send successful update embed",
                 );
 
-            ctx.say("Update has been successful, bot will restart.")
+            ctx.send(|m| m.content("Regy will now restart to finish the update"))
                 .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+                .log_expect(LogImportance::Warning, "Unable to send restart message");
 
             log_this(LogData {
                 importance: LogImportance::Info,
