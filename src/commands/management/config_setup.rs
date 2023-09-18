@@ -23,17 +23,32 @@ pub async fn config_setup(
     let log_channel_id = log_channel.id().to_string().parse::<u64>().unwrap();
 
     if server_exists(guild_id.clone()).await {
-        ctx.say("This server already exists in the database.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Unable to add server to database.")
+                    .description(
+                        "The current server already exists in the database, therefore it does not need to be added again.",
+                    )
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
     gen_server(guild_id, log_channel_id).await;
 
-    ctx.say("Server added to database.")
-        .await
-        .log_expect(LogImportance::Warning, "Unable to send message");
+    ctx.send(|cr| {
+        cr.embed(|ce| {
+            ce.title("Welcome to Regy bot! 🎉")
+                .description("The current server has been added to the database.")
+                .footer(|fe| fe.text("For a list of commands, use /help <category>"))
+        })
+    })
+    .await
+    .log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }

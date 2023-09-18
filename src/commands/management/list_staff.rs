@@ -15,9 +15,17 @@ pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().0.to_string();
 
     if !config::server_exists(server_id.clone()).await {
-        ctx.say("Server does not exist in config")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Server does not exist in config")
+                    .description(
+                        "Please add the server to the config using /config_setup if you are the owner of the server.",
+                    )
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
         return Ok(());
     }
@@ -36,14 +44,25 @@ pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
                 staff_list.push_str(&format!("{}\n", staff_member_user.name));
             }
 
-            ctx.say(format!("Staff List:\n{}", staff_list))
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Staff List")
+                        .description(format!("There are {} staff members.", staff.len()))
+                        .field("Staff Members", staff_list, false)
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
         None => {
-            ctx.say("There are no staff members, try adding some with /add_staff or /config_setup if the server has not been configured yet.")
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Unable to get staff list")
+                        .description("There are no staff members.")
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
     }
 
