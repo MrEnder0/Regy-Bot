@@ -15,7 +15,10 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 #[poise::command(prefix_command, slash_command, user_cooldown = 15)]
 pub async fn remove_regex(
     ctx: Context<'_>,
-    #[description = "Regex id"] mut id: String,
+    #[description = "Regex id"]
+    #[min_length = 32]
+    #[max_length = 36]
+    mut id: String,
 ) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
