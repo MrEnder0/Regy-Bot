@@ -4,7 +4,7 @@ version = "1.14.0"
 edition = "2021"
 
 [dependencies]
-poise = "0.5.5"
+poise = "0.5.6"
 tokio = { version = "1.32.0", features = ["full"] }
 regex = "1.9.4"
 serde = { version = "1.0.188", features = ["derive"] }
