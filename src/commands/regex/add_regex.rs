@@ -14,7 +14,10 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 #[poise::command(prefix_command, slash_command, user_cooldown = 10)]
 pub async fn add_regex(
     ctx: Context<'_>,
-    #[description = "Regex Phrase"] regex_phrase: String,
+    #[description = "Regex Phrase"]
+    #[min_length = 3]
+    #[max_length = 350]
+    regex_phrase: String,
 ) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
@@ -38,16 +41,16 @@ pub async fn add_regex(
         return Ok(());
     }
 
-    if regex_phrase.len() < 3
-        || regex_phrase.len() > 350
-        || regex_phrase == ".*"
+    if regex_phrase == ".*"
         || regex_phrase == ".*+"
         || regex_phrase == "[a-zA-Z0-9]"
+        || regex_phrase == "[a-zA-Z0-9]+"
+        || regex_phrase == "^.*$"
     {
         ctx.send(|cr| {
             cr.embed(|ce| {
                 ce.title("Invalid regex phrase")
-                    .description("You need to specify a regex phrase to add; it cant be empty and it also must be between 3 and 350 characters long.")
+                    .description("Looks like you tried to add a regex phrase that would match everything. For your server's convenience this wont be added.")
                     .color(0x8B0000)
             })
         })
