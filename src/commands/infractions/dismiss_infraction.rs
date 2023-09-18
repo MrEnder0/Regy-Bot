@@ -67,11 +67,10 @@ pub async fn dismiss_infraction(
 
     ctx.send(|cr| {
         cr.embed(|ce| {
-            ce.title("Infraction Dismissed")
-                .description(format!(
-                    "You have dismissed a infraction from {}.",
-                    user.name
-                ))
+            ce.title("Infraction Dismissed").description(format!(
+                "You have dismissed a infraction from {}.",
+                user.name
+            ))
         })
     })
     .await

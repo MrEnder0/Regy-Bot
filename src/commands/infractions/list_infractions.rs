@@ -69,12 +69,11 @@ pub async fn list_infractions(
         Some(infraction_count) => {
             ctx.send(|cr| {
                 cr.embed(|ce| {
-                    ce.title("Infractions")
-                        .description(format!(
-                            "User {} has {} infraction(s).",
-                            user.clone().name,
-                            infraction_count
-                        ))
+                    ce.title("Infractions").description(format!(
+                        "User {} has {} infraction(s).",
+                        user.clone().name,
+                        infraction_count
+                    ))
                 })
             })
             .await
