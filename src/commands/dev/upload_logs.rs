@@ -35,8 +35,9 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
     if std::fs::read_dir("logs").unwrap().count() == 0 || std::fs::read_dir("logs").is_err() {
         ctx.send(|cr| {
             cr.embed(|ce| {
-                ce.title("Log upload")
+                ce.title("Log upload failed")
                     .description("There are no logs to upload")
+                    .color(0x8B0000)
             })
         })
         .await
