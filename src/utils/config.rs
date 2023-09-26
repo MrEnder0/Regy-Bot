@@ -530,7 +530,7 @@ pub async fn delete_user(server_id: String, id: u64) {
 pub async fn update_config() {
     #[cfg(feature = "toml-updating")]
     {
-        use toml;
+        use toml::{Value, from_str};
 
         if !Path::new("config.ron").exists() {
             if Path::new("config.toml").exists() {
@@ -543,7 +543,7 @@ pub async fn update_config() {
                 std::fs::rename("config.toml", "config.toml.bak").unwrap();
 
                 let old_config_file = std::fs::read_to_string("config.toml.bak").unwrap();
-                let config_data: toml::Value = toml::from_str(&old_config_file).unwrap();
+                let config_data:Value = from_str(&old_config_file).unwrap();
 
                 let mut converted_config_data = Config {
                     meta: MetaData {
@@ -630,13 +630,11 @@ pub async fn update_config() {
                     message: "Legacy Toml config found, please compile with the toml-updating feature to convert toml to ron config format.".to_string(),
                 })
                 .await;
-
-                std::process::exit(0);
             }
 
             log_this(LogData {
                 importance: LogImportance::Error,
-                message: "Config file not found, generating default.".to_string(),
+                message: "Ron config file not found, generating default.".to_string(),
             })
             .await;
             gen_config().await;
