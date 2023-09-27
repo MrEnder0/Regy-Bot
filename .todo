@@ -97,6 +97,10 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Command rewrites (link all inside mod.rs instead of main.rs)
 [x] Nuke command used to mass purge messages
 [x] Make more commands messages embeds
+[o] Feature flags
+    [x] Toml update support flag
+    [ ] Dev commands flag
+    [ ] Safe-mode / debug-mode (anti-ban & infraction revert & dev logging) flag
 [ ] Make polls / ping replys activate after scanning
 [ ] Make dm messages embeds
 [ ] Username and nickname scanning
