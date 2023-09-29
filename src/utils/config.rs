@@ -530,7 +530,7 @@ pub async fn delete_user(server_id: String, id: u64) {
 pub async fn update_config() {
     #[cfg(feature = "toml-updating")]
     {
-        use toml::{Value, from_str};
+        use toml::{from_str, Value};
 
         if !Path::new("config.ron").exists() {
             if Path::new("config.toml").exists() {
@@ -543,7 +543,7 @@ pub async fn update_config() {
                 std::fs::rename("config.toml", "config.toml.bak").unwrap();
 
                 let old_config_file = std::fs::read_to_string("config.toml.bak").unwrap();
-                let config_data:Value = from_str(&old_config_file).unwrap();
+                let config_data: Value = from_str(&old_config_file).unwrap();
 
                 let mut converted_config_data = Config {
                     meta: MetaData {
@@ -642,7 +642,6 @@ pub async fn update_config() {
             std::process::exit(0);
         }
     }
-
 }
 
 pub async fn update_regexes(server_id: String) {
