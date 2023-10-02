@@ -88,30 +88,6 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 .await
                 .log_expect(LogImportance::Warning, "Unable to delete message");
 
-            add_infraction(
-                new_message.guild_id.unwrap().to_string(),
-                new_message.author.id.into(),
-            )
-            .await;
-
-            IpmStruct::increment_server(
-                new_message
-                    .guild_id
-                    .unwrap()
-                    .to_string()
-                    .parse::<u64>()
-                    .unwrap(),
-            );
-
-            log_this(LogData {
-                importance: LogImportance::Info,
-                message: format!(
-                    "{} Has sent a message which is not allowed due to the set regex patterns",
-                    new_message.author.id
-                ),
-            })
-            .await;
-
             let server_id = new_message.guild_id.unwrap().to_string();
             let log_channel = ChannelId(
                 read_config()
@@ -122,32 +98,11 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     .log_channel,
             );
 
-            let mut embed = CreateEmbed::default();
-            embed.color(0xFFA500);
-            embed.title("Message blocked due to matching a set regex pattern");
-            embed.field(
-                "The user who broke a regex pattern is below:",
-                format!("<@{}>", new_message.author.id),
-                false,
-            );
-            embed.field(
-                "Their message is the following below:",
-                format!("||{}||", new_message.content),
-                false,
-            );
-            embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
-            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
-            let embed_message_id = log_channel
-                .send_message(&ctx.http, |m| m.set_embed(embed))
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send embed")
-                .id;
-            let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
-            embed_message
-                .unwrap()
-                .react(&ctx.http, ReactionType::Unicode("🚫".to_string()))
-                .await
-                .ok();
+            add_infraction(
+                new_message.guild_id.unwrap().to_string(),
+                new_message.author.id.into(),
+            )
+            .await;
 
             let user_infractions = list_infractions(server_id, new_message.author.id.into()).await;
 
@@ -253,6 +208,51 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 }
                 _ => {}
             }
+
+            IpmStruct::increment_server(
+                new_message
+                    .guild_id
+                    .unwrap()
+                    .to_string()
+                    .parse::<u64>()
+                    .unwrap(),
+            );
+
+            log_this(LogData {
+                importance: LogImportance::Info,
+                message: format!(
+                    "{} Has sent a message which is not allowed due to the set regex patterns",
+                    new_message.author.id
+                ),
+            })
+            .await;
+
+            let mut embed = CreateEmbed::default();
+            embed.color(0xFFA500);
+            embed.title("Message blocked due to matching a set regex pattern");
+            embed.field(
+                "The user who broke a regex pattern is below:",
+                format!("<@{}>", new_message.author.id),
+                false,
+            );
+            embed.field(
+                "Their message is the following below:",
+                format!("||{}||", new_message.content),
+                false,
+            );
+            embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
+            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+            let embed_message_id = log_channel
+                .send_message(&ctx.http, |m| m.set_embed(embed))
+                .await
+                .log_expect(LogImportance::Warning, "Unable to send embed")
+                .id;
+            let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
+            embed_message
+                .unwrap()
+                .react(&ctx.http, ReactionType::Unicode("🚫".to_string()))
+                .await
+                .ok();
 
             let temp_msg_content = format!(
                 "<@{}> You are not allowed to send that due to the server setup regex rules",

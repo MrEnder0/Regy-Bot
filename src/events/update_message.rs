@@ -87,15 +87,6 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 .await
                 .log_expect(LogImportance::Warning, "Unable to delete message");
 
-            add_infraction(guild_id.unwrap().to_string(), author.id.into()).await;
-
-            IpmStruct::increment_server(guild_id.unwrap().to_string().parse::<u64>().unwrap());
-
-            log_this(LogData {
-                importance: LogImportance::Info,
-                message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
-            }).await;
-
             let server_id = guild_id.unwrap().to_string();
             let log_channel = ChannelId(
                 read_config()
@@ -106,32 +97,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     .log_channel,
             );
 
-            let mut embed = CreateEmbed::default();
-            embed.color(0xFFA500);
-            embed.title("Message blocked due to matching a set regex pattern");
-            embed.field(
-                "The user who broke a regex pattern is below:",
-                format!("<@{}>", author.id),
-                false,
-            );
-            embed.field(
-                "Their message is the following below:",
-                format!("||{}||", updated_message),
-                false,
-            );
-            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
-            embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
-            let embed_message_id = log_channel
-                .send_message(&ctx.http, |m| m.set_embed(embed))
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send embed")
-                .id;
-            let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
-            embed_message
-                .unwrap()
-                .react(&ctx.http, ReactionType::Unicode("🚫".to_string()))
-                .await
-                .ok();
+            add_infraction(guild_id.unwrap().to_string(), author.id.into()).await;
 
             let user_infractions = list_infractions(server_id, author.id.into()).await;
 
@@ -229,6 +195,40 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 }
                 _ => {}
             }
+
+            IpmStruct::increment_server(guild_id.unwrap().to_string().parse::<u64>().unwrap());
+
+            log_this(LogData {
+                importance: LogImportance::Info,
+                message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
+            }).await;
+
+            let mut embed = CreateEmbed::default();
+            embed.color(0xFFA500);
+            embed.title("Message blocked due to matching a set regex pattern");
+            embed.field(
+                "The user who broke a regex pattern is below:",
+                format!("<@{}>", author.id),
+                false,
+            );
+            embed.field(
+                "Their message is the following below:",
+                format!("||{}||", updated_message),
+                false,
+            );
+            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+            embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
+            let embed_message_id = log_channel
+                .send_message(&ctx.http, |m| m.set_embed(embed))
+                .await
+                .log_expect(LogImportance::Warning, "Unable to send embed")
+                .id;
+            let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
+            embed_message
+                .unwrap()
+                .react(&ctx.http, ReactionType::Unicode("🚫".to_string()))
+                .await
+                .ok();
 
             let temp_msg_content = format!("<@{}> You are not allowed to edit your message to have that due to the server setup regex rules", author.id);
             let temp_msg = channel_id
