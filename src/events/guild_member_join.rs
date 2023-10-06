@@ -48,7 +48,7 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
         let guild_member_clone = guild_member.clone();
 
         tokio::spawn(async move {
-            tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+            tokio::time::sleep(tokio::time::Duration::from_secs(120)).await;
 
             // If user has not changed their username or nickname, kick them
             if list_regex(guild_member_clone.guild_id.to_string())
