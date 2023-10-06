@@ -13,20 +13,20 @@ use crate::{
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
     // Ignores messages from bots
     if new_message.author.bot {
-        return;
+        return
     }
 
     // Reply to dm messages
     if new_message.guild_id.is_none() {
         new_message.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of love to you :heart:").await.log_expect(LogImportance::Warning, "Unable to reply to dm");
-        return;
+        return
     }
 
     let server_id = new_message.guild_id.unwrap().to_string();
 
     // Check if server exists in config
     if !read_config().await.servers.contains_key(&server_id) {
-        return;
+        return
     }
 
     // Reply standard to pings
@@ -46,7 +46,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             })
             .await;
 
-            return;
+            return
         }
     };
 
@@ -118,7 +118,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     })
                     .await;
 
-                    return;
+                    return
                 }
             };
 
@@ -158,7 +158,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             .await
                             .log_expect(LogImportance::Warning, "Unable to ban user");
 
-                        return;
+                        return
                     }
 
                     let mut embed = CreateEmbed::default();
@@ -285,7 +285,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 .await
                 .log_expect(LogImportance::Warning, "Unable to dm user");
 
-            return;
+            return
         }
     }
 

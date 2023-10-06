@@ -24,7 +24,7 @@ async fn main() {
         })
         .await;
 
-        return;
+        return
     }
 
     if !Path::new("update.lock").exists() {
@@ -34,7 +34,7 @@ async fn main() {
         })
         .await;
 
-        return;
+        return
     }
 
     log_this(LogData {
