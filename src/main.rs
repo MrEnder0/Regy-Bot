@@ -63,6 +63,10 @@ async fn main() {
                             guild_ban::guild_ban_event(*guild_id, banned_user).await;
                         }
 
+                        Event::GuildMemberAddition { new_member } => {
+                            guild_member_join::guild_member_join_event(ctx, new_member).await;
+                        }
+
                         _ => {}
                     }
                     Ok(())
