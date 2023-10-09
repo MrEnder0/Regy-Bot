@@ -26,6 +26,8 @@ path = "src/main.rs"
 [features]
 toml-updating = ["toml"]
 developer-commands = []
+test-deploy = []
+
 default = ["developer-commands"]
 
 [[bin]]
