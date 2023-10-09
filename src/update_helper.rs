@@ -24,7 +24,7 @@ async fn main() {
         })
         .await;
 
-        return;
+        std::process::exit(0);
     }
 
     if !Path::new("update.lock").exists() {
@@ -34,7 +34,7 @@ async fn main() {
         })
         .await;
 
-        return;
+        std::process::exit(0);
     }
 
     log_this(LogData {
