@@ -45,10 +45,8 @@ pub fn commands() -> Vec<poise::Command<super::Data, Error>> {
     ];
 
     #[cfg(feature = "developer-commands")]
-    {
-        for command in dev::dev_commands() {
-            commands.push(command);
-        }
+    for command in dev::dev_commands() {
+        commands.push(command);
     }
 
     commands
