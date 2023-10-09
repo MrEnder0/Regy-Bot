@@ -8,7 +8,6 @@ use ron::{
 use scorched::*;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs::File, path::Path};
-use toml;
 use uuid::Uuid;
 
 static CONFIG_VERSION: u8 = 6;
@@ -70,7 +69,7 @@ pub async fn gen_config() {
         servers: HashMap::new(),
     };
 
-    //Write base config to file
+    // Writes base config to file
     let config = PrettyConfig::new()
         .depth_limit(4)
         .separate_tuple_members(true)
@@ -108,7 +107,7 @@ pub async fn read_config() -> Config {
     config
 }
 
-pub async fn gen_server(guid_id: String, log_channel: u64) {
+pub async fn gen_server(guid_id: String, log_channel_id: u64) {
     let mut data = read_config().await;
     let guild_id = guid_id.clone();
     data.servers.insert(
@@ -117,7 +116,7 @@ pub async fn gen_server(guid_id: String, log_channel: u64) {
             infractions: HashMap::new(),
             block_phrases: Vec::new(),
             staff: Vec::new(),
-            log_channel: log_channel,
+            log_channel: log_channel_id,
         },
     );
 
@@ -153,7 +152,7 @@ pub async fn add_regex(
 ) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -164,7 +163,7 @@ pub async fn add_regex(
         return false;
     }
 
-    //Checks if phrase already exists
+    // Checks if phrase already exists
     for current_phrase in &data.servers.get(&server_id).unwrap().block_phrases {
         if current_phrase.phrase == phrase {
             log_this(LogData {
@@ -207,7 +206,7 @@ pub async fn add_regex(
 pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -249,7 +248,7 @@ pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
 pub async fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
     let data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -287,7 +286,7 @@ pub async fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
 pub async fn add_infraction(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -321,7 +320,7 @@ pub async fn add_infraction(server_id: String, id: u64) -> bool {
 pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -370,7 +369,7 @@ pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
 pub async fn list_infractions(server_id: String, id: u64) -> Option<u64> {
     let mut config = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -426,7 +425,7 @@ pub async fn add_staff(server_id: String, id: u64) -> bool {
 pub async fn remove_staff(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -461,7 +460,7 @@ pub async fn remove_staff(server_id: String, id: u64) -> bool {
 pub async fn list_staff(server_id: String) -> Option<Vec<u64>> {
     let config = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -483,7 +482,7 @@ pub async fn list_staff(server_id: String) -> Option<Vec<u64>> {
 pub async fn delete_user(server_id: String, id: u64) {
     let mut data = read_config().await;
 
-    //Checks if server does not exist
+    // Checks if server does not exist
     if !server_exists(server_id.clone()).await {
         log_this(LogData {
             importance: LogImportance::Warning,
@@ -492,7 +491,7 @@ pub async fn delete_user(server_id: String, id: u64) {
         .await;
     }
 
-    //Checks if user is on infraction list and removes them if they are
+    // Checks if user is on infraction list and removes them if they are
     if data
         .servers
         .get(&server_id)
@@ -507,7 +506,7 @@ pub async fn delete_user(server_id: String, id: u64) {
             .remove(&id.to_string());
     }
 
-    //Checks if user is on staff list and removes them if they are
+    // Checks if user is on staff list and removes them if they are
     if data
         .servers
         .get(&server_id)
@@ -529,85 +528,113 @@ pub async fn delete_user(server_id: String, id: u64) {
 }
 
 pub async fn update_config() {
-    if !Path::new("config.ron").exists() {
-        if Path::new("config.toml").exists() {
-            log_this(LogData {
-                importance: LogImportance::Info,
-                message: "Legacy Toml config found, updating to ron config format.".to_string(),
-            })
-            .await;
+    #[cfg(feature = "toml-updating")]
+    {
+        use toml::{from_str, Value};
 
-            std::fs::rename("config.toml", "config.toml.bak").unwrap();
+        if !Path::new("config.ron").exists() {
+            if Path::new("config.toml").exists() {
+                log_this(LogData {
+                    importance: LogImportance::Info,
+                    message: "Legacy Toml config found, updating to ron config format.".to_string(),
+                })
+                .await;
 
-            let old_config_file = std::fs::read_to_string("config.toml.bak").unwrap();
-            let config_data: toml::Value = toml::from_str(&old_config_file).unwrap();
+                std::fs::rename("config.toml", "config.toml.bak").unwrap();
 
-            let mut converted_config_data = Config {
-                meta: MetaData {
-                    version: CONFIG_VERSION,
-                },
-                global: GlobalOptions {
-                    token: config_data["global"]["token"].as_str().unwrap().to_string(),
-                    user_delete_on_ban: config_data["global"]["user_delete_on_ban"]
-                        .as_bool()
-                        .unwrap(),
-                    allow_shutdown: config_data["global"]["allow_shutdown"].as_bool().unwrap(),
-                    rti_download_frequency: 8,
-                },
-                servers: HashMap::new(),
-            };
+                let old_config_file = std::fs::read_to_string("config.toml.bak").unwrap();
+                let config_data: Value = from_str(&old_config_file).unwrap();
 
-            for (key, value) in config_data["servers"].as_table().unwrap() {
-                let mut server_options = ServerOptions {
-                    infractions: HashMap::new(),
-                    block_phrases: Vec::new(),
-                    staff: Vec::new(),
-                    log_channel: value["log_channel"].as_integer().unwrap() as u64,
+                let mut converted_config_data = Config {
+                    meta: MetaData {
+                        version: CONFIG_VERSION,
+                    },
+                    global: GlobalOptions {
+                        token: config_data["global"]["token"].as_str().unwrap().to_string(),
+                        user_delete_on_ban: config_data["global"]["user_delete_on_ban"]
+                            .as_bool()
+                            .unwrap(),
+                        allow_shutdown: config_data["global"]["allow_shutdown"].as_bool().unwrap(),
+                        rti_download_frequency: 8,
+                    },
+                    servers: HashMap::new(),
                 };
 
-                for (key, value) in value["infractions"].as_table().unwrap() {
-                    server_options
-                        .infractions
-                        .insert(key.to_string(), value.as_integer().unwrap() as u64);
-                }
-
-                for (key, value) in value["block_phrases"].as_table().unwrap() {
-                    let cleaned_value = &value.to_string()[1..value.to_string().len() - 1];
-
-                    let phrase = BlockPhrase {
-                        uuid: key.to_string(),
-                        phrase: general_purpose::STANDARD_NO_PAD.encode(cleaned_value),
-                        is_rti: false,
-                        description: "No description provided.".to_string(),
-                        version: 0,
+                for (key, value) in config_data["servers"].as_table().unwrap() {
+                    let mut server_options = ServerOptions {
+                        infractions: HashMap::new(),
+                        block_phrases: Vec::new(),
+                        staff: Vec::new(),
+                        log_channel: value["log_channel"].as_integer().unwrap() as u64,
                     };
 
-                    server_options.block_phrases.push(phrase);
+                    for (key, value) in value["infractions"].as_table().unwrap() {
+                        server_options
+                            .infractions
+                            .insert(key.to_string(), value.as_integer().unwrap() as u64);
+                    }
+
+                    for (key, value) in value["block_phrases"].as_table().unwrap() {
+                        let cleaned_value = &value.to_string()[1..value.to_string().len() - 1];
+
+                        let phrase = BlockPhrase {
+                            uuid: key.to_string(),
+                            phrase: general_purpose::STANDARD_NO_PAD.encode(cleaned_value),
+                            is_rti: false,
+                            description: "No description provided.".to_string(),
+                            version: 0,
+                        };
+
+                        server_options.block_phrases.push(phrase);
+                    }
+
+                    for value in value["staff"].as_array().unwrap() {
+                        server_options
+                            .staff
+                            .push(value.as_integer().unwrap() as u64);
+                    }
+
+                    converted_config_data
+                        .servers
+                        .insert(key.to_string(), server_options);
                 }
 
-                for value in value["staff"].as_array().unwrap() {
-                    server_options
-                        .staff
-                        .push(value.as_integer().unwrap() as u64);
-                }
+                let config = PrettyConfig::new()
+                    .depth_limit(4)
+                    .separate_tuple_members(true)
+                    .enumerate_arrays(true);
+                let new_config =
+                    to_string_pretty(&converted_config_data, config).expect("Serialization failed");
 
-                converted_config_data
-                    .servers
-                    .insert(key.to_string(), server_options);
+                std::fs::write("config.ron", new_config).unwrap();
+            } else {
+                log_this(LogData {
+                    importance: LogImportance::Error,
+                    message: "Config file not found, generating default.".to_string(),
+                })
+                .await;
+                gen_config().await;
+
+                std::process::exit(0);
+            }
+        }
+    }
+
+    // Minimal behavior with no toml dep
+    #[cfg(not(feature = "toml-updating"))]
+    {
+        if !Path::new("config.ron").exists() {
+            if Path::new("config.toml").exists() {
+                log_this(LogData {
+                    importance: LogImportance::Error,
+                    message: "Legacy Toml config found, please compile with the toml-updating feature to convert toml to ron config format.".to_string(),
+                })
+                .await;
             }
 
-            let config = PrettyConfig::new()
-                .depth_limit(4)
-                .separate_tuple_members(true)
-                .enumerate_arrays(true);
-            let new_config =
-                to_string_pretty(&converted_config_data, config).expect("Serialization failed");
-
-            std::fs::write("config.ron", new_config).unwrap();
-        } else {
             log_this(LogData {
                 importance: LogImportance::Error,
-                message: "Config file not found, generating default.".to_string(),
+                message: "Ron config file not found, generating default.".to_string(),
             })
             .await;
             gen_config().await;

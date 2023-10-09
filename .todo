@@ -94,13 +94,19 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Support scorched async
 
 # Release 15
-[ ] Command rewrites (link all inside mod.rs instead of main.rs)
-[ ] Make config.rs a sub catagory of utils
-[ ] Make more commands messages embeds
-[ ] Make dm messages embeds
-[ ] Username and nickname scanning
+[x] Command rewrites (link all inside mod.rs instead of main.rs)
+[x] Nuke command used to mass purge messages
+[x] Make more commands messages embeds
+[x] Feature flags
+    [x] Toml update support flag
+    [x] Dev commands flag
+    [x] Safe-mode / debug-mode (anti-ban & infraction revert & dev logging) flag
+[x] Make polls / ping replys activate after scanning
+[x] Make dm messages embeds
+[x] Username and nickname scanning
 
 # Release 16
 [ ] Automatic build and deploy off main branch option
+[ ] Make config.rs a sub catagory of utils
 [ ] Config auto cleaning
 [ ] Staff roles

@@ -23,9 +23,16 @@ pub async fn grab_pfp(
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Staff", false)
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 

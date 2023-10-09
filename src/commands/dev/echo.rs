@@ -22,16 +22,16 @@ pub async fn echo(
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
-        return Ok(());
-    }
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Developer", false)
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
-    if ctx.guild_id().is_none() {
-        ctx.say("This command can only be used in a server.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
         return Ok(());
     }
 
@@ -41,7 +41,7 @@ pub async fn echo(
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
-    ctx.say("Sent message as bot")
+    ctx.send(|cr| cr.embed(|ce| ce.title("Sent message as bot")))
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 

@@ -31,9 +31,16 @@ pub async fn list_infractions(
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Staff", false)
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
@@ -41,9 +48,18 @@ pub async fn list_infractions(
     let userid = user.clone().id;
 
     if !config::server_exists(server_id.clone()).await {
-        ctx.say("Server does not exist in config")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Server does not exist in config")
+                    .description(
+                        "Please add the server to the config using /config_setup if you are the owner of the server.",
+                    )
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
@@ -51,19 +67,27 @@ pub async fn list_infractions(
 
     match infraction_count {
         Some(infraction_count) => {
-            let infractions_message = format!(
-                "User {} has {} infraction(s).",
-                user.clone().name,
-                infraction_count
-            );
-            ctx.say(infractions_message)
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Infractions").description(format!(
+                        "User {} has {} infraction(s).",
+                        user.clone().name,
+                        infraction_count
+                    ))
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
         None => {
-            ctx.say("You have no infractions.")
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Infractions")
+                        .description(format!("User {} has no infractions.", user.clone().name))
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
         }
     }
 

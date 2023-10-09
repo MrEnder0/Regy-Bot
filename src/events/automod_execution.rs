@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub async fn automod_execution_event(ctx: &serenity::Context, execution: &ActionExecution) {
-    //Check if server exists in config
+    // Checks if server exists in config
     if !read_config()
         .await
         .servers
@@ -29,6 +29,8 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         .to_user(&ctx.http)
         .await
         .log_expect(LogImportance::Warning, "Unable to get user");
+
+    #[cfg(not(feature = "test-deploy"))]
     add_infraction(execution.guild_id.to_string(), user.id.into()).await;
 
     IpmStruct::increment_server(execution.guild_id.into());
@@ -111,7 +113,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     .await
                     .log_expect(LogImportance::Warning, "Unable to send embed");
 
-                let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
+                let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
                 user.dm(&ctx.http, |m| m.content(dm_msg))
                     .await
                     .log_expect(LogImportance::Warning, "Unable to dm user");
@@ -154,11 +156,24 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         _ => {}
     }
 
-    //TODO: Change message to embed
+    let mut dm_embed = CreateEmbed::default();
+    dm_embed.color(0xFFA500);
+    dm_embed.title("Your message has been blocked due to breaking the servers auto-mod rules");
+    dm_embed.field(
+        "Your message that was removed is the following:",
+        format!("||{}||", execution.content),
+        false,
+    );
+    dm_embed.field(
+        "The server that this interference was in is:",
+        format!("{}", execution.guild_id),
+        false,
+    );
+    dm_embed.footer(|f| {
+        f.text("Think this is a mistake? Contact the specified server staff for help.")
+    });
 
-    let dm_msg = "You are not allowed to send messages with blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.";
-
-    user.dm(&ctx.http, |m| m.content(dm_msg))
+    user.dm(&ctx.http, |m| m.set_embed(dm_embed))
         .await
         .log_expect(LogImportance::Warning, "Unable to dm user");
 }

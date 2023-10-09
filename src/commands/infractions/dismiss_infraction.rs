@@ -31,9 +31,16 @@ pub async fn dismiss_infraction(
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Staff", false)
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
@@ -41,26 +48,58 @@ pub async fn dismiss_infraction(
     let userid = user.clone().id;
 
     if !config::server_exists(server_id.clone()).await {
-        ctx.say("Server does not exist in config")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Server does not exist in config")
+                    .description(
+                        "Please add the server to the config using /config_setup if you are the owner of the server.",
+                    )
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
     config::dismiss_infraction(server_id, userid_to_u64(userid)).await;
 
-    ctx.say(format!("Dismissed a infraction from {}", user.clone().name))
-        .await
-        .log_expect(LogImportance::Warning, "Unable to send message");
-
-    user.dm(ctx, |m| {
-        m.content(format!(
-            "You have has a infraction dismissed from {}",
-            ctx.author().name
-        ))
+    ctx.send(|cr| {
+        cr.embed(|ce| {
+            ce.title("Infraction Dismissed").description(format!(
+                "You have dismissed a infraction from {}.",
+                user.name
+            ))
+        })
     })
     .await
-    .log_expect(LogImportance::Warning, "Unable to dm user");
+    .log_expect(LogImportance::Warning, "Unable to send message");
+
+    match Some(ctx.guild_id().unwrap().name(ctx)) {
+        Some(_) => {
+            user.dm(ctx, |m| {
+                    m.embed(|me| {
+                        me.title("You have been dismissed from a infraction")
+                            .description(format!("You have dismissed from a infraction from a staff member inside {}. Please contact the server for more information.", ctx.guild_id().unwrap().name(ctx).unwrap()))
+                    })
+                })
+                .await
+                .log_expect(LogImportance::Warning, "Unable to dm user");
+        }
+        None => {
+            user.dm(ctx, |m| {
+                m.embed(|me| {
+                    me.title("You have dismissed from a infraction")
+                        .description(
+                            "You have dismissed from a infraction inside an unknown sever.",
+                        )
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to dm user");
+        }
+    }
 
     Ok(())
 }

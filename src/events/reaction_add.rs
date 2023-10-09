@@ -15,17 +15,17 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     let server_id = add_reaction.guild_id.unwrap().to_string();
     let user_id = add_reaction.user_id.unwrap().to_string();
 
-    //Check if server exists in config
+    // Checks if server exists in config
     if !read_config().await.servers.contains_key(&server_id) {
         return;
     }
 
-    //ignore reactions from the bot
+    // Ignores reactions from the bot
     if add_reaction.user_id.unwrap() == ctx.cache.current_user_id() {
         return;
     }
 
-    //ignore events except for staff
+    // Ignores events except for staff
     if !read_config()
         .await
         .servers
@@ -37,7 +37,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         return;
     }
 
-    //Check if the reaction is a dismiss reaction
+    // Check if the reaction is a dismiss reaction
     if add_reaction.channel_id
         == ChannelId(
             read_config()
@@ -48,7 +48,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                 .log_channel,
         )
     {
-        //ignore events except for the 🚫 reaction
+        // Ignores events except for the 🚫 reaction
         if add_reaction.emoji != ReactionType::Unicode("🚫".to_string()) {
             return;
         }
@@ -111,11 +111,6 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             msg.delete_reaction_emoji(&ctx_clone.http, ReactionType::Unicode("🚫".to_string()))
                 .await
                 .ok();
-
-            //Delete the embed
-            /*if let Err(why) = msg.delete(&ctx_clone.http).await {
-            //    println!("Error deleting message: {:?}", why);
-            }*/
         });
     } else {
         let ctx_clone = ctx.clone();
@@ -152,16 +147,6 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                 )
                 .await;
 
-                log_this(LogData {
-                    importance: LogImportance::Info,
-                    message: format!(
-                        "{} Has added a RTI package to their server",
-                        reaction_clone.user_id.unwrap()
-                    ),
-                })
-                .await;
-
-                //edit embed
                 let mut embed = CreateEmbed::default();
                 embed.color(0x556B2F);
                 embed.title("RTI package added to server");
@@ -187,7 +172,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                         f.text("This may take a moment to apply to all your outdated RTI packages")
                     });
                     embed.thumbnail(
-                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/download.png",
                     );
 
                     msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();
@@ -198,7 +183,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                     embed.description("The RTI package update has been cancelled");
                     embed.footer(|f| f.text("No RTI packages will be modified from this action"));
                     embed.thumbnail(
-                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png",
+                        "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/cancel.png",
                     );
 
                     msg.edit(&ctx_clone.http, |m| m.set_embed(embed)).await.ok();

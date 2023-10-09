@@ -20,34 +20,32 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     let channel_id = event.channel_id;
     let message_id = event.id;
 
-    //ignore messages from bots
+    // Ignore messages from bots
     if author.bot {
         return;
     }
 
-    //Reply to dm messages
+    // Reply to dm messages
     if guild_id.is_none() {
         channel_id.send_message(&ctx.http, |m| m.content("I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:")).await.log_expect(LogImportance::Warning, "Unable to send message");
         return;
     }
 
-    //Check if server exists in config
-    if guild_id.is_some() {
-        if !read_config()
-            .await
-            .servers
-            .contains_key(&guild_id.unwrap().to_string())
-        {
-            return;
-        }
+    // Checks if server exists in config
+    if !read_config()
+        .await
+        .servers
+        .contains_key(&guild_id.unwrap().to_string())
+    {
+        return;
     }
 
-    //Ignores moderation from devs
+    // Ignores moderation from devs
     if author.id == 687897073047306270 || author.id == 598280691066732564 {
         return;
     }
 
-    //Ignores moderation from staff
+    // Ignores moderation from staff
     for user in read_config()
         .await
         .servers
@@ -89,15 +87,6 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 .await
                 .log_expect(LogImportance::Warning, "Unable to delete message");
 
-            add_infraction(guild_id.unwrap().to_string(), author.id.into()).await;
-
-            IpmStruct::increment_server(guild_id.unwrap().to_string().parse::<u64>().unwrap());
-
-            log_this(LogData {
-                importance: LogImportance::Info,
-                message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
-            }).await;
-
             let server_id = guild_id.unwrap().to_string();
             let log_channel = ChannelId(
                 read_config()
@@ -108,32 +97,8 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     .log_channel,
             );
 
-            let mut embed = CreateEmbed::default();
-            embed.color(0xFFA500);
-            embed.title("Message blocked due to matching a set regex pattern");
-            embed.field(
-                "The user who broke a regex pattern is below:",
-                format!("<@{}>", author.id),
-                false,
-            );
-            embed.field(
-                "Their message is the following below:",
-                format!("||{}||", updated_message),
-                false,
-            );
-            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
-            embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
-            let embed_message_id = log_channel
-                .send_message(&ctx.http, |m| m.set_embed(embed))
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send embed")
-                .id;
-            let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
-            embed_message
-                .unwrap()
-                .react(&ctx.http, ReactionType::Unicode("🚫".to_string()))
-                .await
-                .ok();
+            #[cfg(not(feature = "test-deploy"))]
+            add_infraction(guild_id.unwrap().to_string(), author.id.into()).await;
 
             let user_infractions = list_infractions(server_id, author.id.into()).await;
 
@@ -170,14 +135,13 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
                         let user = UserId(author.id.into()).to_user(&ctx.http).await.ok();
 
-                        let dm_msg = format!("You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.");
+                        let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
                         user.unwrap()
                             .dm(&ctx.http, |m| m.content(dm_msg))
                             .await
                             .log_expect(LogImportance::Warning, "Unable to dm user");
 
-                        //get guild
-                        let guild = guild_id.unwrap().to_guild_cached(&ctx);
+                        let guild = guild_id.unwrap().to_guild_cached(ctx);
 
                         guild
                             .unwrap()
@@ -233,6 +197,40 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 _ => {}
             }
 
+            IpmStruct::increment_server(guild_id.unwrap().to_string().parse::<u64>().unwrap());
+
+            log_this(LogData {
+                importance: LogImportance::Info,
+                message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
+            }).await;
+
+            let mut embed = CreateEmbed::default();
+            embed.color(0xFFA500);
+            embed.title("Message blocked due to matching a set regex pattern");
+            embed.field(
+                "The user who broke a regex pattern is below:",
+                format!("<@{}>", author.id),
+                false,
+            );
+            embed.field(
+                "Their message is the following below:",
+                format!("||{}||", updated_message),
+                false,
+            );
+            embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+            embed.footer(|f| f.text("React with 🚫 to dismiss this infraction"));
+            let embed_message_id = log_channel
+                .send_message(&ctx.http, |m| m.set_embed(embed))
+                .await
+                .log_expect(LogImportance::Warning, "Unable to send embed")
+                .id;
+            let embed_message = log_channel.message(&ctx.http, embed_message_id).await.ok();
+            embed_message
+                .unwrap()
+                .react(&ctx.http, ReactionType::Unicode("🚫".to_string()))
+                .await
+                .ok();
+
             let temp_msg_content = format!("<@{}> You are not allowed to edit your message to have that due to the server setup regex rules", author.id);
             let temp_msg = channel_id
                 .send_message(&ctx.http, |m| m.content(temp_msg_content))
@@ -244,14 +242,29 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 temp_msg.delete(&ctx_clone.http).await.ok();
             });
 
-            //TODO: Change message to embed
+            let mut dm_embed = CreateEmbed::default();
+            dm_embed.color(0xFFA500);
+            dm_embed.title("Your message has been blocked due to breaking the servers regex rules");
+            dm_embed.field(
+                "Your message that was removed is the following:",
+                format!("||{}||", updated_message),
+                false,
+            );
+            dm_embed.field(
+                "The server that this interference was in is:",
+                guild_id.unwrap().to_string(),
+                false,
+            );
+            dm_embed.footer(|f| {
+                f.text("Think this is a mistake? Contact the specified server staff for help.")
+            });
 
-            let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
-                                        The message which has been blocked is below:\n\
-                                        ||{}||", updated_message);
-
-            author
-                .dm(&ctx.http, |m| m.content(dm_msg))
+            UserId(author.id.into())
+                .to_user(&ctx.http)
+                .await
+                .ok()
+                .unwrap()
+                .dm(&ctx.http, |m| m.set_embed(dm_embed))
                 .await
                 .log_expect(LogImportance::Warning, "Unable to dm user");
 

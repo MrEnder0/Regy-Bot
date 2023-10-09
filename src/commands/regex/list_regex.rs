@@ -1,3 +1,4 @@
+use poise::serenity_prelude::CreateEmbed;
 use scorched::*;
 
 use crate::{
@@ -14,7 +15,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 struct Regex {
     id: String,
     phrase: String,
-    is_rt: bool,
+    is_rti: bool,
 }
 
 #[poise::command(
@@ -33,80 +34,67 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Staff", false)
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
         return Ok(());
     }
 
     let status_msg = ctx
-        .say("Sending regex phrases this may take a few seconds...")
+        .send(|m| m.embed(|e| e.title("Sending regex phrases, this may take a few seconds...")))
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
     let block_phrases = match { config::list_regex(server_id).await } {
         Some(block_phrases) => block_phrases,
         None => {
-            ctx.say("This server does not exist in the database, please run `config_setup` first; if you have already done this please add a regex phrase before trying to list them.")
-                .await
-                .log_expect(LogImportance::Warning, "Unable to send message");
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Database error")
+                        .description("This server does not exist in the database, please run `config_setup` first; if you have already done this please add a regex phrase before trying to list them.")
+                        .color(0x8B0000)
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+
             return Ok(());
         }
     };
 
-    let mut formatted_blocked_phrases = String::new();
+    // TODO: Create paging system for regex phrases
+    let mut embed = CreateEmbed::default();
+    embed.title("Regex phrases");
+    embed.description("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**");
     for item in block_phrases.iter() {
         let regex = Regex {
             id: item.uuid.clone(),
             phrase: item.phrase.clone(),
-            is_rt: item.is_rti,
+            is_rti: item.is_rti,
         };
 
-        formatted_blocked_phrases.push_str(&format!(
-            "{} | {} | {}\n",
-            regex.id, regex.is_rt, regex.phrase
-        ));
+        embed.field(
+            format!("{} | {}", regex.id, regex.is_rti),
+            format!("||{}||", regex.phrase),
+            false,
+        );
     }
 
-    let status_message = format!("The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**\n||```                  ID                 | RTI | REGEX\n{}```||", formatted_blocked_phrases);
-    let channel_id = ctx.channel_id();
-
-    if status_message.len() > 2000 {
-        channel_id
-            .say(
-                ctx,
-                "The current regex being used are **[WARNING CONTAINS SENSITIVE MESSAGES]**",
-            )
-            .await?;
-        let mut split_status_message = String::new();
-        //remove the warning message
-        let status_message = status_message[75..status_message.len()].to_string();
-        let status_message = status_message[5..status_message.len() - 5].to_string();
-        let mut line_count = 0;
-        for line in status_message.lines() {
-            split_status_message.push_str(line);
-            split_status_message.push('\n');
-            line_count += 1;
-            if line_count == 5 {
-                let message_part = format!("```{}```", split_status_message);
-                channel_id
-                    .say(ctx, message_part)
-                    .await
-                    .log_expect(LogImportance::Warning, "Unable to send message");
-                split_status_message = String::new();
-                line_count = 0;
-                tokio::time::sleep(std::time::Duration::from_millis(40)).await;
-            }
-        }
-    } else {
-        ctx.say(status_message)
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
-    }
+    ctx.channel_id()
+        .send_message(&ctx, |m| m.set_embed(embed))
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
     status_msg
         .edit(ctx, |m| {
-            m.content("Finished sending regex phrases to the channel.")
+            m.embed(|e| e.title("Finished sending regex phrases to the channel."))
         })
         .await
         .log_expect(LogImportance::Warning, "Unable to edit message");

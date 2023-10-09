@@ -5,7 +5,6 @@ mod utils;
 use poise::{serenity_prelude as serenity, Event};
 use std::path::Path;
 
-use crate::commands::*;
 use crate::events::*;
 use crate::utils::config::*;
 use crate::utils::ipm::*;
@@ -14,7 +13,7 @@ pub struct Data {}
 
 #[tokio::main]
 async fn main() {
-    //check for config file
+    // Check for config file
     if !Path::new("config.ron").exists() {
         if Path::new("config.toml").exists() {
             update_config().await;
@@ -25,37 +24,7 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![
-                general::help::help(),
-                general::permission_level::permission_level(),
-                info::about::about(),
-                info::why_rust::why_rust(),
-                info::what_is_regex::what_is_regex(),
-                info::skid::skid(),
-                infractions::my_infractions::my_infractions(),
-                infractions::add_infraction::add_infraction(),
-                infractions::dismiss_infraction::dismiss_infraction(),
-                infractions::list_infractions::list_infractions(),
-                moderation::grab_pfp::grab_pfp(),
-                regex::add_regex::add_regex(),
-                regex::remove_regex::remove_regex(),
-                regex::list_regex::list_regex(),
-                management::add_staff::add_staff(),
-                management::remove_staff::remove_staff(),
-                management::list_staff::list_staff(),
-                management::config_setup::config_setup(),
-                management::config_clone::config_clone_regex(),
-                dev::upload_logs::upload_logs(),
-                dev::clean_logs::clean_logs(),
-                dev::get_ipm::get_ipm(),
-                dev::reset_ipm::reset_ipm(),
-                dev::echo::echo(),
-                dev::shutdown::shutdown(),
-                dev::local_update::update(),
-                rti::search_rti::search_rti(),
-                rti::update_rti::update_rti(),
-                rti::reload_rti::reload_rti(),
-            ],
+            commands: commands::commands(),
             event_handler: |ctx, event, _framework, _data| {
                 Box::pin(async move {
                     match event {
@@ -92,6 +61,10 @@ async fn main() {
                             banned_user,
                         } => {
                             guild_ban::guild_ban_event(*guild_id, banned_user).await;
+                        }
+
+                        Event::GuildMemberAddition { new_member } => {
+                            guild_member_join::guild_member_join_event(ctx, new_member).await;
                         }
 
                         _ => {}

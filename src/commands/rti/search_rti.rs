@@ -30,6 +30,7 @@ pub async fn search_rti(
             cr.embed(|ce| {
                 ce.title("You do not have permission to use this command.")
                     .field("Lacking permissions:", "Staff", false)
+                    .color(0x8B0000)
             })
         })
         .await
@@ -42,7 +43,7 @@ pub async fn search_rti(
         ctx.send(|cr| {
             cr.embed(|ce| {
                 ce.title("You need to specify a search phrase to search").description(
-                    "The search query cant be empty and it also must be at least 2 characters long.",
+                    "The search query cant be empty and it also must be at least 2 characters long, do note though that shorter searches that are for example 3 characters long will have more irrelevant results.",
                 )
             })
         }).await.log_expect(LogImportance::Warning, "Unable to send message");
@@ -76,7 +77,6 @@ pub async fn search_rti(
             embed.title("RTI Package Found".to_string());
             embed.color(0x556B2F);
             embed.field("Version", rti_object.version, false);
-            embed.field("UUID", rti_object.uuid, false);
             embed.field("Description", rti_object.description, false);
             embed.field("Phrase", rti_object.phrase, false);
             embed.footer(|fe| fe.text("React with ✅ to add this package to your server"));

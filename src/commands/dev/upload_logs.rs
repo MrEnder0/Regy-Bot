@@ -19,17 +19,29 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
     )
     .await
     {
-        ctx.say("You do not have permission to use this command.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("You do not have permission to use this command.")
+                    .field("Lacking permissions:", "Developer", false)
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
         return Ok(());
     }
 
     if std::fs::read_dir("logs").unwrap().count() == 0 || std::fs::read_dir("logs").is_err() {
-        ctx.say("There are no logs to upload.")
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Log upload failed")
+                    .description("There are no logs to upload")
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
 
         return Ok(());
     }
@@ -37,7 +49,8 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
     for file in std::fs::read_dir("logs").unwrap() {
         let log_file = std::fs::read_to_string(file.unwrap().path())
             .log_expect(LogImportance::Warning, "Unable to read log file");
-        let file_name = log_file.split(" ").collect::<Vec<&str>>()[0];
+        let file_name = log_file.split(' ').collect::<Vec<&str>>()[0];
+
         ctx.channel_id()
             .send_files(ctx, vec![(log_file.as_bytes(), "logs.log")], |m| {
                 m.content(format!("Logs for {}:", file_name))
