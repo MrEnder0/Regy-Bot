@@ -17,7 +17,7 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 
 // Link all commands into vec
 pub fn commands() -> Vec<poise::Command<super::Data, Error>> {
-    vec![
+    let mut commands = vec![
         general::help::help(),
         general::permission_level::permission_level(),
         fun::about::about(),
@@ -39,15 +39,17 @@ pub fn commands() -> Vec<poise::Command<super::Data, Error>> {
         management::list_staff::list_staff(),
         management::config_setup::config_setup(),
         management::config_clone::config_clone_regex(),
-        dev::upload_logs::upload_logs(),
-        dev::clean_logs::clean_logs(),
-        dev::get_ipm::get_ipm(),
-        dev::reset_ipm::reset_ipm(),
-        dev::echo::echo(),
-        dev::shutdown::shutdown(),
-        dev::local_update::update(),
         rti::search_rti::search_rti(),
         rti::update_rti::update_rti(),
         rti::reload_rti::reload_rti(),
-    ]
+    ];
+
+    #[cfg(feature = "developer-commands")]
+    {
+        for command in dev::dev_commands() {
+            commands.push(command);
+        }
+    }
+
+    commands
 }

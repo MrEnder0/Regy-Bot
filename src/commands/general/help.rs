@@ -21,6 +21,7 @@ pub enum HelpEnum {
     Regex,
     #[name = "RTI commands help"]
     Rti,
+    #[cfg(feature = "developer-commands")]
     #[name = "Developer commands help"]
     Developer,
 }
@@ -182,6 +183,7 @@ pub async fn help(
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         }
+        #[cfg(feature = "developer-commands")]
         HelpEnum::Developer => {
             ctx.send(|cr| {
                 cr.embed(|ce| {
@@ -197,28 +199,10 @@ pub async fn help(
                             "Uploads the log file to the current channel",
                             false,
                         )
-                        .field("echo", "Says the message back as the bot", false)
+                        .field("echo", "Returns the specified the message back as the bot", false)
                         .field("get_ipm", "Shows the current server IPM", false)
                         .field("reset_ipm", "Resets the IPM for the current server", false)
-                        .field("local_update", "Updates the bot from a local file", false)
-                })
-            })
-            .await
-            .log_expect(LogImportance::Warning, "Unable to send message");
-        }
-        #[allow(unreachable_patterns)]
-        _ => {
-            ctx.send(|cr| {
-                cr.embed(|ce| {
-                    ce.title("Unknown command category, the available permission levels are:")
-                        .field("General", "General commands help", false)
-                        .field("Fun", "Fun commands help", false)
-                        .field("Moderation", "Moderation commands help", false)
-                        .field("Infraction", "Infraction commands help", false)
-                        .field("Management", "Management commands help", false)
-                        .field("Regex", "Regex commands help", false)
-                        .field("RTI", "RTI commands help", false)
-                        .field("Developer", "Developer commands help", false)
+                        .field("update", "Updates the bot from a local file", false)
                 })
             })
             .await
