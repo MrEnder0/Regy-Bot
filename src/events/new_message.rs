@@ -98,6 +98,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     .log_channel,
             );
 
+            #[cfg(not(feature = "test-deploy"))]
             add_infraction(
                 new_message.guild_id.unwrap().to_string(),
                 new_message.author.id.into(),
@@ -273,8 +274,6 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     .log_expect(LogImportance::Warning, "Unable to delete message");
             });
 
-            //TODO: Change message to embed
-
             let mut dm_embed = CreateEmbed::default();
             dm_embed.color(0xFFA500);
             dm_embed.title("Your message has been blocked due to breaking the servers regex rules");
@@ -289,7 +288,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 false,
             );
             dm_embed.footer(|f| {
-                f.text("Think this is a mistake? Contact the specified server staff for help")
+                f.text("Think this is a mistake? Contact the specified server staff for help.")
             });
 
             UserId(new_message.author.id.into())

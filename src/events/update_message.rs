@@ -97,6 +97,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     .log_channel,
             );
 
+            #[cfg(not(feature = "test-deploy"))]
             add_infraction(guild_id.unwrap().to_string(), author.id.into()).await;
 
             let user_infractions = list_infractions(server_id, author.id.into()).await;
@@ -241,8 +242,6 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 temp_msg.delete(&ctx_clone.http).await.ok();
             });
 
-            // TODO: Change message to embed
-
             let mut dm_embed = CreateEmbed::default();
             dm_embed.color(0xFFA500);
             dm_embed.title("Your message has been blocked due to breaking the servers regex rules");
@@ -257,7 +256,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                 false,
             );
             dm_embed.footer(|f| {
-                f.text("Think this is a mistake? Contact the specified server staff for help")
+                f.text("Think this is a mistake? Contact the specified server staff for help.")
             });
 
             UserId(author.id.into())
