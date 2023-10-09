@@ -199,7 +199,11 @@ pub async fn help(
                             "Uploads the log file to the current channel",
                             false,
                         )
-                        .field("echo", "Returns the specified the message back as the bot", false)
+                        .field(
+                            "echo",
+                            "Returns the specified the message back as the bot",
+                            false,
+                        )
                         .field("get_ipm", "Shows the current server IPM", false)
                         .field("reset_ipm", "Resets the IPM for the current server", false)
                         .field("update", "Updates the bot from a local file", false)
