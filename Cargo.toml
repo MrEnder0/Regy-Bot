@@ -1,11 +1,11 @@
 [package]
 name = "regy_bot"
-version = "1.14.9"
+version = "1.15.0"
 edition = "2021"
 
 [dependencies]
 poise = "0.5.6"
-tokio = { version = "1.32.0", features = ["full"] }
+tokio = { version = "1.33.0", features = ["full"] }
 regex = "1.9.6"
 serde = { version = "1.0.188", features = ["derive"] }
 toml  = { version = "0.8.2", optional = true }
