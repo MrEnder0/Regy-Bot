@@ -22,13 +22,13 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     // Ignore messages from bots
     if author.bot {
-        return
+        return;
     }
 
     // Reply to dm messages
     if guild_id.is_none() {
         channel_id.send_message(&ctx.http, |m| m.content("I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of to you :heart:")).await.log_expect(LogImportance::Warning, "Unable to send message");
-        return
+        return;
     }
 
     // Checks if server exists in config
@@ -37,12 +37,12 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
         .servers
         .contains_key(&guild_id.unwrap().to_string())
     {
-        return
+        return;
     }
 
     // Ignores moderation from devs
     if author.id == 687897073047306270 || author.id == 598280691066732564 {
-        return
+        return;
     }
 
     // Ignores moderation from staff
@@ -55,7 +55,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
         .iter()
     {
         if author.id == UserId(*user) {
-            return
+            return;
         }
     }
 
@@ -73,7 +73,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             })
             .await;
 
-            return
+            return;
         }
     };
 
@@ -110,7 +110,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     })
                     .await;
 
-                    return
+                    return;
                 }
             };
 
@@ -148,7 +148,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                             .await
                             .log_expect(LogImportance::Warning, "Unable to ban user");
 
-                        return
+                        return;
                     }
 
                     let mut embed = CreateEmbed::default();
@@ -243,16 +243,33 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
             // TODO: Change message to embed
 
-            let dm_msg = format!("You are not allowed to edit your messages to have blocked content which breaks the server's setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
-                                        The message which has been blocked is below:\n\
-                                        ||{}||", updated_message);
+            let mut dm_embed = CreateEmbed::default();
+            dm_embed.color(0xFFA500);
+            dm_embed.title("Your message has been blocked due to breaking the servers regex rules");
+            dm_embed.field(
+                "Your message that was removed is the following:",
+                format!("||{}||", updated_message),
+                false,
+            );
+            dm_embed.field(
+                "The server that this interference was in is:",
+                guild_id.unwrap().to_string(),
+                false,
+            );
+            dm_embed.footer(|f| {
+                f.text("Think this is a mistake? Contact the specified server staff for help")
+            });
 
-            author
-                .dm(&ctx.http, |m| m.content(dm_msg))
+            UserId(author.id.into())
+                .to_user(&ctx.http)
+                .await
+                .ok()
+                .unwrap()
+                .dm(&ctx.http, |m| m.set_embed(dm_embed))
                 .await
                 .log_expect(LogImportance::Warning, "Unable to dm user");
 
-            return
+            return;
         }
     }
 }

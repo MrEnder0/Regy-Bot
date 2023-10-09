@@ -13,20 +13,20 @@ use crate::{
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
     // Ignores messages from bots
     if new_message.author.bot {
-        return
+        return;
     }
 
     // Reply to dm messages
     if new_message.guild_id.is_none() {
         new_message.reply(ctx, "I wish I could dm you but because to my new fav Discord Developer Compliance worker Gatito I cant. :upside_down: Lots of love to you :heart:").await.log_expect(LogImportance::Warning, "Unable to reply to dm");
-        return
+        return;
     }
 
     let server_id = new_message.guild_id.unwrap().to_string();
 
     // Check if server exists in config
     if !read_config().await.servers.contains_key(&server_id) {
-        return
+        return;
     }
 
     // Reply standard to pings
@@ -46,7 +46,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             })
             .await;
 
-            return
+            return;
         }
     };
 
@@ -118,7 +118,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     })
                     .await;
 
-                    return
+                    return;
                 }
             };
 
@@ -158,7 +158,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             .await
                             .log_expect(LogImportance::Warning, "Unable to ban user");
 
-                        return
+                        return;
                     }
 
                     let mut embed = CreateEmbed::default();
@@ -275,17 +275,33 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
             //TODO: Change message to embed
 
-            let dm_msg = format!("You are not allowed to send that due to the server setup regex rules, this has been reported to the server staff, continued infractions will result in greater punishment.\n\n\
-                                The message which has been blocked is below:\n\
-                                ||{}||", new_message.content);
+            let mut dm_embed = CreateEmbed::default();
+            dm_embed.color(0xFFA500);
+            dm_embed.title("Your message has been blocked due to breaking the servers regex rules");
+            dm_embed.field(
+                "Your message that was removed is the following:",
+                format!("||{}||", new_message.content),
+                false,
+            );
+            dm_embed.field(
+                "The server that this interference was in is:",
+                new_message.guild_id.unwrap().to_string(),
+                false,
+            );
+            dm_embed.footer(|f| {
+                f.text("Think this is a mistake? Contact the specified server staff for help")
+            });
 
-            new_message
-                .author
-                .dm(&ctx.http, |m| m.content(dm_msg))
+            UserId(new_message.author.id.into())
+                .to_user(&ctx.http)
+                .await
+                .ok()
+                .unwrap()
+                .dm(&ctx.http, |m| m.set_embed(dm_embed))
                 .await
                 .log_expect(LogImportance::Warning, "Unable to dm user");
 
-            return
+            return;
         }
     }
 
