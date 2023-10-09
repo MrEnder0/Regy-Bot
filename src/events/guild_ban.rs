@@ -9,7 +9,7 @@ pub async fn guild_ban_event(server_id: GuildId, banned_user: &User) {
         .servers
         .contains_key(&server_id.to_string())
     {
-        return
+        return;
     }
 
     if read_config().await.global.user_delete_on_ban {

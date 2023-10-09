@@ -16,12 +16,12 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
         .servers
         .contains_key(&execution.guild_id.to_string())
     {
-        return
+        return;
     }
 
     //If action is BlockMessage
     if execution.action != serenity::model::guild::automod::Action::BlockMessage {
-        return
+        return;
     }
 
     let user = execution
@@ -89,7 +89,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     message: format!("Unable to get infractions for user {}", user.id),
                 })
                 .await;
-                return
+                return;
             }
         };
 
@@ -126,7 +126,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     .await
                     .log_expect(LogImportance::Warning, "Unable to ban user");
 
-                return
+                return;
             }
 
             let mut embed = CreateEmbed::default();

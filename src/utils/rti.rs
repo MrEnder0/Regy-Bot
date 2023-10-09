@@ -41,7 +41,7 @@ pub async fn download_rti() {
                 message: format!("Unable to download RTI packages file:\n{}", e),
             })
             .await;
-            return
+            return;
         }
     };
 

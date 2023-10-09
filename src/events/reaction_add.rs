@@ -17,12 +17,12 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
 
     // Checks if server exists in config
     if !read_config().await.servers.contains_key(&server_id) {
-        return
+        return;
     }
 
     // Ignores reactions from the bot
     if add_reaction.user_id.unwrap() == ctx.cache.current_user_id() {
-        return
+        return;
     }
 
     // Ignores events except for staff
@@ -34,7 +34,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         .staff
         .contains(&user_id.parse::<u64>().unwrap())
     {
-        return
+        return;
     }
 
     // Check if the reaction is a dismiss reaction
@@ -50,7 +50,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     {
         // Ignores events except for the 🚫 reaction
         if add_reaction.emoji != ReactionType::Unicode("🚫".to_string()) {
-            return
+            return;
         }
 
         let ctx_clone = ctx.clone();
@@ -131,7 +131,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         match embed_type {
             EmbedType::Add => {
                 if add_reaction.emoji != ReactionType::Unicode("✅".to_string()) {
-                    return
+                    return;
                 }
 
                 let phrase_ver = &msg.embeds[0].fields[0].value;

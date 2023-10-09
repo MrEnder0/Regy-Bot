@@ -1,7 +1,4 @@
-use poise::{
-    serenity_prelude as serenity,
-    serenity_prelude::Member,
-};
+use poise::{serenity_prelude as serenity, serenity_prelude::Member};
 use regex::Regex;
 use scorched::{LogExpect, LogImportance};
 
@@ -14,7 +11,7 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
         .servers
         .contains_key(&guild_member.guild_id.to_string())
     {
-        return
+        return;
     }
 
     let filtered_username = filter_characters(&guild_member.user.name.to_lowercase());
@@ -66,7 +63,7 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
                     .await
                     .log_expect(LogImportance::Error, "Failed to kick user");
 
-                return
+                return;
             }
         });
     }
