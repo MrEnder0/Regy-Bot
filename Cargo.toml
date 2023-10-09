@@ -25,7 +25,8 @@ path = "src/main.rs"
 
 [features]
 toml-updating = ["toml"]
-default = []
+developer-commands = []
+default = ["developer-commands"]
 
 [[bin]]
 name = "regy_bot_update_helper"
