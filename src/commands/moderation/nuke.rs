@@ -9,7 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[poise::command(prefix_command, slash_command, user_cooldown = 20, ephemeral = true)]
+#[poise::command(prefix_command, slash_command, user_cooldown = 18, ephemeral = true)]
 pub async fn nuke(
     ctx: Context<'_>,
     #[description = "Nuke size"] nuke_size: u64,
