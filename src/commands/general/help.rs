@@ -188,11 +188,7 @@ pub async fn help(
             ctx.send(|cr| {
                 cr.embed(|ce| {
                     ce.title("Developer Commands Help")
-                        .field(
-                            "shutdown",
-                            "Shuts down the bot",
-                            false,
-                        )
+                        .field("shutdown", "Shuts down the bot", false)
                         .field("clean_logs", "Deletes the log file", false)
                         .field(
                             "upload_logs",
