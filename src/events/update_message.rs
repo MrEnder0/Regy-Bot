@@ -117,11 +117,11 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
             match (user_infractions >= 10, user_infractions % 5) {
                 (true, 0) => {
-                    if user_infractions >= 20 {
+                    if user_infractions >= 15 {
                         let mut embed = CreateEmbed::default();
                         embed.color(0x556B2F);
                         embed.title("User banned");
-                        embed.description("User was banned for reaching 20 infractions");
+                        embed.description("User was banned for reaching 15 infractions");
                         embed.field(
                             "The user who was terminated from the server is:",
                             format!("<@{}>", author.id),
@@ -135,7 +135,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
                         let user = UserId(author.id.into()).to_user(&ctx.http).await.ok();
 
-                        let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
+                        let dm_msg = "You have been banned from a server due to having 15 infractions, if you believe this is a mistake please contact the server staff.";
                         user.unwrap()
                             .dm(&ctx.http, |m| m.content(dm_msg))
                             .await
@@ -155,7 +155,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     let mut embed = CreateEmbed::default();
                     embed.color(0x8B0000);
                     embed.title(":warning: High infraction count");
-                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
                     embed.field(
                         "The user with the high infractions warning is:",
                         format!("<@{}>", author.id),
@@ -176,7 +176,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
                     let mut embed = CreateEmbed::default();
                     embed.title("High infraction count");
-                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
                     embed.field(
                         "You have these infractions in:",
                         guild_id.unwrap().to_string(),
