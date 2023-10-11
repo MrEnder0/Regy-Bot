@@ -190,7 +190,7 @@ pub async fn help(
                     ce.title("Developer Commands Help")
                         .field(
                             "shutdown",
-                            "Shuts down the bot after a 120 second countdown",
+                            "Shuts down the bot",
                             false,
                         )
                         .field("clean_logs", "Deletes the log file", false)
