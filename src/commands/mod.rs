@@ -1,17 +1,17 @@
-pub mod dev;
+mod dev;
 
 // User
-pub mod fun;
-pub mod general;
+mod fun;
+mod general;
 
 // Staff
-pub mod infractions;
-pub mod moderation;
-pub mod rti;
+mod infractions;
+mod moderation;
+mod rti;
 
 // Administrator
-pub mod management;
-pub mod regex;
+mod management;
+mod regex;
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 
