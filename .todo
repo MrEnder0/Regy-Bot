@@ -108,7 +108,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 # Release 16
 [-] Automatic build and deploy off main branch option
 [ ] Make config.rs a sub catagory of utils
-[ ] Compile time info command
+[x] Compile time info command
 [ ] Config auto cleaning
 [ ] Staff roles
 
