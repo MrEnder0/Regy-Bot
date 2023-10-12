@@ -35,10 +35,11 @@ pub async fn build_info(
     }
 
     let version = env!("CARGO_PKG_VERSION");
+    let scorched_version = scorched::VERSION;
 
     ctx.send(|cr| {
         cr.embed(|ce| {
-            ce.title("Build info").field("Version", version, false)
+            ce.title("Build info").field("Version", version, false).field("Scorched version", scorched_version, false)
         })
     })
     .await
