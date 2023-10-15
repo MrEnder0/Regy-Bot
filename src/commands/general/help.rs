@@ -125,6 +125,21 @@ pub async fn help(
                             false,
                         )
                         .field(
+                            "add_dead_zone",
+                            "Adds the specified channel to the dead zone list",
+                            false,
+                        )
+                        .field(
+                            "remove_dead_zone",
+                            "Removes the specified channel from the dead zone list",
+                            false,
+                        )
+                        .field(
+                            "list_dead_zones",
+                            "Lists all the current dead zones in the server",
+                            false,
+                        )
+                        .field(
                             "config_setup",
                             "Adds the current server to the config file",
                             false,
