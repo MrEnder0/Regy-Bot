@@ -23,6 +23,7 @@ pub fn commands() -> Vec<poise::Command<super::Data, Error>> {
         fun::about::about(),
         fun::why_rust::why_rust(),
         fun::what_is_regex::what_is_regex(),
+        fun::what_are_dead_zones::what_are_dead_zones(),
         fun::skid::skid(),
         fun::random_word::random_word(),
         infractions::my_infractions::my_infractions(),
