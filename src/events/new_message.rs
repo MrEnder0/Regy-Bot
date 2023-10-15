@@ -29,6 +29,11 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
         return;
     }
 
+    // Ignore message if in dead zone
+    if is_dead_zone(server_id.clone(), new_message.channel_id.into()).await {
+        return;
+    }
+
     // Reply standard to pings
     if new_message.mentions_user_id(ctx.cache.current_user_id()) {
         let ctx = ctx.clone();

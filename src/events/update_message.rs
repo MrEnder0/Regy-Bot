@@ -40,6 +40,11 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
         return;
     }
 
+    // Ignore message if in dead zone
+    if is_dead_zone(guild_id.unwrap().to_string(), channel_id.into()).await {
+        return;
+    }
+
     // Ignores moderation from devs
     if author.id == 687897073047306270 || author.id == 598280691066732564 {
         return;
