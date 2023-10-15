@@ -1,10 +1,10 @@
+mod build_info;
 mod clean_logs;
 mod echo;
 mod get_ipm;
 mod reset_ipm;
 mod shutdown;
 mod upload_logs;
-mod build_info;
 
 #[cfg(target_os = "windows")]
 pub mod local_update;

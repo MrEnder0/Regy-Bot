@@ -9,9 +9,7 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(slash_command, ephemeral = true)]
-pub async fn build_info(
-    ctx: Context<'_>,
-) -> Result<(), Error> {
+pub async fn build_info(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
     if !has_perm(
@@ -39,7 +37,9 @@ pub async fn build_info(
 
     ctx.send(|cr| {
         cr.embed(|ce| {
-            ce.title("Build info").field("Version", version, false).field("Scorched version", scorched_version, false)
+            ce.title("Build info")
+                .field("Version", version, false)
+                .field("Scorched version", scorched_version, false)
         })
     })
     .await
