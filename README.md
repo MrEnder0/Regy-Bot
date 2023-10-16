@@ -13,8 +13,12 @@ Seamless automation using regex moderation.
 ## Features
 
 * Regex moderation
+* Username moderation
 * Infraction system
 * Infraction logging
 * Server template cloning
-* Auto raid detection
+* Auto raid detection (IPM)
 * Auto-mod integration
+* Regex Template Index (RTI)
+* Dead zone channel support
+* Built in update system
