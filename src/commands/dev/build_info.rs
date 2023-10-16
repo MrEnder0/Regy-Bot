@@ -40,6 +40,9 @@ pub async fn build_info(ctx: Context<'_>) -> Result<(), Error> {
             ce.title("Build info")
                 .field("Version", version, false)
                 .field("Scorched version", scorched_version, false)
+                .footer(|fe| {
+                    fe.text("Regy's source can be found at https://github.com/MrEnder0/Regy-Bot")
+                })
         })
     })
     .await
