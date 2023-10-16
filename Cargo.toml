@@ -13,7 +13,7 @@ base64 = "0.21.4"
 uuid = { version = "1.4.1", features = ["v4", "serde", "fast-rng"] }
 self-replace = "1.3.7"
 owo-colors = "3.5.0"
-scorched = "0.2.8"
+scorched = "0.2.9"
 ron = "0.8.1"
 reqwest = { version = "0.11.22", features = ["blocking"] }
 fuzzy-matcher = "0.3.7"
