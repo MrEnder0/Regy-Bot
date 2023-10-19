@@ -711,6 +711,7 @@ pub async fn update_config() {
                         block_phrases: Vec::new(),
                         staff: Vec::new(),
                         log_channel: value["log_channel"].as_integer().unwrap() as u64,
+                        dead_zones: Vec::new(),
                     };
 
                     for (key, value) in value["infractions"].as_table().unwrap() {
@@ -726,7 +727,7 @@ pub async fn update_config() {
                             uuid: key.to_string(),
                             phrase: general_purpose::STANDARD_NO_PAD.encode(cleaned_value),
                             is_rti: false,
-                            description: "No description provided.".to_string(),
+                            description: "No description provided, legacy TOML port.".to_string(),
                             version: 0,
                         };
 
@@ -789,7 +790,7 @@ pub async fn update_config() {
     }
 }
 
-pub async fn update_regexes(server_id: String) {
+pub async fn update_rti_regexes(server_id: String) {
     let mut data = read_config().await;
     let rti = read_rti().await;
 
