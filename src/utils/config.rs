@@ -817,3 +817,27 @@ pub async fn update_rti_regexes(server_id: String) {
     let config_str = to_string_pretty(&data, config).expect("Serialization failed");
     std::fs::write("config.ron", config_str).unwrap();
 }
+
+pub async fn clean_config() {
+    let mut data = read_config().await;
+
+    for (_server_id, server_options) in &mut data.servers {
+        server_options
+            .infractions
+            .retain(|_, &mut v| v != 0 as u64);
+
+        server_options
+            .block_phrases
+            .retain(|x| x.phrase != "".to_string());
+
+        server_options.staff.retain(|&x| x != 0 as u64);
+    }
+
+    let config = PrettyConfig::new()
+        .depth_limit(4)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
+}

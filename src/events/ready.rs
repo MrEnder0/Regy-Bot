@@ -7,7 +7,7 @@ use std::net::TcpStream;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use crate::{
-    utils::{config::read_config, rti::download_rti},
+    utils::{config::{read_config, clean_config}, rti::download_rti},
     IpmStruct,
 };
 
@@ -28,6 +28,11 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     // Downloads RTI on startup
     tokio::spawn(async move {
         download_rti().await;
+    });
+
+    // Clean config
+    tokio::spawn(async move {
+        clean_config().await;
     });
 
     // Sets bot activity
