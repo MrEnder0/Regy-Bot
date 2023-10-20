@@ -109,7 +109,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [-] Automatic build and deploy off main branch option
 [x] Compile time info command
 [x] Dead zone channels
-[ ] Config auto cleaning
+[x] Config auto cleaning
 [ ] Staff roles
 
 # Release 17
