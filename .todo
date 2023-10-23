@@ -110,7 +110,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Compile time info command
 [x] Dead zone channels
 [x] Config auto cleaning
-[ ] Staff roles
+[x] Staff roles
 
 # Release 17
 [ ] Make config.rs a sub mod of utils
