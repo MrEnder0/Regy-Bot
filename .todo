@@ -113,7 +113,8 @@ Note none of these plans are guaranteed and also there may be other changes that
 [ ] Staff roles
 
 # Release 17
-[ ] Make config.rs a sub catagory of utils
+[ ] Make config.rs a sub mod of utils
+[ ] Split some things into a "custom" events mod
 [ ] Network sync
 [ ] Add regex severity
     [ ] Ranks to regex format (low = 0 infraction, medium = 1 infraction, high = 2 infraction, citical = 5 infraction)
