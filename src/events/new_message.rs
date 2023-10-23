@@ -310,7 +310,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     // Poll detection
-    let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
+    let poll_re = Regex::new("(?i)\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
     if poll_re.is_match(&new_message.content) {
         new_message
             .react(&ctx.http, ReactionType::Unicode("👍".to_string()))
