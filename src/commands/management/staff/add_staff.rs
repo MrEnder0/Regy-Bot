@@ -14,7 +14,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
     guild_cooldown = 5,
     required_permissions = "ADMINISTRATOR"
 )]
-pub async fn remove_staff(
+pub async fn add_staff(
     ctx: Context<'_>,
     #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
@@ -36,15 +36,18 @@ pub async fn remove_staff(
         return Ok(());
     }
 
-    let remove_staff_status =
-        config::remove_staff(ctx.guild_id().unwrap().0.to_string(), userid_to_u64(userid)).await;
+    let add_staff_status = config::add_staff(
+        ctx.guild_id().unwrap().0.to_string(),
+        userid_to_u64(userid).await,
+    )
+    .await;
 
-    match remove_staff_status {
+    match add_staff_status {
         true => {
             ctx.send(|cr| {
                 cr.embed(|ce| {
-                    ce.title("Removed staff")
-                        .description(format!("Removed {} from staff", user.clone().name))
+                    ce.title("Added staff")
+                        .description(format!("Added {} to staff", user.clone().name))
                 })
             })
             .await
@@ -52,8 +55,8 @@ pub async fn remove_staff(
 
             user.dm(ctx, |m| {
                 m.embed(|ce| {
-                    ce.title("Revoked staff perms").description(format!(
-                        "You have been revoked from Regy staff in {}",
+                    ce.title("Received staff perms").description(format!(
+                        "You have been given Regy staff perms in {}",
                         ctx.guild_id().unwrap().0.to_string()
                     ))
                 })
@@ -64,10 +67,9 @@ pub async fn remove_staff(
         false => {
             ctx.send(|cr| {
                 cr.embed(|ce| {
-                    ce.title("Failed to remove staff").description(format!(
-                        "{} is not staff in the current server.",
-                        user.clone().name
-                    ))
+                    ce.title("Failed to add staff")
+                        .description(format!("Failed to add {} to staff", user.clone().name))
+                        .color(0x8B0000)
                 })
             })
             .await

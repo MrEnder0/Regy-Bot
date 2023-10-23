@@ -35,9 +35,15 @@ pub fn commands() -> Vec<poise::Command<super::Data, Error>> {
         regex::add_regex::add_regex(),
         regex::remove_regex::remove_regex(),
         regex::list_regex::list_regex(),
-        management::add_staff::add_staff(),
-        management::remove_staff::remove_staff(),
-        management::list_staff::list_staff(),
+        #[cfg(feature = "legacy-staff")]
+        management::staff::add_staff::add_staff(),
+        #[cfg(feature = "legacy-staff")]
+        management::staff::remove_staff::remove_staff(),
+        #[cfg(feature = "legacy-staff")]
+        management::staff::list_staff::list_staff(),
+        management::staff::add_staff_role::add_staff_role(),
+        management::staff::remove_staff_role::remove_staff_role(),
+        management::staff::list_staff_roles::list_staff_roles(),
         management::config_setup::config_setup(),
         management::config_clone::config_clone_regex(),
         management::add_dead_zone::add_dead_zone(),

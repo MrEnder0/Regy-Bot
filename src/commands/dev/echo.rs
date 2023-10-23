@@ -18,6 +18,7 @@ pub async fn echo(
     if !has_perm(
         server_id,
         ctx.author().id.to_string().parse::<u64>().unwrap(),
+        Vec::new(),
         Developer,
     )
     .await

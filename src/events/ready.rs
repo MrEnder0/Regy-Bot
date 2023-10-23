@@ -7,7 +7,10 @@ use std::net::TcpStream;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use crate::{
-    utils::{config::{read_config, clean_config}, rti::download_rti},
+    utils::{
+        config::{clean_config, read_config},
+        rti::download_rti,
+    },
     IpmStruct,
 };
 

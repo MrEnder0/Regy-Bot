@@ -17,9 +17,27 @@ pub async fn permission_level(
     #[description = "Target User"] user: serenity::User,
 ) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
+
     let user_id = user.clone().id.to_string().parse::<u64>().unwrap();
 
-    let perm = match highest_unlocked_perm(server_id, user_id).await {
+    let member = match ctx.guild_id().unwrap().member(&ctx, user.id).await {
+        Ok(user) => user,
+        Err(_) => {
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Unable to get user")
+                        .description("Please try again later.")
+                        .color(0x8B0000)
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+
+            return Ok(());
+        }
+    };
+
+    let perm = match highest_unlocked_perm(server_id, user_id, member.roles.clone()).await {
         PermissionLevel::User => "User",
         PermissionLevel::Staff => "Staff",
         PermissionLevel::Developer => "Developer",

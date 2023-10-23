@@ -2,7 +2,7 @@ use poise::serenity_prelude as serenity;
 use scorched::*;
 
 use crate::{
-    utils::{config, type_conversions::userid_to_u64},
+    utils::{config, type_conversions::roleid_to_u64},
     Data,
 };
 
@@ -14,11 +14,11 @@ type Context<'a> = poise::Context<'a, Data, Error>;
     guild_cooldown = 5,
     required_permissions = "ADMINISTRATOR"
 )]
-pub async fn add_staff(
+pub async fn add_staff_role(
     ctx: Context<'_>,
-    #[description = "Target User"] user: serenity::User,
+    #[description = "Target Role"] role: serenity::Role,
 ) -> Result<(), Error> {
-    let userid = user.clone().id;
+    let roleid = role.clone().id;
 
     if !config::server_exists(ctx.guild_id().unwrap().0.to_string()).await {
         ctx.send(|cr| {
@@ -36,36 +36,31 @@ pub async fn add_staff(
         return Ok(());
     }
 
-    let add_staff_status =
-        config::add_staff(ctx.guild_id().unwrap().0.to_string(), userid_to_u64(userid)).await;
+    let add_staff_role_status = config::add_staff_role(
+        ctx.guild_id().unwrap().0.to_string(),
+        roleid_to_u64(roleid).await,
+    )
+    .await;
 
-    match add_staff_status {
+    match add_staff_role_status {
         true => {
             ctx.send(|cr| {
                 cr.embed(|ce| {
-                    ce.title("Added staff")
-                        .description(format!("Added {} to staff", user.clone().name))
+                    ce.title("Added staff role")
+                        .description(format!("Added {} to staff roles", role.clone().name))
                 })
             })
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-
-            user.dm(ctx, |m| {
-                m.embed(|ce| {
-                    ce.title("Received staff perms").description(format!(
-                        "You have been given Regy staff perms in {}",
-                        ctx.guild_id().unwrap().0.to_string()
-                    ))
-                })
-            })
-            .await
-            .log_expect(LogImportance::Warning, "Unable to dm user");
         }
         false => {
             ctx.send(|cr| {
                 cr.embed(|ce| {
-                    ce.title("Failed to add staff")
-                        .description(format!("Failed to add {} to staff", user.clone().name))
+                    ce.title("Unable to add staff role")
+                        .description(format!(
+                            "Unable to add {} to staff roles",
+                            role.clone().name
+                        ))
                         .color(0x8B0000)
                 })
             })
