@@ -162,7 +162,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             }
             EmbedType::Update => {
                 if add_reaction.emoji == ReactionType::Unicode("✅".to_string()) {
-                    update_regexes(server_id).await;
+                    update_rti_regexes(server_id).await;
 
                     let mut embed = CreateEmbed::default();
                     embed.color(0x556B2F);

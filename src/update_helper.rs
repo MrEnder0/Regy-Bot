@@ -3,6 +3,8 @@ mod utils;
 use scorched::*;
 use std::{path::Path, process::Command, time::Duration};
 
+pub const VERSION: &str = "1.4.1";
+
 #[tokio::main]
 async fn main() {
     // Wait for Regy to fully shutdown

@@ -18,6 +18,7 @@ pub async fn echo(
     if !has_perm(
         server_id,
         ctx.author().id.to_string().parse::<u64>().unwrap(),
+        Vec::new(),
         Developer,
     )
     .await
@@ -41,9 +42,14 @@ pub async fn echo(
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
-    ctx.send(|cr| cr.embed(|ce| ce.title("Sent message as bot")))
-        .await
-        .log_expect(LogImportance::Warning, "Unable to send message");
+    ctx.send(|cr| {
+        cr.embed(|ce| {
+            ce.title("Echoed message")
+                .description("Your provided message has been echoed by Regy.")
+        })
+    })
+    .await
+    .log_expect(LogImportance::Warning, "Unable to send message");
 
     Ok(())
 }

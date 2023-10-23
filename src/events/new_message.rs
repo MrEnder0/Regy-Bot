@@ -29,6 +29,11 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
         return;
     }
 
+    // Ignore message if in dead zone
+    if is_dead_zone(server_id.clone(), new_message.channel_id.into()).await {
+        return;
+    }
+
     // Reply standard to pings
     if new_message.mentions_user_id(ctx.cache.current_user_id()) {
         let ctx = ctx.clone();
@@ -125,11 +130,11 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
             match (user_infractions >= 10, user_infractions % 5) {
                 (true, 0) => {
-                    if user_infractions >= 20 {
+                    if user_infractions >= 15 {
                         let mut embed = CreateEmbed::default();
                         embed.color(0x556B2F);
                         embed.title("User banned");
-                        embed.description("User was banned for reaching 20 infractions");
+                        embed.description("User was banned for reaching 15 infractions");
                         embed.field(
                             "The user who was terminated from the server is:",
                             format!("<@{}>", new_message.author.id),
@@ -146,7 +151,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             .await
                             .ok();
 
-                        let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
+                        let dm_msg = "You have been banned from a server due to having 15 infractions, if you believe this is a mistake please contact the server staff.";
                         user.unwrap()
                             .dm(&ctx.http, |m| m.content(dm_msg))
                             .await
@@ -155,7 +160,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                         new_message
                             .guild(ctx)
                             .unwrap()
-                            .ban_with_reason(&ctx, new_message.author.id, 0, "20 infractions")
+                            .ban_with_reason(&ctx, new_message.author.id, 0, "15 infractions")
                             .await
                             .log_expect(LogImportance::Warning, "Unable to ban user");
 
@@ -165,7 +170,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     let mut embed = CreateEmbed::default();
                     embed.color(0x8B0000);
                     embed.title(":warning: High infraction count");
-                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
                     embed.field(
                         "The user with the high infractions warning is:",
                         format!("<@{}>", new_message.author.id),
@@ -189,7 +194,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
                     let mut embed = CreateEmbed::default();
                     embed.title("High infraction count");
-                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 20 infractions");
+                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
                     embed.field(
                         "You have these infractions in:",
                         new_message.guild_id.unwrap().to_string(),
@@ -305,7 +310,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     }
 
     // Poll detection
-    let poll_re = Regex::new("\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
+    let poll_re = Regex::new("(?i)\\b(?:let'?’?s|start|begin|initiate)\\s+(?:a\\s+)?(?:poll|vote|survey|poll|questionnaire)\\b|\\bdo\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b|\\bvote\\s+if\\s+you(?:\\s+guys|\\s+all)?\\s+like\\b").unwrap();
     if poll_re.is_match(&new_message.content) {
         new_message
             .react(&ctx.http, ReactionType::Unicode("👍".to_string()))

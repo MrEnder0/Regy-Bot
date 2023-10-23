@@ -97,11 +97,11 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
 
     match (user_infractions >= 10, user_infractions % 5) {
         (true, 0) => {
-            if user_infractions >= 20 {
+            if user_infractions >= 15 {
                 let mut embed = CreateEmbed::default();
                 embed.color(0x556B2F);
                 embed.title("User banned");
-                embed.description("User was banned for reaching 20 infractions");
+                embed.description("User was banned for reaching 15 infractions");
                 embed.field(
                     "The user who was terminated from the server is:",
                     format!("<@{}>", user.id),
@@ -113,7 +113,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     .await
                     .log_expect(LogImportance::Warning, "Unable to send embed");
 
-                let dm_msg = "You have been banned from a server due to having 20 infractions, if you believe this is a mistake please contact the server staff.";
+                let dm_msg = "You have been banned from a server due to having 15 infractions, if you believe this is a mistake please contact the server staff.";
                 user.dm(&ctx.http, |m| m.content(dm_msg))
                     .await
                     .log_expect(LogImportance::Warning, "Unable to dm user");
@@ -124,7 +124,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                     .log_expect(LogImportance::Warning, "Unable to get guild");
 
                 guild
-                    .ban_with_reason(&ctx.http, user.id, 0, "20 infractions")
+                    .ban_with_reason(&ctx.http, user.id, 0, "15 infractions")
                     .await
                     .log_expect(LogImportance::Warning, "Unable to ban user");
 
