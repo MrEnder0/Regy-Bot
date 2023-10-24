@@ -1,7 +1,9 @@
+use std::path::Path;
+
 use scorched::*;
 
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Developer},
+    utils::{perm_check::{has_perm, PermissionLevel::Developer}, config::read_config, rti::read_rti},
     Data,
 };
 
@@ -9,7 +11,7 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[poise::command(slash_command, ephemeral = true)]
-pub async fn build_info(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn dev_stats(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
     if !has_perm(
@@ -35,12 +37,26 @@ pub async fn build_info(ctx: Context<'_>) -> Result<(), Error> {
 
     let version = env!("CARGO_PKG_VERSION");
     let scorched_version = scorched::VERSION;
+    let config_version = read_config().await.meta.version;
+    let rti_version = read_rti().await.meta.version;
+    let rti_length = read_rti().await.packages.len();
+    let update_helper_available = Path::new("regy_bot_update_helper.exe").exists();
+
+    let update_helper_available = if update_helper_available {
+        "Available"
+    } else {
+        "Not available"
+    };
 
     ctx.send(|cr| {
         cr.embed(|ce| {
-            ce.title("Build info")
-                .field("Version", version, false)
-                .field("Scorched version", scorched_version, false)
+            ce.title("Dev Stats")
+                .field("Version", version, true)
+                .field("Scorched version", scorched_version, true)
+                .field("Config version", config_version, true)
+                .field("RTI version", rti_version, true)
+                .field("RTI package count", rti_length, true)
+                .field("Update helper status", update_helper_available, true)
                 .footer(|fe| {
                     fe.text("Regy's source can be found at https://github.com/MrEnder0/Regy-Bot")
                 })
