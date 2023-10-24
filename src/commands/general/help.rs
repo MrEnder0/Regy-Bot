@@ -24,6 +24,9 @@ pub enum HelpEnum {
     #[cfg(feature = "developer-commands")]
     #[name = "Developer commands help"]
     Developer,
+    #[cfg(feature = "legacy-staff")]
+    #[name = "Legacy staff commands help"]
+    LegacyStaff,
 }
 
 #[poise::command(slash_command, prefix_command, ephemeral = true)]
@@ -110,18 +113,18 @@ pub async fn help(
                 cr.embed(|ce| {
                     ce.title("Management Commands Help")
                         .field(
-                            "add_staff",
-                            "Adds the specified user to the staff list",
+                            "add_staff_role",
+                            "Adds the specified role to the staff role list",
                             false,
                         )
                         .field(
-                            "remove_staff",
-                            "Removes the specified user from the staff list",
+                            "remove_staff_role",
+                            "Removes the specified user from the staff role list",
                             false,
                         )
                         .field(
-                            "list_staff",
-                            "Lists all the current staff members",
+                            "list_staff_roles",
+                            "Lists all the current staff roles",
                             false,
                         )
                         .field(
@@ -218,6 +221,27 @@ pub async fn help(
                         .field("get_ipm", "Shows the current server IPM", false)
                         .field("reset_ipm", "Resets the IPM for the current server", false)
                         .field("update", "Updates the bot from a local file", false)
+                })
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to send message");
+        }
+        #[cfg(feature = "legacy-staff")]
+        HelpEnum::LegacyStaff => {
+            ctx.send(|cr| {
+                cr.embed(|ce| {
+                    ce.title("Legacy Staff Commands Help")
+                        .field(
+                            "add_staff",
+                            "Adds the specified user to the staff list",
+                            false,
+                        )
+                        .field(
+                            "remove_staff",
+                            "Removes the specified user from the staff list",
+                            false,
+                        )
+                        .field("list_staff", "Lists all the current staff members", false)
                 })
             })
             .await

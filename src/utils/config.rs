@@ -13,8 +13,8 @@ use uuid::Uuid;
 static CONFIG_VERSION: u8 = 8;
 
 #[derive(Serialize, Deserialize)]
-struct MetaData {
-    version: u8,
+pub struct MetaData {
+    pub version: u8,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -47,7 +47,7 @@ pub struct ServerOptions {
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-    meta: MetaData,
+    pub meta: MetaData,
     pub global: GlobalOptions,
     pub servers: HashMap<String, ServerOptions>,
 }
