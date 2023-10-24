@@ -23,7 +23,7 @@ impl IpmStruct {
         let binding = &IPM;
         let guard = binding.lock().unwrap();
         for (key, value) in guard.iter() {
-            if value > &12 {
+            if value > &15 {
                 overflow.push(*key);
             }
         }
