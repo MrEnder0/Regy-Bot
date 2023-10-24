@@ -1,5 +1,5 @@
-mod build_info;
 mod clean_logs;
+mod dev_stats;
 mod echo;
 mod get_ipm;
 mod reset_ipm;
@@ -20,7 +20,7 @@ pub fn dev_commands() -> Vec<poise::Command<super::super::Data, Error>> {
         reset_ipm::reset_ipm(),
         shutdown::shutdown(),
         upload_logs::upload_logs(),
-        build_info::build_info(),
+        dev_stats::dev_stats(),
         #[cfg(target_os = "windows")]
         local_update::update(),
     ]
