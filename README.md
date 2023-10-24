@@ -15,10 +15,12 @@ Seamless automation using regex moderation.
 * Regex moderation
 * Username moderation
 * Infraction system
-* Infraction logging
-* Server template cloning
-* Auto raid detection (IPM)
+* Modderation logging
+* Server regex cloning
+* Auto raid detection using IPM system
 * Auto-mod integration
 * Regex Template Index (RTI)
 * Dead zone channel support
-* Built in update system
+* Automatic seamless poll detection
+* Message nuking commands
+* Built in self update system (Windows Only)
