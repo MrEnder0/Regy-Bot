@@ -118,6 +118,7 @@ pub async fn gen_server(guid_id: String, log_channel_id: u64) {
         ServerOptions {
             infractions: HashMap::new(),
             block_phrases: Vec::new(),
+            #[cfg(feature = "legacy-staff")]
             staff: Vec::new(),
             staff_roles: Vec::new(),
             log_channel: log_channel_id,
