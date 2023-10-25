@@ -53,12 +53,6 @@ pub struct Config {
 }
 
 pub async fn gen_config() {
-    let mut phr = HashMap::new();
-    phr.insert(
-        Uuid::new_v4(),
-        general_purpose::STANDARD_NO_PAD.encode("regy test phrase"),
-    );
-
     let data = Config {
         meta: MetaData {
             version: CONFIG_VERSION,
