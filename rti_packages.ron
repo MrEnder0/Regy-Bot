@@ -9,6 +9,6 @@
         /*[3]*/ (phrase: "KFswMV1cZHsyfXwyWzAtNF1cZHwyNVswLTVdKVwuKFswMV1cZHsyfXwyWzAtNF1cZHwyNVswLTVdKVwuKFswMV1cZHsyfXwyWzAtNF1cZHwyNVswLTVdKVwuKFswMV1cZHsyfXwyWzAtNF1cZHwyNVswLTVdKSA", description: "IP blocker, helps prevent doxxing from ip ex: 132.85.32.1", version: 0),
         /*[4]*/ (phrase: "XGIoPzpoYXJtfGtpbGx8aHVydHxjdXR8c2hvb3R8Ym9tYnxtdXJkZXJ8YmxvdyB1cClcYi4qP1xiKD86eW91fHNvbWVvbmV8bXlzZWxmfHlvdXJzZWxmfGJhYmllc3x0aGVtfGpld3N8YmxhY2tzfGhpc3Bhbmljc3xteSlcYg", description: "Prevents suicide messages and selfharm, self harm, or threats against other people.", version: 2),
         /*[5]*/ (phrase: "dXBkYXRlK3Rlc3QrNDU2", description: "test package", version: 1),
-        /*[6]*/ (phrase: "Xig/PS4qXGIoPzpjb2RlfGRpc2NvdW50fG9mZmVyfHByb21vfHByb21vdGlvbnxmcmVlIGdpZnR8bGltaXRlZCBnaWZ0KVxiKSg/PS4qXGIoPzp0ZW11fHdpc2h8YWxpZXhwcmVzc3xzaGVpbnxyb3NlZ2FsfGFsaWJhYmEpXGIpLio", description: "Anti scam website, chinese scam, temu, scam website, scam promotion, wish scams.", version: 0)
+        /*[6]*/ (phrase: "Xig/PS4qXGIoPzpjb2RlfGRpc2NvdW50fG9mZmVyfHByb21vfHByb21vdGlvbnxmcmVlIGdpZnR8bGltaXRlZCBnaWZ0KVxiKSg/PS4qXGIoPzp0ZW11fHdpc2h8YWxpZXhwcmVzc3xzaGVpbnxyb3NlZ2FsfGFsaWJhYmEpXGIpLio", description: "Anti scam website, chinese scam, temu, scam website, scam promotion, wish scams.", version: 0),
     ]
 )
