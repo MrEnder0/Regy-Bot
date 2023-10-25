@@ -135,8 +135,8 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
                 }
 
                 let phrase_ver = &msg.embeds[0].fields[0].value;
-                let phrase_desc = &msg.embeds[0].fields[2].value;
-                let phrase_phrase = &msg.embeds[0].fields[3].value;
+                let phrase_desc = &msg.embeds[0].fields[1].value;
+                let phrase_phrase = &msg.embeds[0].fields[2].value;
 
                 add_regex(
                     server_id,
