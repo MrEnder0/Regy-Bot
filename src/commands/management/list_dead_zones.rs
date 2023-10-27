@@ -36,5 +36,5 @@ pub async fn list_dead_zones(ctx: Context<'_>) -> Result<(), Error> {
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
-    return Ok(());
+    Ok(())
 }

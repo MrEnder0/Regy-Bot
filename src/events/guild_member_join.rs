@@ -62,8 +62,6 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
                     .kick(&ctx_clone.http.clone())
                     .await
                     .log_expect(LogImportance::Error, "Failed to kick user");
-
-                return;
             }
         });
     }

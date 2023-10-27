@@ -1,5 +1,5 @@
 pub fn filter_characters(input: &str) -> String {
-    let output = input
+    input
         .to_string()
         .replace(&['а', 'ạ', 'ą', 'ä', 'à', 'á'][..], "a")
         .replace(
@@ -37,7 +37,5 @@ pub fn filter_characters(input: &str) -> String {
         .replace(&['ẁ', 'ẃ', 'ẅ', 'ẇ', 'ẉ', 'ẘ'][..], "w")
         .replace(&['х', 'ҳ', 'ẋ', 'ẍ'][..], "x")
         .replace(&['у', 'ÿ', 'ỳ', 'ý', 'ỵ', 'ỹ', 'ỷ'][..], "y")
-        .replace(&['ʐ', 'ž', 'ż', 'ź'][..], "z");
-
-    output
+        .replace(&['ʐ', 'ž', 'ż', 'ź'][..], "z")
 }

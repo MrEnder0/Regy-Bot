@@ -128,60 +128,18 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                 }
             };
 
-            match (user_infractions >= 10, user_infractions % 5) {
-                (true, 0) => {
-                    if user_infractions >= 15 {
-                        let mut embed = CreateEmbed::default();
-                        embed.color(0x556B2F);
-                        embed.title("User banned");
-                        embed.description("User was banned for reaching 15 infractions");
-                        embed.field(
-                            "The user who was terminated from the server is:",
-                            format!("<@{}>", new_message.author.id),
-                            true,
-                        );
-                        embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png");
-                        log_channel
-                            .send_message(&ctx.http, |m| m.set_embed(embed))
-                            .await
-                            .log_expect(LogImportance::Warning, "Unable to send embed");
-
-                        let user = UserId(new_message.author.id.into())
-                            .to_user(&ctx.http)
-                            .await
-                            .ok();
-
-                        let dm_msg = "You have been banned from a server due to having 15 infractions, if you believe this is a mistake please contact the server staff.";
-                        user.unwrap()
-                            .dm(&ctx.http, |m| m.content(dm_msg))
-                            .await
-                            .log_expect(LogImportance::Warning, "Unable to dm user");
-
-                        new_message
-                            .guild(ctx)
-                            .unwrap()
-                            .ban_with_reason(&ctx, new_message.author.id, 0, "15 infractions")
-                            .await
-                            .log_expect(LogImportance::Warning, "Unable to ban user");
-
-                        return;
-                    }
-
+            if (user_infractions >= 10, user_infractions % 5) == (true, 0) {
+                if user_infractions >= 15 {
                     let mut embed = CreateEmbed::default();
-                    embed.color(0x8B0000);
-                    embed.title(":warning: High infraction count");
-                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
+                    embed.color(0x556B2F);
+                    embed.title("User banned");
+                    embed.description("User was banned for reaching 15 infractions");
                     embed.field(
-                        "The user with the high infractions warning is:",
+                        "The user who was terminated from the server is:",
                         format!("<@{}>", new_message.author.id),
                         true,
                     );
-                    embed.field(
-                        "The user has the following amount of infractions:",
-                        format!("{}", user_infractions),
-                        true,
-                    );
-                    embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+                    embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/secure.png");
                     log_channel
                         .send_message(&ctx.http, |m| m.set_embed(embed))
                         .await
@@ -192,27 +150,64 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                         .await
                         .ok();
 
-                    let mut embed = CreateEmbed::default();
-                    embed.title("High infraction count");
-                    embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
-                    embed.field(
-                        "You have these infractions in:",
-                        new_message.guild_id.unwrap().to_string(),
-                        true,
-                    );
-                    embed.footer(|f| {
-                        f.text(
-                            "Think this is a mistake? Contact the specified server staff for help",
-                        )
-                    });
-                    embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
-
+                    let dm_msg = "You have been banned from a server due to having 15 infractions, if you believe this is a mistake please contact the server staff.";
                     user.unwrap()
-                        .dm(&ctx.http, |m| m.set_embed(embed))
+                        .dm(&ctx.http, |m| m.content(dm_msg))
                         .await
                         .log_expect(LogImportance::Warning, "Unable to dm user");
+
+                    new_message
+                        .guild(ctx)
+                        .unwrap()
+                        .ban_with_reason(&ctx, new_message.author.id, 0, "15 infractions")
+                        .await
+                        .log_expect(LogImportance::Warning, "Unable to ban user");
+
+                    return;
                 }
-                _ => {}
+
+                let mut embed = CreateEmbed::default();
+                embed.color(0x8B0000);
+                embed.title(":warning: High infraction count");
+                embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
+                embed.field(
+                    "The user with the high infractions warning is:",
+                    format!("<@{}>", new_message.author.id),
+                    true,
+                );
+                embed.field(
+                    "The user has the following amount of infractions:",
+                    format!("{}", user_infractions),
+                    true,
+                );
+                embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+                log_channel
+                    .send_message(&ctx.http, |m| m.set_embed(embed))
+                    .await
+                    .log_expect(LogImportance::Warning, "Unable to send embed");
+
+                let user = UserId(new_message.author.id.into())
+                    .to_user(&ctx.http)
+                    .await
+                    .ok();
+
+                let mut embed = CreateEmbed::default();
+                embed.title("High infraction count");
+                embed.description("This message will appear for every 5 infractions a user gets, note users get banned at 15 infractions");
+                embed.field(
+                    "You have these infractions in:",
+                    new_message.guild_id.unwrap().to_string(),
+                    true,
+                );
+                embed.footer(|f| {
+                    f.text("Think this is a mistake? Contact the specified server staff for help")
+                });
+                embed.thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/warning.png");
+
+                user.unwrap()
+                    .dm(&ctx.http, |m| m.set_embed(embed))
+                    .await
+                    .log_expect(LogImportance::Warning, "Unable to dm user");
             }
 
             IpmStruct::increment_server(

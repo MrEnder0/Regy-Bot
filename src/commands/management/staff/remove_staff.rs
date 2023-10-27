@@ -56,8 +56,8 @@ pub async fn remove_staff(
             user.dm(ctx, |m| {
                 m.embed(|ce| {
                     ce.title("Revoked staff perms").description(format!(
-                        "You have been revoked from Regy staff in {}",
-                        ctx.guild_id().unwrap().0.to_string()
+                        "You have been revoked from Regy staff perms in {}",
+                        ctx.guild_id().unwrap().0
                     ))
                 })
             })

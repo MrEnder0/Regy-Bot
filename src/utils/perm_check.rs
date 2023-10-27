@@ -35,7 +35,7 @@ pub async fn has_perm(
                 };
 
                 for role in roles {
-                    if staff_roles.clone().contains(&role.as_u64()) {
+                    if staff_roles.clone().contains(role.as_u64()) {
                         return true;
                     }
                 }
@@ -53,7 +53,7 @@ pub async fn highest_unlocked_perm(
     roles: Vec<RoleId>,
 ) -> PermissionLevel {
     if DEVELOPERS.contains(&&userid.to_string()[..]) {
-        return PermissionLevel::Developer;
+        PermissionLevel::Developer
     } else if config::read_config()
         .await
         .servers
@@ -70,7 +70,7 @@ pub async fn highest_unlocked_perm(
         };
 
         for role in roles {
-            if staff_roles.clone().contains(&role.as_u64()) {
+            if staff_roles.clone().contains(role.as_u64()) {
                 return PermissionLevel::Staff;
             }
         }

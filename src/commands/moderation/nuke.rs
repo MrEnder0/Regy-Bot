@@ -62,7 +62,7 @@ pub async fn nuke(
 
     let mut message_ids: Vec<MessageId> = Vec::new();
     for message in messages.iter_mut() {
-        message_ids.push(MessageId::from(message.id));
+        message_ids.push(message.id);
     }
 
     if nuke_size < 3 {
@@ -107,7 +107,7 @@ pub async fn nuke(
         // Deletes messages in chunks of 100
         let mut message_ids: Vec<MessageId> = Vec::new();
         for message in messages.iter_mut() {
-            message_ids.push(MessageId::from(message.id));
+            message_ids.push(message.id);
         }
 
         let mut message_ids_chunked: Vec<Vec<MessageId>> = message_ids

@@ -57,7 +57,7 @@ pub async fn add_staff(
                 m.embed(|ce| {
                     ce.title("Received staff perms").description(format!(
                         "You have been given Regy staff perms in {}",
-                        ctx.guild_id().unwrap().0.to_string()
+                        ctx.guild_id().unwrap().0
                     ))
                 })
             })

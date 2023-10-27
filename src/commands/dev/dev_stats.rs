@@ -3,7 +3,11 @@ use std::path::Path;
 use scorched::*;
 
 use crate::{
-    utils::{perm_check::{has_perm, PermissionLevel::Developer}, config::read_config, rti::read_rti},
+    utils::{
+        config::read_config,
+        perm_check::{has_perm, PermissionLevel::Developer},
+        rti::read_rti,
+    },
     Data,
 };
 

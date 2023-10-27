@@ -30,8 +30,6 @@ pub async fn add_dead_zone(
             })
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-
-            return Ok(());
         }
 
         false => {
@@ -44,8 +42,8 @@ pub async fn add_dead_zone(
             })
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
-
-            return Ok(());
         }
     }
+
+    Ok(())
 }
