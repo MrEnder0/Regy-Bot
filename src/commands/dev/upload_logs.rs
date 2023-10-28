@@ -48,6 +48,10 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
     }
 
     for file in std::fs::read_dir("logs").unwrap() {
+        if !file.as_ref().unwrap().path().ends_with(".log") {
+            continue;
+        }
+
         let log_file = std::fs::read_to_string(file.unwrap().path())
             .log_expect(LogImportance::Warning, "Unable to read log file");
         let file_name = log_file.split(' ').collect::<Vec<&str>>()[0];
