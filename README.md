@@ -6,7 +6,7 @@
 
 ## Important info
 
-* MSRV Policy 1.67.1 (Last checked 10/9/23)
+* MSRV Policy 1.67.1 (Last checked 10/27/23)
 * Built to run on Windows (Linux platforms are tested infrequently but support all features excluding self updates)
 * Made for IrwinTechs discord server
 
