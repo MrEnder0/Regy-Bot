@@ -2,6 +2,7 @@ use poise::serenity_prelude::RoleId;
 
 use super::config;
 
+#[derive(PartialEq)]
 pub enum PermissionLevel {
     User,
     Staff,
@@ -19,6 +20,7 @@ pub async fn has_perm(
     match permission_level {
         PermissionLevel::User => true,
         PermissionLevel::Staff => {
+            #[cfg(feature = "legacy-staff")]
             if config::read_config()
                 .await
                 .servers
@@ -27,21 +29,21 @@ pub async fn has_perm(
                 .staff
                 .contains(&userid)
             {
-                true
-            } else {
-                let staff_roles = match config::list_staff_roles(server_id.clone()).await {
-                    Some(staff_roles) => staff_roles,
-                    None => return false,
-                };
-
-                for role in roles {
-                    if staff_roles.clone().contains(role.as_u64()) {
-                        return true;
-                    }
-                }
-
-                false
+                return true;
             }
+
+            let staff_roles = match config::list_staff_roles(server_id.clone()).await {
+                Some(staff_roles) => staff_roles,
+                None => return false,
+            };
+
+            for role in roles {
+                if staff_roles.clone().contains(role.as_u64()) {
+                    return true;
+                }
+            }
+
+            false
         }
         PermissionLevel::Developer => DEVELOPERS.contains(&&userid.to_string()[..]),
     }
@@ -53,8 +55,11 @@ pub async fn highest_unlocked_perm(
     roles: Vec<RoleId>,
 ) -> PermissionLevel {
     if DEVELOPERS.contains(&&userid.to_string()[..]) {
-        PermissionLevel::Developer
-    } else if config::read_config()
+        return PermissionLevel::Developer;
+    }
+
+    #[cfg(feature = "legacy-staff")]
+    if config::read_config()
         .await
         .servers
         .get(&server_id)
@@ -62,19 +67,19 @@ pub async fn highest_unlocked_perm(
         .staff
         .contains(&userid)
     {
-        PermissionLevel::Staff
-    } else {
-        let staff_roles = match config::list_staff_roles(server_id.clone()).await {
-            Some(staff_roles) => staff_roles,
-            None => return PermissionLevel::User,
-        };
-
-        for role in roles {
-            if staff_roles.clone().contains(role.as_u64()) {
-                return PermissionLevel::Staff;
-            }
-        }
-
-        PermissionLevel::User
+        return PermissionLevel::Staff;
     }
+
+    let staff_roles = match config::list_staff_roles(server_id.clone()).await {
+        Some(staff_roles) => staff_roles,
+        None => return PermissionLevel::User,
+    };
+
+    for role in roles {
+        if staff_roles.clone().contains(role.as_u64()) {
+            return PermissionLevel::Staff;
+        }
+    }
+
+    PermissionLevel::User
 }

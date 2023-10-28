@@ -1,14 +1,14 @@
 [package]
 name = "regy_bot"
-version = "1.16.1"
+version = "1.16.2"
 edition = "2021"
 
 [dependencies]
 poise = "0.5.7"
 tokio = { version = "1.33.0", features = ["full"] }
 regex = "1.10.2"
-serde = { version = "1.0.189", features = ["derive"] }
-toml  = { version = "0.8.4", optional = true }
+serde = { version = "1.0.190", features = ["derive"] }
+toml  = { version = "0.8.6", optional = true }
 base64 = "0.21.5"
 uuid = { version = "1.5.0", features = ["v4", "serde", "fast-rng"] }
 self-replace = "1.3.7"
@@ -29,7 +29,7 @@ developer-commands = []
 test-deploy = []
 legacy-staff = []
 
-default = ["developer-commands", "legacy-staff"]
+default = ["developer-commands"]
 
 [[bin]]
 name = "regy_bot_update_helper"

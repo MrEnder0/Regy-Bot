@@ -6,7 +6,11 @@ use regex::Regex;
 use scorched::*;
 
 use crate::{
-    utils::{config::*, word_prep::*},
+    utils::{
+        config::*,
+        perm_check::{highest_unlocked_perm, PermissionLevel},
+        word_prep::*,
+    },
     IpmStruct,
 };
 
@@ -72,14 +76,21 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
         }
 
         // Ignores moderation from staff
-        if read_config()
-            .await
-            .servers
-            .get(&server_id)
-            .unwrap()
-            .staff
-            .iter()
-            .any(|&x| &x == new_message.author.id.as_u64())
+        if highest_unlocked_perm(
+            server_id.clone(),
+            new_message.author.id.into(),
+            new_message
+                .member(ctx)
+                .await
+                .unwrap()
+                .roles(ctx)
+                .unwrap()
+                .iter_mut()
+                .map(|role| role.id)
+                .collect::<Vec<_>>(),
+        )
+        .await
+            != PermissionLevel::User
         {
             break;
         }

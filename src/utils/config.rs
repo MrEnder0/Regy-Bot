@@ -391,6 +391,7 @@ pub async fn list_infractions(server_id: String, id: u64) -> Option<u64> {
     Some(*infractions)
 }
 
+#[cfg(feature = "legacy-staff")]
 pub async fn add_staff(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
@@ -422,6 +423,7 @@ pub async fn add_staff(server_id: String, id: u64) -> bool {
     }
 }
 
+#[cfg(feature = "legacy-staff")]
 pub async fn remove_staff(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
 
@@ -457,6 +459,7 @@ pub async fn remove_staff(server_id: String, id: u64) -> bool {
     }
 }
 
+#[cfg(feature = "legacy-staff")]
 pub async fn list_staff(server_id: String) -> Option<Vec<u64>> {
     let config = read_config().await;
 
@@ -613,6 +616,7 @@ pub async fn delete_user(server_id: String, id: u64) {
             .remove(&id.to_string());
     }
 
+    #[cfg(feature = "legacy-staff")]
     // Checks if user is on staff list and removes them if they are
     if data
         .servers
@@ -906,10 +910,22 @@ pub async fn update_rti_regexes(server_id: String) {
                 .iter()
                 .find(|rti_object| rti_object.description == phrase.description);
 
-            if filtered_rti_objects.is_some() {
-                phrase.phrase = filtered_rti_objects.unwrap().phrase.clone();
-                phrase.description = filtered_rti_objects.unwrap().description.clone();
-                phrase.version = filtered_rti_objects.unwrap().version;
+            match filtered_rti_objects {
+                Some(_) => {
+                    phrase.phrase = filtered_rti_objects.unwrap().phrase.clone();
+                    phrase.description = filtered_rti_objects.unwrap().description.clone();
+                    phrase.version = filtered_rti_objects.unwrap().version;
+                }
+                None => {
+                    log_this(LogData {
+                        importance: LogImportance::Warning,
+                        message: format!(
+                            "Unable to update found RTI object with the description '{}'.",
+                            phrase.description
+                        ),
+                    })
+                    .await;
+                }
             }
         }
     }
@@ -927,12 +943,11 @@ pub async fn clean_config() {
     let mut data = read_config().await;
 
     for (_server_id, server_options) in &mut data.servers {
-        server_options.infractions.retain(|_, &mut v| v != 0 as u64);
+        server_options.infractions.retain(|_, &mut v| v != 0);
 
-        server_options
-            .block_phrases
-            .retain(|x| x.phrase != "".to_string());
+        server_options.block_phrases.retain(|x| x.phrase.is_empty());
 
+        #[cfg(feature = "legacy-staff")]
         server_options.staff.retain(|&x| x != 0 as u64);
     }
 
