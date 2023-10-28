@@ -36,7 +36,18 @@ pub async fn list_staff_roles(ctx: Context<'_>) -> Result<(), Error> {
             let mut staff_role_list = String::new();
 
             for staff_role in staff_roles.clone() {
-                staff_role_list.push_str(&format!("{}\n", staff_role));
+                let role_name = ctx
+                    .guild()
+                    .unwrap()
+                    .roles
+                    .iter_mut()
+                    .find(|role| role.0.as_u64() == &staff_role)
+                    .unwrap()
+                    .1
+                    .name
+                    .clone();
+
+                staff_role_list.push_str(&format!("{}\n", role_name));
             }
 
             ctx.send(|cr| {
