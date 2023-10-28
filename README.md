@@ -7,8 +7,7 @@
 ## Important info
 
 * MSRV Policy 1.67.1 (Last checked 10/27/23)
-* Built to run on Windows (Linux platforms are tested infrequently but support all features excluding self updates)
-* Made for IrwinTechs discord server
+* Built to run on Windows (Linux platforms are tested infrequently but have a known support for the bot as shown in the [Features](#Features) section)
 
 ## Features
 
