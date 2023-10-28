@@ -4,7 +4,10 @@ use poise::{
 };
 use scorched::*;
 
-use crate::utils::config::*;
+use crate::utils::{
+    config::*,
+    perm_check::{has_perm, PermissionLevel},
+};
 
 enum EmbedType {
     Add,
@@ -25,14 +28,20 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
         return;
     }
 
-    // Ignores events except for staff
-    if !read_config()
-        .await
-        .servers
-        .get(&server_id)
-        .unwrap()
-        .staff
-        .contains(&user_id.parse::<u64>().unwrap())
+    // Ignores all non staff reactions
+    if has_perm(
+        server_id.clone(),
+        user_id.parse::<u64>().unwrap(),
+        add_reaction
+            .guild_id
+            .unwrap()
+            .member(&ctx, UserId(user_id.parse::<u64>().unwrap()))
+            .await
+            .unwrap()
+            .roles,
+        PermissionLevel::Staff,
+    )
+    .await
     {
         return;
     }

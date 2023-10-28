@@ -6,7 +6,11 @@ use regex::Regex;
 use scorched::*;
 
 use crate::{
-    utils::{config::*, word_prep::*},
+    utils::{
+        config::*,
+        perm_check::{highest_unlocked_perm, PermissionLevel},
+        word_prep::*,
+    },
     IpmStruct,
 };
 
@@ -51,17 +55,21 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
     }
 
     // Ignores moderation from staff
-    for user in read_config()
-        .await
-        .servers
-        .get(&guild_id.unwrap().to_string())
-        .unwrap()
-        .staff
-        .iter()
+    if highest_unlocked_perm(
+        guild_id.unwrap().to_string(),
+        author.id.into(),
+        event
+            .guild_id
+            .unwrap()
+            .member(&ctx, UserId(author.id.into()))
+            .await
+            .unwrap()
+            .roles,
+    )
+    .await
+        != PermissionLevel::User
     {
-        if author.id == UserId(*user) {
-            return;
-        }
+        return;
     }
 
     let filtered_message = filter_characters(&updated_message.to_lowercase());
