@@ -131,6 +131,11 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             .await
             .unwrap();
 
+        // Returns if message contains no embeds
+        if msg.embeds.is_empty() {
+            return;
+        }
+
         let embed_type = match msg.embeds[0].title.as_mut().unwrap().to_string().as_str() {
             "Are you sure you want to update your RTI package?" => EmbedType::Update,
             "RTI Package Found" => EmbedType::Add,
