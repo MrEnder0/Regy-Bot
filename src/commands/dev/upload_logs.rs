@@ -33,11 +33,25 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    if std::fs::read_dir("logs").unwrap().count() == 0 || std::fs::read_dir("logs").is_err() {
+    if !std::path::Path::new("logs").exists() {
         ctx.send(|cr| {
             cr.embed(|ce| {
                 ce.title("Log upload failed")
-                    .description("There are no logs to upload")
+                    .description("There currently is no log folder.")
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+
+        return Ok(());
+    }
+
+    if std::fs::read_dir("logs").unwrap().count() == 0 {
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Log upload failed")
+                    .description("There currently are no log files in the log dir.")
                     .color(0x8B0000)
             })
         })
