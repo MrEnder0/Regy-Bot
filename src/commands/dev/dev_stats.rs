@@ -41,6 +41,7 @@ pub async fn dev_stats(ctx: Context<'_>) -> Result<(), Error> {
 
     let version = env!("CARGO_PKG_VERSION");
     let scorched_version = scorched::VERSION;
+    let os = std::env::consts::OS;
     let config_version = read_config().await.meta.version;
     let rti_version = read_rti().await.meta.version;
     let rti_length = read_rti().await.packages.len();
@@ -57,6 +58,7 @@ pub async fn dev_stats(ctx: Context<'_>) -> Result<(), Error> {
             ce.title("Dev Stats")
                 .field("Version", version, true)
                 .field("Scorched version", scorched_version, true)
+                .field("OS", os, true)
                 .field("Config version", config_version, true)
                 .field("RTI version", rti_version, true)
                 .field("RTI package count", rti_length, true)
