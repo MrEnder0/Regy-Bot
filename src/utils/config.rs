@@ -940,16 +940,23 @@ pub async fn update_rti_regexes(server_id: String) {
 }
 
 pub async fn clean_config() {
+    log_this(LogData {
+        importance: LogImportance::Info,
+        message: "Running startup config cleanup.".to_string(),
+    }).await;
+
     let mut data = read_config().await;
 
-    for (_server_id, server_options) in &mut data.servers {
-        server_options.infractions.retain(|_, &mut v| v != 0);
+    data.servers.iter_mut().for_each(|(_, server_options)| {
+        server_options
+            .infractions
+            .retain(|_, &mut v| v != 0);
 
         server_options.block_phrases.retain(|x| x.phrase.is_empty());
 
         #[cfg(feature = "legacy-staff")]
-        server_options.staff.retain(|&x| x != 0 as u64);
-    }
+        server_options.staff.retain(|&x| x != 0);
+    });
 
     let config = PrettyConfig::new()
         .depth_limit(4)
