@@ -1,7 +1,7 @@
 use poise::serenity_prelude::Channel;
 use scorched::*;
 
-use crate::{utils::config, Data};
+use crate::{utils::config::dead_zones, Data};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -20,7 +20,7 @@ pub async fn remove_dead_zone(
         None => ctx.channel_id().0,
     };
 
-    match config::remove_dead_zone(ctx.guild_id().unwrap().0.to_string(), channel_id).await {
+    match dead_zones::remove_dead_zone(ctx.guild_id().unwrap().0.to_string(), channel_id).await {
         true => {
             ctx.send(|cr| {
                 cr.embed(|ce| {

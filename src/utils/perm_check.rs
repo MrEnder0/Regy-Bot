@@ -32,7 +32,7 @@ pub async fn has_perm(
                 return true;
             }
 
-            let staff_roles = match config::list_staff_roles(server_id.clone()).await {
+            let staff_roles = match config::staff::list_staff_roles(server_id.clone()).await {
                 Some(staff_roles) => staff_roles,
                 None => return false,
             };
@@ -70,7 +70,7 @@ pub async fn highest_unlocked_perm(
         return PermissionLevel::Staff;
     }
 
-    let staff_roles = match config::list_staff_roles(server_id.clone()).await {
+    let staff_roles = match config::staff::list_staff_roles(server_id.clone()).await {
         Some(staff_roles) => staff_roles,
         None => return PermissionLevel::User,
     };

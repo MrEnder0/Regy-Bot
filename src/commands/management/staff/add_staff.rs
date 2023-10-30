@@ -2,7 +2,10 @@ use poise::serenity_prelude as serenity;
 use scorched::*;
 
 use crate::{
-    utils::{config, type_conversions::userid_to_u64},
+    utils::{
+        config::{self, staff::legacy},
+        type_conversions::userid_to_u64,
+    },
     Data,
 };
 
@@ -36,7 +39,7 @@ pub async fn add_staff(
         return Ok(());
     }
 
-    let add_staff_status = config::add_staff(
+    let add_staff_status = legacy::add_staff(
         ctx.guild_id().unwrap().0.to_string(),
         userid_to_u64(userid).await,
     )

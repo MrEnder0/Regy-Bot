@@ -5,7 +5,10 @@ use poise::{
 use scorched::*;
 
 use crate::utils::{
-    config::*,
+    config::{
+        infractions::dismiss_infraction, read_config, regex::add_regex,
+        updating::update_rti_regexes,
+    },
     perm_check::{has_perm, PermissionLevel},
 };
 

@@ -1,13 +1,18 @@
+use ::regex::Regex;
 use poise::{
     serenity_prelude as serenity,
     serenity_prelude::{ChannelId, CreateEmbed, ReactionType, UserId},
 };
-use regex::Regex;
 use scorched::*;
 
 use crate::{
     utils::{
-        config::*,
+        config::{
+            dead_zones::is_dead_zone,
+            infractions::{add_infraction, list_infractions},
+            read_config,
+            regex::list_regex,
+        },
         perm_check::{highest_unlocked_perm, PermissionLevel},
         word_prep::*,
     },

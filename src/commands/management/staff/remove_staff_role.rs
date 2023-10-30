@@ -2,7 +2,10 @@ use poise::serenity_prelude as serenity;
 use scorched::*;
 
 use crate::{
-    utils::{config, type_conversions::roleid_to_u64},
+    utils::{
+        config::{self, staff},
+        type_conversions::roleid_to_u64,
+    },
     Data,
 };
 
@@ -36,7 +39,7 @@ pub async fn remove_staff_role(
         return Ok(());
     }
 
-    let remove_staff_role_status = config::remove_staff_role(
+    let remove_staff_role_status = staff::remove_staff_role(
         ctx.guild_id().unwrap().0.to_string(),
         roleid_to_u64(roleid).await,
     )

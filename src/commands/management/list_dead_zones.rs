@@ -1,6 +1,6 @@
 use scorched::*;
 
-use crate::{utils::config, Data};
+use crate::{utils::config::dead_zones, Data};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -11,7 +11,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
     required_permissions = "ADMINISTRATOR"
 )]
 pub async fn list_dead_zones(ctx: Context<'_>) -> Result<(), Error> {
-    let dead_zones = config::get_dead_zones(ctx.guild_id().unwrap().0.to_string()).await;
+    let dead_zones = dead_zones::list_dead_zones(ctx.guild_id().unwrap().0.to_string()).await;
 
     if dead_zones.is_none() {
         ctx.send(|cr| {

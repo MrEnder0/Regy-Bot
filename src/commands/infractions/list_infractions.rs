@@ -3,7 +3,7 @@ use scorched::*;
 
 use crate::{
     utils::{
-        config,
+        config::{self, infractions},
         perm_check::{has_perm, PermissionLevel::Staff},
         type_conversions::userid_to_u64,
     },
@@ -81,7 +81,8 @@ pub async fn list_infractions(
         return Ok(());
     }
 
-    let infraction_count = config::list_infractions(server_id, userid_to_u64(userid).await).await;
+    let infraction_count =
+        infractions::list_infractions(server_id, userid_to_u64(userid).await).await;
 
     match infraction_count {
         Some(infraction_count) => {

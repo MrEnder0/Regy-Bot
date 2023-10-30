@@ -5,7 +5,10 @@ use poise::{
 use scorched::*;
 
 use crate::{
-    utils::config::{add_infraction, list_infractions, read_config},
+    utils::config::{
+        infractions::{add_infraction, list_infractions},
+        read_config,
+    },
     IpmStruct,
 };
 

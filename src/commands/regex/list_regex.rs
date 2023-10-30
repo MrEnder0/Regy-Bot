@@ -3,7 +3,7 @@ use scorched::*;
 
 use crate::{
     utils::{
-        config,
+        config::regex,
         perm_check::{has_perm, PermissionLevel::Staff},
     },
     Data,
@@ -70,7 +70,7 @@ pub async fn list_regex(ctx: Context<'_>) -> Result<(), Error> {
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
 
-    let block_phrases = match { config::list_regex(server_id).await } {
+    let block_phrases = match { regex::list_regex(server_id).await } {
         Some(block_phrases) => block_phrases,
         None => {
             ctx.send(|cr| {

@@ -1,7 +1,10 @@
 use scorched::*;
 
 use crate::{
-    utils::{config, type_conversions::userid_to_u64},
+    utils::{
+        config::{self, infractions},
+        type_conversions::userid_to_u64,
+    },
     Data,
 };
 
@@ -29,7 +32,7 @@ pub async fn my_infractions(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    let user_infractions = config::list_infractions(server_id, user_id.await).await;
+    let user_infractions = infractions::list_infractions(server_id, user_id.await).await;
 
     match user_infractions {
         Some(user_infractions) => {

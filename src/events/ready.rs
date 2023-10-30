@@ -8,7 +8,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use crate::{
     utils::{
-        config::{clean_config, read_config},
+        config::{management::clean_config, read_config},
         rti::download_rti,
     },
     IpmStruct,

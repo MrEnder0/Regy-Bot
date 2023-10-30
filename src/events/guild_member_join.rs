@@ -1,8 +1,11 @@
+use ::regex::Regex;
 use poise::{serenity_prelude as serenity, serenity_prelude::Member};
-use regex::Regex;
 use scorched::{LogExpect, LogImportance};
 
-use crate::utils::{config::*, word_prep::filter_characters};
+use crate::utils::{
+    config::{read_config, regex::list_regex},
+    word_prep::filter_characters,
+};
 
 pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Member) {
     // Checks if server exists in config

@@ -3,7 +3,7 @@ use scorched::*;
 
 use crate::{
     utils::{
-        config,
+        config::{self, infractions},
         perm_check::{has_perm, PermissionLevel::Staff},
         type_conversions::userid_to_u64,
     },
@@ -78,7 +78,7 @@ pub async fn add_infraction(
         return Ok(());
     }
 
-    config::add_infraction(server_id, userid_to_u64(userid).await).await;
+    infractions::add_infraction(server_id, userid_to_u64(userid).await).await;
 
     ctx.send(|cr| {
         cr.embed(|ce| {
