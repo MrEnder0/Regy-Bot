@@ -2,7 +2,7 @@ use scorched::*;
 
 use crate::{
     utils::{
-        config,
+        config::regex,
         perm_check::{has_perm, PermissionLevel::Staff},
     },
     Data,
@@ -78,7 +78,7 @@ pub async fn add_regex(
         return Ok(());
     }
 
-    config::add_regex(
+    regex::add_regex(
         server_id,
         format!("{} ", regex_phrase.clone()),
         false,

@@ -1,7 +1,10 @@
 use poise::serenity_prelude::UserId;
 use scorched::*;
 
-use crate::{utils::config, Data};
+use crate::{
+    utils::config::{self, staff::legacy},
+    Data,
+};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -30,7 +33,7 @@ pub async fn list_staff(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    let staff = config::list_staff(server_id).await;
+    let staff = legacy::list_staff(server_id).await;
 
     match staff {
         Some(staff) => {

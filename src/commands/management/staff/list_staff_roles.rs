@@ -1,6 +1,9 @@
 use scorched::*;
 
-use crate::{utils::config, Data};
+use crate::{
+    utils::config::{self, staff},
+    Data,
+};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -29,7 +32,7 @@ pub async fn list_staff_roles(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    let staff_roles = config::list_staff_roles(server_id).await;
+    let staff_roles = staff::list_staff_roles(server_id).await;
 
     match staff_roles {
         Some(staff_roles) => {

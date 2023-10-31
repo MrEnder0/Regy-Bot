@@ -4,6 +4,7 @@ mod utils;
 
 use poise::{serenity_prelude as serenity, Event};
 use std::path::Path;
+use utils::config::{management::gen_config, updating::update_config};
 
 use crate::events::*;
 use crate::utils::config::*;

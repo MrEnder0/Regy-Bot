@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::{
     utils::{
-        config::{self, list_regex},
+        config::regex::{self, list_regex},
         perm_check::{has_perm, PermissionLevel::Staff},
     },
     Data,
@@ -135,7 +135,7 @@ pub async fn remove_regex(
     }
 
     let server_id = ctx.guild_id().unwrap().0.to_string();
-    config::remove_regex(server_id, id).await;
+    regex::remove_regex(server_id, id).await;
 
     ctx.send(|cr| {
         cr.embed(|ce| {
