@@ -52,8 +52,6 @@ pub async fn clean_config() {
     data.servers.iter_mut().for_each(|(_, server_options)| {
         server_options.infractions.retain(|_, &mut v| v != 0);
 
-        server_options.block_phrases.retain(|x| x.phrase.is_empty());
-
         #[cfg(feature = "legacy-staff")]
         server_options.staff.retain(|&x| x != 0);
     });
