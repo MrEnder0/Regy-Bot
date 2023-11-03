@@ -9,6 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Grabs the profile picture of a user
 #[poise::command(prefix_command, slash_command, user_cooldown = 5)]
 pub async fn grab_pfp(
     ctx: Context<'_>,

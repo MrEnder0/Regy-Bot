@@ -6,6 +6,7 @@ use crate::{utils::perm_check::*, Data};
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Returns the permission level of a user
 #[poise::command(
     context_menu_command = "Permission Level",
     slash_command,

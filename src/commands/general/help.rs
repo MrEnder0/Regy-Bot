@@ -29,6 +29,7 @@ pub enum HelpEnum {
     LegacyStaff,
 }
 
+/// The help command... the name is pretty self explanatory
 #[poise::command(slash_command, prefix_command, ephemeral = true)]
 pub async fn help(
     ctx: Context<'_>,

@@ -12,6 +12,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Removes a regex phrase from the current server
 #[poise::command(prefix_command, slash_command, user_cooldown = 15)]
 pub async fn remove_regex(
     ctx: Context<'_>,

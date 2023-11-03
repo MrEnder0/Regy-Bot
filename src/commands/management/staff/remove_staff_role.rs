@@ -12,6 +12,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Removes a target role from the staff roles
 #[poise::command(
     slash_command,
     guild_cooldown = 5,

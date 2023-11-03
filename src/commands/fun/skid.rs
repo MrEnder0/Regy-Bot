@@ -5,6 +5,7 @@ use crate::Data;
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// What is a skid?
 #[poise::command(prefix_command, slash_command, channel_cooldown = 60)]
 pub async fn skid(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(|cr| {

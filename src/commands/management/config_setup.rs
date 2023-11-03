@@ -9,6 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Sets up the current server in the database
 #[poise::command(
     prefix_command,
     slash_command,

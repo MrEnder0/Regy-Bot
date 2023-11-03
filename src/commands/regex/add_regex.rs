@@ -11,6 +11,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Adds a regex phrase to the current server
 #[poise::command(prefix_command, slash_command, user_cooldown = 10)]
 pub async fn add_regex(
     ctx: Context<'_>,

@@ -18,6 +18,7 @@ struct Regex {
     is_rti: bool,
 }
 
+/// Lists all regex phrases in the current server
 #[poise::command(
     prefix_command,
     slash_command,

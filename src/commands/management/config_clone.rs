@@ -11,6 +11,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Clones regex phrases from a target server
 #[poise::command(
     prefix_command,
     slash_command,

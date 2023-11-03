@@ -5,6 +5,7 @@ use crate::Data;
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Explains what Regy is
 #[poise::command(prefix_command, slash_command, channel_cooldown = 60)]
 pub async fn about(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(|cr| {

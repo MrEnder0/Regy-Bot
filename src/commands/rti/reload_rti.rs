@@ -11,6 +11,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Reloads the RTI packages from the RTI index on GitHub
 #[poise::command(slash_command, global_cooldown = 120)]
 pub async fn reload_rti(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();

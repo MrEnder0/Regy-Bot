@@ -12,6 +12,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Searches for a RTI package in the RTI index
 #[poise::command(prefix_command, slash_command, user_cooldown = 5)]
 pub async fn search_rti(
     ctx: Context<'_>,

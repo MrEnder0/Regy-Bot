@@ -13,6 +13,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Adds an infraction to a target user
 #[poise::command(
     context_menu_command = "Add Infraction",
     slash_command,
