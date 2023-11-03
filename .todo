@@ -116,6 +116,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Make config.rs a sub mod of utils
 [x] Add description to commands
 [ ] Split some things into a "custom" events mod
+[ ] Compiled Regex Cache (CRC)
 
 # Release 18
 [ ] Compiled Regex Cache (CRC)
