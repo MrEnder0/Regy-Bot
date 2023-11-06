@@ -1,4 +1,5 @@
 pub mod config;
+pub mod crc;
 pub mod ipm;
 pub mod perm_check;
 pub mod rti;
