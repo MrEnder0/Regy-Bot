@@ -32,7 +32,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
     }
 
     // Ignores all non staff reactions
-    if has_perm(
+    if !has_perm(
         server_id.clone(),
         user_id.parse::<u64>().unwrap(),
         add_reaction
