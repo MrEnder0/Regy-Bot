@@ -38,4 +38,5 @@ pub fn filter_characters(input: &str) -> String {
         .replace(&['х', 'ҳ', 'ẋ', 'ẍ'][..], "x")
         .replace(&['у', 'ÿ', 'ỳ', 'ý', 'ỵ', 'ỹ', 'ỷ'][..], "y")
         .replace(&['ʐ', 'ž', 'ż', 'ź'][..], "z")
+        .replace(&['\u{200B}', '\u{200C}', '\u{200D}'][..], "")
 }
