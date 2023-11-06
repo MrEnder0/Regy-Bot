@@ -2,7 +2,6 @@ use poise::{
     serenity_prelude as serenity,
     serenity_prelude::{ChannelId, CreateEmbed, MessageUpdateEvent, ReactionType, UserId},
 };
-use regex::Regex;
 use scorched::*;
 
 use crate::{
@@ -11,12 +10,11 @@ use crate::{
             dead_zones::is_dead_zone,
             infractions::{add_infraction, list_infractions},
             read_config,
-            regex::*,
         },
         perm_check::{highest_unlocked_perm, PermissionLevel},
         word_prep::*,
     },
-    IpmStruct,
+    CrcStruct, IpmStruct,
 };
 
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
@@ -79,27 +77,33 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     let filtered_message = filter_characters(&updated_message.to_lowercase());
 
-    let block_phrases = match { list_regex(guild_id.unwrap().to_string()).await } {
-        Some(phrases) => phrases,
-        None => {
-            log_this(LogData {
-                importance: LogImportance::Warning,
-                message: format!(
-                    "Unable to get regex phrases for server {}",
-                    guild_id.unwrap()
-                ),
-            })
-            .await;
-
-            return;
-        }
-    };
-
-    for regex_phrase in block_phrases {
-        if Regex::new(&regex_phrase.phrase)
+    if CrcStruct::check_cache(
+        guild_id
             .unwrap()
-            .is_match(&format!("{} #", filtered_message))
-        {
+            .to_string()
+            .parse::<u64>()
+            .log_expect(LogImportance::Warning, "Unable to parse server id"),
+    ) {
+        CrcStruct::build_server_cache(
+            guild_id
+                .unwrap()
+                .to_string()
+                .parse::<u64>()
+                .log_expect(LogImportance::Warning, "Unable to parse server id"),
+        );
+    }
+
+    let cached_regex = CrcStruct::load_server_cache(
+        guild_id
+            .unwrap()
+            .to_string()
+            .parse::<u64>()
+            .log_expect(LogImportance::Warning, "Unable to parse server id"),
+    )
+    .regex;
+
+    for regex_phrase in cached_regex {
+        if regex_phrase.is_match(&format!("{} #", filtered_message)) {
             channel_id
                 .delete_message(&ctx.http, message_id)
                 .await

@@ -4,10 +4,11 @@ mod utils;
 
 use poise::{serenity_prelude as serenity, Event};
 use std::path::Path;
+use utils::config::read_config;
 use utils::config::{management::gen_config, updating::update_config};
 
 use crate::events::*;
-use crate::utils::config::*;
+use crate::utils::crc::*;
 use crate::utils::ipm::*;
 
 pub struct Data {}

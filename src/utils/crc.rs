@@ -46,6 +46,9 @@ impl CrcStruct {
         let binding = &CRC;
         let mut guard = binding.lock().unwrap();
 
+        // Clears the cache if it exists before it builds
+        Self::clear_cache(CacheLevel::Server { data: server_id });
+
         let hash = format!(
             "{:x}",
             md5::compute(

@@ -11,12 +11,11 @@ use crate::{
             dead_zones::is_dead_zone,
             infractions::{add_infraction, list_infractions},
             read_config,
-            regex::list_regex,
         },
         perm_check::{highest_unlocked_perm, PermissionLevel},
         word_prep::*,
     },
-    IpmStruct,
+    CrcStruct, IpmStruct,
 };
 
 pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::Message) {
@@ -51,20 +50,26 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
     let filtered_message = filter_characters(&new_message.content.to_lowercase());
 
-    let block_phrases = match { list_regex(server_id.clone()).await } {
-        Some(phrases) => phrases,
-        None => {
-            log_this(LogData {
-                importance: LogImportance::Warning,
-                message: format!("Unable to get regex phrases for server {}", server_id),
-            })
-            .await;
+    if CrcStruct::check_cache(
+        server_id
+            .parse::<u64>()
+            .log_expect(LogImportance::Warning, "Unable to parse server id"),
+    ) {
+        CrcStruct::build_server_cache(
+            server_id
+                .parse::<u64>()
+                .log_expect(LogImportance::Warning, "Unable to parse server id"),
+        );
+    }
 
-            return;
-        }
-    };
+    let cached_regex = CrcStruct::load_server_cache(
+        server_id
+            .parse::<u64>()
+            .log_expect(LogImportance::Warning, "Unable to parse server id"),
+    )
+    .regex;
 
-    for regex_phrase in block_phrases {
+    for regex_phrase in cached_regex {
         // Ignores moderation from devs
         if new_message.author.id == 687897073047306270
             || new_message.author.id == 598280691066732564
@@ -100,10 +105,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             break;
         }
 
-        if Regex::new(&regex_phrase.phrase)
-            .unwrap()
-            .is_match(&format!("{} #", filtered_message))
-        {
+        if regex_phrase.is_match(&format!("{} #", filtered_message)) {
             new_message
                 .delete(&ctx.http)
                 .await
