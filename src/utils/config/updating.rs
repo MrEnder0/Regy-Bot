@@ -1,10 +1,11 @@
-use crate::utils::rti::read_rti;
+use crate::utils::{rti::read_rti, config::{structs::{Config, MetaData, GlobalOptions, ServerOptions, BlockPhrase}, CONFIG_VERSION}};
+use base64::{engine::general_purpose, Engine};
 use ron::{
     self,
     ser::{to_string_pretty, PrettyConfig},
 };
 use scorched::*;
-use std::path::Path;
+use std::{path::Path, collections::HashMap};
 
 use super::{management::gen_config, read_config};
 
@@ -45,7 +46,7 @@ pub async fn update_config() {
                     let mut server_options = ServerOptions {
                         infractions: HashMap::new(),
                         block_phrases: Vec::new(),
-                        staff: Vec::new(),
+                        staff_roles: Vec::new(),
                         log_channel: value["log_channel"].as_integer().unwrap() as u64,
                         dead_zones: Vec::new(),
                     };
@@ -70,11 +71,13 @@ pub async fn update_config() {
                         server_options.block_phrases.push(phrase);
                     }
 
+                    /* Legacy staff system is not supported anymore
                     for value in value["staff"].as_array().unwrap() {
                         server_options
                             .staff
                             .push(value.as_integer().unwrap() as u64);
                     }
+                    */
 
                     converted_config_data
                         .servers
