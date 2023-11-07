@@ -24,6 +24,7 @@
 | Dead Zone Channels                 | ✅ | ✅ |
 | Seamless Poll Detection            | ✅ | ✅ |
 | Message Nuking                     | ✅ | ✅ |
+| Compiled Regx Cache ([CRC](#CRC))  | ✅ | ✅ |
 | Self Update System                 | ✅ | ❌ |
 
 ### IPM
@@ -34,6 +35,10 @@ IPM is a system that allows the bot to detect raids and automatically ban the ra
 
 RTI is a index of community made regex templates that can be used to moderate your server. Server moderators can use `/search_rti <phrase>` to search the frequently updated list for phrases that match the tags of that search. If a template is found that matches the search it can be added to the server by reacting to it. RTI phrases have versions and can automatically update when a new version is released by the moderators running `/update_rti` this command will update all RTI phrases in the server to the latest version available inside the RTI index.
 
+### CRC
+
+CRC is a cache generated during runtime that contains compiled regex phrases, this is a optimization regy uses to speed up its message scanning.
+
 ## Quick-Start
 
 ### Before building
@@ -43,7 +48,8 @@ RTI is a index of community made regex templates that can be used to moderate yo
 
 ### When building
 
-1. Clone the repository and open up the main branch or develop branch
+1. Clone the repository and open up the main branch or develop branch, note that the develop branch may have in progress features and will be more
+prone to bugs.
 2. Build using cargo like so: `cargo build --release`
 3. Run the executable in `target/release/regy_bot.exe`
 4. The bot will generate a template config file in the same directory as the executable and then exit
