@@ -40,7 +40,6 @@ impl CrcStruct {
         }
     }
     pub fn build_server_cache(server_id: u64) {
-        println!("Building cache for server {}", server_id);
         let binding = &CRC;
         let mut guard = binding.lock().unwrap();
 
@@ -48,8 +47,6 @@ impl CrcStruct {
         if guard.iter().any(|x| x.0 == &server_id) {
             guard.remove(&server_id);
         }
-
-        println!("Cleared cache for server {}", server_id);
 
         let hash = format!(
             "{:x}",
@@ -71,8 +68,6 @@ impl CrcStruct {
             compiled_regex.push(Regex::new(&regex).unwrap());
         }
 
-        println!("Compiled regex for server {}", server_id);
-
         // Inserts server regex cache into the cache
         guard.insert(
             server_id,
@@ -81,10 +76,6 @@ impl CrcStruct {
                 regex: compiled_regex,
             },
         );
-
-        drop(guard);
-
-        println!("Built cache for server {}", server_id)
     }
     pub fn check_cache(server_id: u64) -> bool {
         let binding = &CRC;
@@ -106,17 +97,10 @@ impl CrcStruct {
             // Validates cache
             let hash = &guard.iter().find(|x| x.0 == &server_id).unwrap().1.hash;
 
-            if comparison_hash == hash.to_string() {
-                drop(guard);
-                println!("Cache for server {} is valid", server_id);
-
+            if comparison_hash == *hash {
                 return true;
             }
         }
-
-        // drops the mutex
-        drop(guard);
-        println!("Cache for server {} is invalid", server_id);
 
         false
     }
@@ -128,11 +112,9 @@ impl CrcStruct {
         match level {
             CacheLevel::Server { data } => {
                 guard.remove(&data);
-                drop(guard);
             }
             CacheLevel::Global => {
                 guard.clear();
-                drop(guard);
             }
         }
     }
