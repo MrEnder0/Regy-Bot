@@ -1,7 +1,0 @@
-{
-    "rust-analyzer.showUnlinkedFileNotification": false,
-    "cSpell.words": [
-        "regx",
-        "userid"
-    ]
-}
