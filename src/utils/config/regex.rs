@@ -6,7 +6,7 @@ use ron::{
 use scorched::*;
 use uuid::Uuid;
 
-use super::{read_config, server_exists, structs::BlockPhrase};
+use super::{non_async_read_config, read_config, server_exists, structs::BlockPhrase};
 
 pub async fn add_regex(
     server_id: String,
@@ -146,4 +146,29 @@ pub async fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
     }
 
     Some(block_phrases)
+}
+
+pub fn non_async_list_regex(server_id: String) -> Vec<BlockPhrase> {
+    let data = non_async_read_config();
+
+    let mut block_phrases: Vec<BlockPhrase> = Vec::new();
+
+    for phrase in &data.servers.get(&server_id).unwrap().block_phrases {
+        let decoded_phrase = String::from_utf8(
+            general_purpose::STANDARD_NO_PAD
+                .decode(phrase.phrase.as_bytes())
+                .log_expect(LogImportance::Warning, "Unable to decode regex phrase"),
+        )
+        .unwrap();
+
+        block_phrases.push(BlockPhrase {
+            uuid: phrase.uuid.clone(),
+            phrase: decoded_phrase,
+            is_rti: phrase.is_rti,
+            description: phrase.description.clone(),
+            version: phrase.version,
+        });
+    }
+
+    block_phrases
 }

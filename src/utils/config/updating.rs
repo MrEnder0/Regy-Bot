@@ -1,11 +1,17 @@
-use crate::utils::{rti::read_rti, config::{structs::{Config, MetaData, GlobalOptions, ServerOptions, BlockPhrase}, CONFIG_VERSION}};
+use crate::utils::{
+    config::{
+        structs::{BlockPhrase, Config, GlobalOptions, MetaData, ServerOptions},
+        CONFIG_VERSION,
+    },
+    rti::read_rti,
+};
 use base64::{engine::general_purpose, Engine};
 use ron::{
     self,
     ser::{to_string_pretty, PrettyConfig},
 };
 use scorched::*;
-use std::{path::Path, collections::HashMap};
+use std::{collections::HashMap, path::Path};
 
 use super::{management::gen_config, read_config};
 

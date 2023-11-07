@@ -77,7 +77,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
 
     let filtered_message = filter_characters(&updated_message.to_lowercase());
 
-    if CrcStruct::check_cache(
+    if !CrcStruct::check_cache(
         guild_id
             .unwrap()
             .to_string()

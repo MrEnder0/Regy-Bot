@@ -1,13 +1,11 @@
-use futures::executor::block_on;
+use super::config::regex::non_async_list_regex;
 use regex::Regex;
-use std::{collections::HashMap, sync::Mutex};
+use std::{collections::BTreeMap, sync::Mutex};
 
-use super::config::regex::list_regex;
-
-static CRC: Mutex<Vec<HashMap<u64, Server>>> = Mutex::new(Vec::new());
+static CRC: Mutex<BTreeMap<u64, Server>> = Mutex::new(BTreeMap::new());
 
 pub struct Server {
-    pub hash: u64,
+    pub hash: String,
     pub regex: Vec<Regex>,
 }
 
@@ -23,45 +21,47 @@ impl CrcStruct {
         let binding = &CRC;
         let guard = binding.lock().unwrap();
 
-        // Loads the data from the cache
-        let hash = guard
-            .iter()
-            .find(|x| x.contains_key(&server_id))
-            .unwrap()
-            .get(&server_id)
-            .unwrap()
-            .hash;
-        let regex = guard
-            .iter()
-            .find(|x| x.contains_key(&server_id))
-            .unwrap()
-            .get(&server_id)
-            .unwrap()
-            .regex
-            .clone();
+        let server = match guard.get(&server_id) {
+            Some(x) => Some(x),
+            None => {
+                Self::build_server_cache(server_id);
+                guard.get(&server_id)
+            }
+        }
+        .unwrap();
 
-        Server { hash, regex }
+        // Loads the data from the cache
+        let hash = &server.hash;
+        let regex = server.regex.clone();
+
+        Server {
+            hash: hash.to_string(),
+            regex,
+        }
     }
     pub fn build_server_cache(server_id: u64) {
+        println!("Building cache for server {}", server_id);
         let binding = &CRC;
         let mut guard = binding.lock().unwrap();
 
         // Clears the cache if it exists before it builds
-        Self::clear_cache(CacheLevel::Server { data: server_id });
+        if guard.iter().any(|x| x.0 == &server_id) {
+            guard.remove(&server_id);
+        }
+
+        println!("Cleared cache for server {}", server_id);
 
         let hash = format!(
             "{:x}",
             md5::compute(
-                block_on(list_regex(server_id.to_string()))
-                    .unwrap()
+                non_async_list_regex(server_id.to_string())
                     .iter()
                     .map(|x| x.phrase.clone())
                     .collect::<Vec<String>>()
                     .join("\n")
             )
         );
-        let regex = block_on(list_regex(server_id.to_string()))
-            .unwrap()
+        let regex = non_async_list_regex(server_id.to_string())
             .iter()
             .map(|x| x.phrase.clone())
             .collect::<Vec<String>>();
@@ -71,46 +71,53 @@ impl CrcStruct {
             compiled_regex.push(Regex::new(&regex).unwrap());
         }
 
+        println!("Compiled regex for server {}", server_id);
+
         // Inserts server regex cache into the cache
-        guard.push(HashMap::new());
-        guard.last_mut().unwrap().insert(
+        guard.insert(
             server_id,
             Server {
-                hash: hash.parse::<u64>().unwrap(),
+                hash: hash.clone(),
                 regex: compiled_regex,
             },
         );
+
+        drop(guard);
+
+        println!("Built cache for server {}", server_id)
     }
     pub fn check_cache(server_id: u64) -> bool {
         let binding = &CRC;
         let guard = binding.lock().unwrap();
 
-        // Checks if the cache is empty
-        if guard.iter().any(|x| x.contains_key(&server_id)) {
+        let comparison_hash = format!(
+            "{:x}",
+            md5::compute(
+                non_async_list_regex(server_id.to_string())
+                    .iter()
+                    .map(|x| x.phrase.clone())
+                    .collect::<Vec<String>>()
+                    .join("\n"),
+            ),
+        );
+
+        // Checks if server exists in cache
+        if guard.iter().any(|x| x.0 == &server_id) {
             // Validates cache
-            let comparison_hash = format!(
-                "{:x}",
-                md5::compute(
-                    block_on(list_regex(server_id.to_string()))
-                        .unwrap()
-                        .iter()
-                        .map(|x| x.phrase.clone())
-                        .collect::<Vec<String>>()
-                        .join("\n")
-                )
-            );
-            let hash = guard
-                .iter()
-                .find(|x| x.contains_key(&server_id))
-                .unwrap()
-                .get(&server_id)
-                .unwrap()
-                .hash;
+            let hash = &guard.iter().find(|x| x.0 == &server_id).unwrap().1.hash;
 
             if comparison_hash == hash.to_string() {
+                drop(guard);
+                println!("Cache for server {} is valid", server_id);
+
                 return true;
             }
         }
+
+        // drops the mutex
+        drop(guard);
+        println!("Cache for server {} is invalid", server_id);
+
         false
     }
     pub fn clear_cache(level: CacheLevel<u64>) {
@@ -120,14 +127,12 @@ impl CrcStruct {
         // Clears the cache
         match level {
             CacheLevel::Server { data } => {
-                guard.iter_mut().for_each(|x| {
-                    if x.contains_key(&data) {
-                        x.remove(&data);
-                    }
-                });
+                guard.remove(&data);
+                drop(guard);
             }
             CacheLevel::Global => {
                 guard.clear();
+                drop(guard);
             }
         }
     }

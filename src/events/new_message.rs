@@ -50,7 +50,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
 
     let filtered_message = filter_characters(&new_message.content.to_lowercase());
 
-    if CrcStruct::check_cache(
+    if !CrcStruct::check_cache(
         server_id
             .parse::<u64>()
             .log_expect(LogImportance::Warning, "Unable to parse server id"),
@@ -68,6 +68,10 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
             .log_expect(LogImportance::Warning, "Unable to parse server id"),
     )
     .regex;
+
+    for regex in cached_regex.clone() {
+        println!("{}", regex.as_str());
+    }
 
     for regex_phrase in cached_regex {
         // Ignores moderation from devs
