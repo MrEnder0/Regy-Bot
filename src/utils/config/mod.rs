@@ -46,6 +46,11 @@ pub fn non_async_read_config() -> Config {
     let config: Config = match from_reader(config_file) {
         Ok(x) => x,
         Err(e) => {
+            log_this(LogData {
+                importance: LogImportance::Error,
+                message: format!("Unable to read config file with the following error {}", e),
+            });
+
             std::process::exit(0);
         }
     };
