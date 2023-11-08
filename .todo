@@ -116,9 +116,9 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Make config.rs a sub mod of utils
 [x] Add description to commands
 [ ] Split some things into a "custom" events mod
-[o] Compiled Regex Cache (CRC)
+[x] Compiled Regex Cache (CRC)
     [x] Cache system
-    [ ] Cache related dev commands (cache_size, cache_reset, cache_list)
+    [x] Cache clean command
 [ ] Debug logthis for optional features being enabled like debug mode
 
 # Release 18
