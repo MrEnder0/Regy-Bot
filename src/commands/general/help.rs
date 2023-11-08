@@ -194,7 +194,7 @@ pub async fn help(
                         )
                         .field(
                             "reload_rti",
-                            "Re-downloads the online RTI package list (Global Cool-down: 120 seconds)",
+                            "Re-downloads the online RTI package list from GitHub (Global Cool-down: 120 seconds)",
                             false,
                         )
                 })
@@ -221,6 +221,7 @@ pub async fn help(
                         )
                         .field("get_ipm", "Shows the current server IPM", false)
                         .field("reset_ipm", "Resets the IPM for the current server", false)
+                        .field("clean_cache", "Resets the CRC cache", false)
                         .field("update", "Updates the bot from a local file", false)
                 })
             })
@@ -243,6 +244,9 @@ pub async fn help(
                             false,
                         )
                         .field("list_staff", "Lists all the current staff members", false)
+                        .footer(|f| {
+                            f.text("These commands are only available to legacy staff feature flag due to them being deprecated")
+                        })
                 })
             })
             .await
