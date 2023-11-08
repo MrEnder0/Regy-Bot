@@ -30,8 +30,6 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
                 .is_match(&format!("{} #", filtered_username))
         })
     {
-        println!("filtered username or nickname");
-
         // Dm user they need to change their username or nickname
         guild_member
             .user

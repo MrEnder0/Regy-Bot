@@ -69,10 +69,6 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
     )
     .regex;
 
-    for regex in cached_regex.clone() {
-        println!("{}", regex.as_str());
-    }
-
     for regex_phrase in cached_regex {
         // Ignores moderation from devs
         if new_message.author.id == 687897073047306270
