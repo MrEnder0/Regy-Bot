@@ -16,6 +16,7 @@ pub enum ResetEnum {
     Server,
 }
 
+/// Resets the IPM
 #[poise::command(slash_command, guild_cooldown = 5)]
 pub async fn reset_ipm(
     ctx: Context<'_>,

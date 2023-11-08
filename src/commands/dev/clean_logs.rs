@@ -8,6 +8,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Cleans the log folder
 #[poise::command(slash_command, global_cooldown = 10)]
 pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
