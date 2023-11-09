@@ -119,7 +119,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Compiled Regex Cache (CRC)
     [x] Cache system
     [x] Cache clean command
-[ ] Debug logthis for optional features being enabled like debug mode
+[x] Debug logthis for optional features being enabled like debug mode
 
 # Release 18
 [ ] Add regex severity

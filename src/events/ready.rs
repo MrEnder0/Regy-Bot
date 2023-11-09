@@ -26,6 +26,13 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     })
     .await;
 
+    #[cfg(feature = "test-deploy")]
+    log_this(LogData {
+        importance: LogImportance::Debug,
+        message: "This is a test deployment, infractions will not be tracked.".to_string(),
+    })
+    .await;
+
     let ctx_clone = ctx.clone();
 
     // Downloads RTI on startup
