@@ -1,6 +1,6 @@
 [package]
 name = "regy_bot"
-version = "1.16.8"
+version = "1.16.9"
 edition = "2021"
 
 [dependencies]
