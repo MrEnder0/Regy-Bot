@@ -11,6 +11,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Returns the number of infractions you have
 #[poise::command(prefix_command, slash_command, user_cooldown = 25, ephemeral = true)]
 pub async fn my_infractions(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();

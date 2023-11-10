@@ -6,6 +6,7 @@ use crate::{utils::config::dead_zones, Data};
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Adds a target channel to the dead zones
 #[poise::command(
     slash_command,
     guild_cooldown = 10,

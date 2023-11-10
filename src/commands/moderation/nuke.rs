@@ -9,6 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Nukes a specified amount of messages in the current channel
 #[poise::command(prefix_command, slash_command, user_cooldown = 18, ephemeral = true)]
 pub async fn nuke(
     ctx: Context<'_>,

@@ -8,6 +8,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Echoes back the given message
 #[poise::command(slash_command, ephemeral = true)]
 pub async fn echo(
     ctx: Context<'_>,

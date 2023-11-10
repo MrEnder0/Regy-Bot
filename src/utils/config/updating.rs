@@ -11,6 +11,9 @@ use super::{management::gen_config, read_config};
 pub async fn update_config() {
     #[cfg(feature = "toml-updating")]
     {
+        use crate::utils::config::{structs::*, CONFIG_VERSION};
+        use base64::{engine::general_purpose, Engine};
+        use std::collections::HashMap;
         use toml::{from_str, Value};
 
         if !Path::new("config.ron").exists() {
@@ -45,7 +48,7 @@ pub async fn update_config() {
                     let mut server_options = ServerOptions {
                         infractions: HashMap::new(),
                         block_phrases: Vec::new(),
-                        staff: Vec::new(),
+                        staff_roles: Vec::new(),
                         log_channel: value["log_channel"].as_integer().unwrap() as u64,
                         dead_zones: Vec::new(),
                     };
@@ -70,11 +73,13 @@ pub async fn update_config() {
                         server_options.block_phrases.push(phrase);
                     }
 
+                    /* Legacy staff system is not supported anymore
                     for value in value["staff"].as_array().unwrap() {
                         server_options
                             .staff
                             .push(value.as_integer().unwrap() as u64);
                     }
+                    */
 
                     converted_config_data
                         .servers

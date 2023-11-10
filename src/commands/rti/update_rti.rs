@@ -9,6 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Updates all the RTI packages to the latest version in the server
 #[poise::command(prefix_command, slash_command, user_cooldown = 5)]
 pub async fn update_rti(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();

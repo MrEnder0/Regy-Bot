@@ -5,6 +5,7 @@ use crate::Data;
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Returns a random word from https://random-word-api.herokuapp.com/word?lang=en
 #[poise::command(prefix_command, slash_command)]
 pub async fn random_word(ctx: Context<'_>) -> Result<(), Error> {
     // Sends api request to https://random-word-api.herokuapp.com/word?lang=en for a random word

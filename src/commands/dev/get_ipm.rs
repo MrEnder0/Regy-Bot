@@ -8,6 +8,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Gets the IPM
 #[poise::command(slash_command, guild_cooldown = 5)]
 pub async fn get_ipm(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();

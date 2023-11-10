@@ -9,6 +9,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Deprecated, use /list_staff_roles instead
 #[poise::command(
     slash_command,
     guild_cooldown = 5,

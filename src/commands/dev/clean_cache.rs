@@ -1,8 +1,11 @@
 use scorched::*;
 
 use crate::{
-    utils::perm_check::{has_perm, PermissionLevel::Developer},
-    Data, IpmStruct,
+    utils::{
+        crc::CacheLevel,
+        perm_check::{has_perm, PermissionLevel::Developer},
+    },
+    CrcStruct, Data,
 };
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -10,15 +13,15 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[derive(Debug, poise::ChoiceParameter)]
 pub enum ResetEnum {
-    #[name = "Global IPM reset"]
+    #[name = "Global CRC reset"]
     Global,
-    #[name = "Server IPM reset"]
+    #[name = "Server CRC reset"]
     Server,
 }
 
-/// Resets the IPM
-#[poise::command(slash_command, guild_cooldown = 5)]
-pub async fn reset_ipm(
+/// Resets the CRC cache
+#[poise::command(slash_command, global_cooldown = 10)]
+pub async fn clean_cache(
     ctx: Context<'_>,
     #[description = "Reset Level"] reset_level: ResetEnum,
 ) -> Result<(), Error> {
@@ -47,19 +50,21 @@ pub async fn reset_ipm(
 
     match reset_level {
         ResetEnum::Global => {
-            IpmStruct::global_reset();
+            CrcStruct::clear_cache(CacheLevel::Global);
 
             ctx.send(|cr| {
-                cr.embed(|ce| ce.title("IPM Reset").description("Reset global IPM to 0"))
+                cr.embed(|ce| ce.title("CRC Reset").description("Reset global CRC cache"))
             })
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");
         }
         ResetEnum::Server => {
-            IpmStruct::set_server(ctx.guild_id().unwrap().into(), 0);
+            CrcStruct::clear_cache(CacheLevel::Server {
+                data: ctx.guild_id().unwrap().into(),
+            });
 
             ctx.send(|cr| {
-                cr.embed(|ce| ce.title("IPM Reset").description("Reset server IPM to 0"))
+                cr.embed(|ce| ce.title("CRC Reset").description("Reset server CRC cache"))
             })
             .await
             .log_expect(LogImportance::Warning, "Unable to send message");

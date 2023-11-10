@@ -8,6 +8,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+/// Lists all the staff roles in the server
 #[poise::command(
     slash_command,
     guild_cooldown = 5,

@@ -40,9 +40,27 @@ pub async fn read_config() -> Config {
     config
 }
 
-pub async fn server_exists(guid_id: String) -> bool {
+pub fn non_async_read_config() -> Config {
+    let config_file =
+        File::open("config.ron").log_expect(LogImportance::Error, "Config file not found");
+    let config: Config = match from_reader(config_file) {
+        Ok(x) => x,
+        Err(e) => {
+            log_this(LogData {
+                importance: LogImportance::Error,
+                message: format!("Unable to read config file with the following error {}", e),
+            });
+
+            std::process::exit(0);
+        }
+    };
+
+    config
+}
+
+pub async fn server_exists(server_id: String) -> bool {
     let data = read_config().await;
-    data.servers.contains_key(&guid_id)
+    data.servers.contains_key(&server_id)
 }
 
 pub async fn delete_user(server_id: String, id: u64) {
