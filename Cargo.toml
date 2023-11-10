@@ -1,7 +1,8 @@
 [package]
 name = "regy_bot"
-version = "1.16.9"
+version = "1.17.0"
 edition = "2021"
+default-run = "regy_bot"
 
 [dependencies]
 poise = "0.5.7"
