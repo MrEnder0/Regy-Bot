@@ -5,9 +5,9 @@ edition = "2021"
 
 [dependencies]
 poise = "0.5.7"
-tokio = { version = "1.33.0", features = ["full"] }
+tokio = { version = "1.34.0", features = ["full"] }
 regex = "1.10.2"
-serde = { version = "1.0.191", features = ["derive"] }
+serde = { version = "1.0.192", features = ["derive"] }
 toml  = { version = "0.8.8", optional = true }
 base64 = "0.21.5"
 uuid = { version = "1.5.0", features = ["v4", "serde", "fast-rng"] }
