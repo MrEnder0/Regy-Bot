@@ -1,23 +1,19 @@
-use crate::utils::{
-    config::{
-        structs::{BlockPhrase, Config, GlobalOptions, MetaData, ServerOptions},
-        CONFIG_VERSION,
-    },
-    rti::read_rti,
-};
-use base64::{engine::general_purpose, Engine};
+use crate::utils::rti::read_rti;
 use ron::{
     self,
     ser::{to_string_pretty, PrettyConfig},
 };
 use scorched::*;
-use std::{collections::HashMap, path::Path};
+use std::path::Path;
 
 use super::{management::gen_config, read_config};
 
 pub async fn update_config() {
     #[cfg(feature = "toml-updating")]
     {
+        use crate::utils::config::{structs::*, CONFIG_VERSION};
+        use base64::{engine::general_purpose, Engine};
+        use std::collections::HashMap;
         use toml::{from_str, Value};
 
         if !Path::new("config.ron").exists() {
