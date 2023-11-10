@@ -48,6 +48,8 @@ pub async fn update_config() {
                     let mut server_options = ServerOptions {
                         infractions: HashMap::new(),
                         block_phrases: Vec::new(),
+                        #[cfg(feature = "legacy-staff")]
+                        staff: Vec::new(),
                         staff_roles: Vec::new(),
                         log_channel: value["log_channel"].as_integer().unwrap() as u64,
                         dead_zones: Vec::new(),
@@ -73,13 +75,12 @@ pub async fn update_config() {
                         server_options.block_phrases.push(phrase);
                     }
 
-                    /* Legacy staff system is not supported anymore
+                    #[cfg(feature = "legacy-staff")]
                     for value in value["staff"].as_array().unwrap() {
                         server_options
                             .staff
                             .push(value.as_integer().unwrap() as u64);
                     }
-                    */
 
                     converted_config_data
                         .servers
