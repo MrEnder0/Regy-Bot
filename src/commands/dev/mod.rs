@@ -1,4 +1,4 @@
-mod clean_cache;
+mod clean_crc;
 mod clean_logs;
 mod dev_stats;
 mod echo;
@@ -22,7 +22,7 @@ pub fn dev_commands() -> Vec<poise::Command<super::super::Data, Error>> {
         shutdown::shutdown(),
         upload_logs::upload_logs(),
         dev_stats::dev_stats(),
-        clean_cache::clean_cache(),
+        clean_crc::clean_cache(),
         #[cfg(target_os = "windows")]
         local_update::update(),
     ]
