@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 use scorched::*;
 use screenshots::Screen;
 
@@ -65,6 +67,12 @@ pub async fn capture_screen(ctx: Context<'_>) -> Result<(), Error> {
         .send_files(ctx, vec!["temp/capture.png"], |m| m)
         .await
         .log_expect(LogImportance::Warning, "Unable to send message");
+
+    log_this(LogData {
+        importance: LogImportance::Info,
+        message: format!("{} ({}) has sent screen capture command in a server with the id {}", ctx.author().id, ctx.author().name, ctx.guild_id().unwrap().0),
+    })
+    .await;
 
     Ok(())
 }
