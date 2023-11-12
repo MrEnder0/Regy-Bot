@@ -10,7 +10,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 
 /// Cleans the log folder
 #[poise::command(slash_command, global_cooldown = 10)]
-pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn clean(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();
 
     if !has_perm(
@@ -40,7 +40,7 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
 
         ctx.send(|cr| {
             cr.embed(|ce| {
-                ce.title("Log folder")
+                ce.title("Cleaner")
                     .description("Found and deleted log folder")
                     .thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/trashcan.png")
             })
@@ -50,13 +50,13 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
     } else {
         log_this(LogData {
             importance: LogImportance::Info,
-            message: "Log folder does not exist".to_string(),
+            message: "Log folder does not exist, unable to delete".to_string(),
         })
         .await;
 
         ctx.send(|cr| {
             cr.embed(|ce| {
-                ce.title("Log folder")
+                ce.title("Cleaner")
                     .description("Log folder does not exist, unable to delete")
             })
         })
@@ -70,8 +70,23 @@ pub async fn clean_logs(ctx: Context<'_>) -> Result<(), Error> {
 
         ctx.send(|cr| {
             cr.embed(|ce| {
-                ce.title("Log archive")
+                ce.title("Cleaner")
                     .description("Found and deleted log archive")
+                    .thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/trashcan.png")
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
+    }
+
+    if std::path::Path::new("temp").exists() {
+        std::fs::remove_dir_all("temp")
+            .log_expect(LogImportance::Warning, "Unable to delete temp folder");
+
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Cleaner")
+                    .description("Found and deleted temp folder")
                     .thumbnail("https://raw.githubusercontent.com/MrEnder0/Regy-Bot/master/.github/assets/trashcan.png")
             })
         })
