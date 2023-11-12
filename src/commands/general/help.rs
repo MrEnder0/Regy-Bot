@@ -222,6 +222,11 @@ pub async fn help(
                         .field("get_ipm", "Shows the current server IPM", false)
                         .field("reset_ipm", "Resets the IPM for the current server", false)
                         .field("clean_crc", "Resets the CRC cache", false)
+                        .field(
+                            "capture_screen",
+                            "Captures and uploads a screenshot of the bot host system for debugging purposes",
+                            false,
+                        )
                         .field("update", "Updates the bot from a local file", false)
                 })
             })
