@@ -21,7 +21,7 @@ pub enum ResetEnum {
 
 /// Resets the CRC cache
 #[poise::command(slash_command, global_cooldown = 10)]
-pub async fn clean_cache(
+pub async fn clean_crc(
     ctx: Context<'_>,
     #[description = "Reset Level"] reset_level: ResetEnum,
 ) -> Result<(), Error> {
