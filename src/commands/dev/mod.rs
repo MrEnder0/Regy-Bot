@@ -1,5 +1,5 @@
-mod clean_crc;
 mod clean;
+mod clean_crc;
 mod dev_stats;
 mod echo;
 mod get_ipm;

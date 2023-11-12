@@ -121,7 +121,7 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Debug logthis for optional features being enabled like debug mode
 
 # Release 18
-[ ] Management console
+[x] Screen capture
 [ ] Split some things into a "custom" events mod
 [ ] Add regex severity
     [ ] Ranks to regex format (low = 0 infraction, medium = 1 infraction, high = 2 infraction, citical = 5 infraction)
