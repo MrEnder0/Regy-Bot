@@ -9,8 +9,8 @@ pub struct Server {
     pub regex: Vec<Regex>,
 }
 
-pub enum CacheLevel<U64> {
-    Server { data: U64 },
+pub enum CacheLevel {
+    Server { data: u64 },
     Global,
 }
 
@@ -104,7 +104,7 @@ impl CrcStruct {
 
         false
     }
-    pub fn clear_cache(level: CacheLevel<u64>) {
+    pub fn clear_cache(level: CacheLevel) {
         let binding = &CRC;
         let mut guard = binding.lock().unwrap();
 
