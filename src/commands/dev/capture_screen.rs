@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use scorched::*;
 use screenshots::Screen;
 
