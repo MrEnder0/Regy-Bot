@@ -46,8 +46,7 @@ pub async fn capture_screen(ctx: Context<'_>) -> Result<(), Error> {
     }
 
     if !std::path::Path::new("temp").exists() {
-        std::fs::create_dir("temp")
-            .log_expect(LogImportance::Error, "Unable to create temp dir");
+        std::fs::create_dir("temp").log_expect(LogImportance::Error, "Unable to create temp dir");
     }
 
     let screens = Screen::all().log_expect(LogImportance::Error, "Unable to get screen info");
@@ -70,7 +69,12 @@ pub async fn capture_screen(ctx: Context<'_>) -> Result<(), Error> {
 
     log_this(LogData {
         importance: LogImportance::Info,
-        message: format!("{} ({}) has sent screen capture command in a server with the id {}", ctx.author().id, ctx.author().name, ctx.guild_id().unwrap().0),
+        message: format!(
+            "{} ({}) has sent screen capture command in a server with the id {}",
+            ctx.author().id,
+            ctx.author().name,
+            ctx.guild_id().unwrap().0
+        ),
     })
     .await;
 
