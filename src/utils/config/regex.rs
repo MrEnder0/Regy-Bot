@@ -6,6 +6,8 @@ use ron::{
 use scorched::*;
 use uuid::Uuid;
 
+use crate::utils::crc::CrcStruct;
+
 use super::{non_async_read_config, read_config, server_exists, structs::BlockPhrase};
 
 pub async fn add_regex(
@@ -65,6 +67,8 @@ pub async fn add_regex(
     let config_str = to_string_pretty(&data, config).expect("Serialization failed");
     std::fs::write("config.ron", config_str).unwrap();
 
+    CrcStruct::build_server_cache(server_id.parse::<u64>().unwrap());
+
     true
 }
 
@@ -106,6 +110,8 @@ pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
     } else {
         return false;
     }
+
+    CrcStruct::build_server_cache(server_id.parse::<u64>().unwrap());
 
     true
 }
