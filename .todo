@@ -122,6 +122,9 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 18
 [x] Screen capture command for debuging
+[ ] More advanced user check
+    [ ] Check for prevois regy bans / infractions in other servers
+    [ ] Check about me (TBD)
 [ ] Split some things into a "custom" events mod
 [ ] Add regex severity
     [ ] Ranks to regex format (low = 0 infraction, medium = 1 infraction, high = 2 infraction, citical = 5 infraction)
