@@ -122,10 +122,14 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 18
 [x] Screen capture command for debuging
-[ ] More advanced user check
-    [ ] Check for prevois regy bans / infractions in other servers
+[o] More advanced user check
+    [ ] Check for previoua regy bans / infractions in other servers
     [ ] Check about me (TBD)
+    [x] Config support for new global user offenses x
 [ ] Split some things into a "custom" events mod
+
+# Release 19
+[ ] Base rti packages memory off of uuid and not description
 [ ] Add regex severity
     [ ] Ranks to regex format (low = 0 infraction, medium = 1 infraction, high = 2 infraction, citical = 5 infraction)
     [ ] Add severity ranker (more times regex is broken in a msg will add) (2 low = medium, 2 medium = high...)

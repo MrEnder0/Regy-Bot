@@ -22,6 +22,7 @@ pub async fn gen_config() {
             rti_download_frequency: 8,
         },
         servers: HashMap::new(),
+        user_global_offenses: HashMap::new(),
     };
 
     // Writes base config to file

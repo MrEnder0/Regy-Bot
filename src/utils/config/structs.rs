@@ -35,8 +35,15 @@ pub struct ServerOptions {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct UserOffenses {
+    pub global_infractions: u64,
+    pub regy_bans: u64,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Config {
     pub meta: MetaData,
     pub global: GlobalOptions,
     pub servers: HashMap<String, ServerOptions>,
+    pub user_global_offenses: HashMap<String, UserOffenses>,
 }
