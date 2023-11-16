@@ -27,14 +27,7 @@ pub struct RtiPackages {
 pub async fn download_rti() {
     let url = "https://raw.githubusercontent.com/MrEnder0/Regy-Bot/rti_packages/rti_packages.ron";
     let mut response = match get(url) {
-        Ok(x) => {
-            log_this(LogData {
-                importance: LogImportance::Info,
-                message: format!("Successfully downloaded RTI packages from {}", url),
-            })
-            .await;
-            x
-        }
+        Ok(x) => x,
         Err(e) => {
             log_this(LogData {
                 importance: LogImportance::Warning,
@@ -45,25 +38,50 @@ pub async fn download_rti() {
         }
     };
 
-    let mut file = File::create("rti_packages.ron").unwrap();
+    if !std::path::Path::new("temp").exists() {
+        std::fs::create_dir("temp").unwrap();
+    }
+
+    let mut file = File::create("temp/rti_packages.ron").unwrap();
     response.copy_to(&mut file).unwrap();
 }
 
 pub async fn read_rti() -> RtiPackages {
-    let rti_packages_file =
-        File::open("rti_packages.ron").log_expect(LogImportance::Warning, "RTI file not found");
+    if !std::path::Path::new("temp/rti_packages.ron").exists() {
+        download_rti().await;
+    }
+
+    let rti_packages_file = File::open("temp/rti_packages.ron")
+        .log_expect(LogImportance::Warning, "RTI file not found");
     let rti_packages: RtiPackages = match from_reader(rti_packages_file) {
         Ok(x) => x,
         Err(e) => {
             log_this(LogData {
                 importance: LogImportance::Warning,
-                message: format!("Unable to read rti packages file:\n{}", e),
+                message: format!("Unable to read rti packages file, will attempt to re-download download RTI packages file in the case of corruption:\n{}", e),
             })
             .await;
 
-            RtiPackages {
-                meta: MetaData { version: 0 },
-                packages: Vec::new(),
+            download_rti().await;
+
+            let rti_packages_file = File::open("temp/rti_packages.ron")
+                .log_expect(LogImportance::Warning, "RTI file not found");
+
+            // Checks the now re-downloaded file
+            match from_reader(rti_packages_file) {
+                Ok(x) => x,
+                Err(e) => {
+                    log_this(LogData {
+                        importance: LogImportance::Error,
+                        message: format!("Failed to re-download and read RTI packages file with the following error:\n{}", e),
+                    })
+                    .await;
+
+                    return RtiPackages {
+                        meta: MetaData { version: 0 },
+                        packages: Vec::new(),
+                    };
+                }
             }
         }
     };
