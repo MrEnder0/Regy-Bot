@@ -34,7 +34,7 @@ pub struct ServerOptions {
     pub dead_zones: Vec<u64>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct UserOffenses {
     pub global_infractions: u64,
     pub regy_bans: u64,

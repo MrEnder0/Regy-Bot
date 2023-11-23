@@ -1,9 +1,12 @@
 use ::regex::Regex;
-use poise::{serenity_prelude as serenity, serenity_prelude::{Member, ChannelId}};
+use poise::{
+    serenity_prelude as serenity,
+    serenity_prelude::{ChannelId, Member},
+};
 use scorched::{LogExpect, LogImportance};
 
 use crate::utils::{
-    config::{read_config, regex::list_regex},
+    config::{infractions::get_user_offenses, read_config, regex::list_regex},
     word_prep::filter_characters,
 };
 
@@ -19,7 +22,7 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
 
     let filtered_username = filter_characters(&guild_member.user.name.to_lowercase());
 
-    // checks if username or nickname contains a banned word
+    // Checks if username or nickname contains a banned word
     if list_regex(guild_member.guild_id.to_string())
         .await
         .unwrap()
@@ -30,7 +33,7 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
                 .is_match(&format!("{} #", filtered_username))
         })
     {
-        // Dm user they need to change their username or nickname
+        // Dms the user that they need to change their username or nickname
         guild_member
             .user
             .dm(&ctx.http, |m| {
@@ -64,7 +67,7 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
                     .await
                     .log_expect(LogImportance::Error, "Failed to kick user");
 
-                // Send message to log channel
+                // Sends a message to log channel
                 let log_channel = ChannelId(
                     read_config()
                         .await
@@ -73,7 +76,7 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
                         .unwrap()
                         .log_channel,
                 );
-                
+
                 log_channel
                     .send_message(&ctx_clone.http, |m| {
                         m.embed(|e| {
@@ -88,5 +91,62 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
                     .log_expect(LogImportance::Error, "Failed to send message to log channel");
             }
         });
+    }
+
+    // Checks the users global regy offenses
+    let offenses = get_user_offenses(guild_member.user.id.into())
+        .await
+        .log_expect(LogImportance::Error, "Failed to get user offenses");
+
+    if offenses.regy_bans > 3 {
+        let log_channel = ChannelId(
+            read_config()
+                .await
+                .servers
+                .get(&guild_member.guild_id.to_string())
+                .unwrap()
+                .log_channel,
+        );
+
+        log_channel
+                    .send_message(&ctx.http, |m| {
+                        m.embed(|e| {
+                            e.title("High suspicion user joined");
+                            e.description(format!(
+                                "{} ({}) joined the server, they have been banned from {} servers by Regy bot.",
+                                guild_member.user.id,
+                                guild_member.user.name,
+                                offenses.regy_bans
+                            ))
+                        })
+                    })
+                    .await
+                    .log_expect(LogImportance::Error, "Failed to send message to log channel");
+    }
+    if offenses.global_infractions > 50 {
+        let log_channel = ChannelId(
+            read_config()
+                .await
+                .servers
+                .get(&guild_member.guild_id.to_string())
+                .unwrap()
+                .log_channel,
+        );
+
+        log_channel
+            .send_message(&ctx.http, |m| {
+                m.embed(|e| {
+                    e.title("High suspicion user joined");
+                    e.description(format!(
+                        "{} ({}) joined the server, they have {} global infractions.",
+                        guild_member.user.id, guild_member.user.name, offenses.global_infractions
+                    ))
+                })
+            })
+            .await
+            .log_expect(
+                LogImportance::Error,
+                "Failed to send message to log channel",
+            );
     }
 }

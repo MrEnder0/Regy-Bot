@@ -64,6 +64,12 @@ pub async fn clean_config() {
 
     let config_str = to_string_pretty(&data, config).expect("Serialization failed");
     std::fs::write("config.ron", config_str).unwrap();
+
+    log_this(LogData {
+        importance: LogImportance::Info,
+        message: "Finished startup config cleanup.".to_string(),
+    })
+    .await;
 }
 
 pub async fn gen_server(guid_id: String, log_channel_id: u64) {

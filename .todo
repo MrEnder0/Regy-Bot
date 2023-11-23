@@ -122,9 +122,8 @@ Note none of these plans are guaranteed and also there may be other changes that
 
 # Release 18
 [x] Screen capture command for debuging
-[o] More advanced user check
-    [ ] Check for previoua regy bans / infractions in other servers
-    [ ] Check about me (TBD)
+[x] More advanced user check
+    [x] Check for previoua regy bans / infractions in other servers
     [x] Config support for new global user offenses x
 [ ] Split some things into a "custom" events mod
 
