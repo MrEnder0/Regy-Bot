@@ -14,7 +14,32 @@ async fn main() {
     })
     .await;
 
-    std::thread::sleep(Duration::from_millis(2500));
+    std::thread::sleep(Duration::from_millis(500));
+
+    for tries in 1..3 {
+        if !Path::new("update.lock").exists() {
+            if tries == 3 {
+                log_this(LogData {
+                    importance: LogImportance::Error,
+                    message: "[Update Helper] Regy has failed to enter update state, shutting down update-helper."
+                        .to_string(),
+                })
+                .await;
+
+                std::process::exit(0);
+            }
+
+            log_this(LogData {
+                importance: LogImportance::Info,
+                message: format!("[Update Helper] Regy is not in update state, retrying (Tries: {}/3)", tries).to_string(),
+            })
+            .await;
+
+            std::thread::sleep(Duration::from_millis(1000));
+        } else {
+            break;
+        }
+    }
 
     let regy_bin = "regy_bot.exe";
 
