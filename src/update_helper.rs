@@ -31,7 +31,11 @@ async fn main() {
 
             log_this(LogData {
                 importance: LogImportance::Info,
-                message: format!("[Update Helper] Regy is not in update state, retrying (Tries: {}/3)", tries).to_string(),
+                message: format!(
+                    "[Update Helper] Regy is not in update state, retrying (Tries: {}/3)",
+                    tries
+                )
+                .to_string(),
             })
             .await;
 
