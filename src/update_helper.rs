@@ -3,7 +3,7 @@ mod utils;
 use scorched::*;
 use std::{path::Path, process::Command, time::Duration};
 
-pub const VERSION: &str = "1.4.3";
+pub const VERSION: &str = "1.4.5";
 
 #[tokio::main]
 async fn main() {
