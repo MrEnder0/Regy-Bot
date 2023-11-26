@@ -94,9 +94,10 @@ pub async fn guild_member_join_event(ctx: &serenity::Context, guild_member: &Mem
     }
 
     // Checks the users global regy offenses
-    let offenses = get_user_offenses(guild_member.user.id.into())
-        .await
-        .log_expect(LogImportance::Error, "Failed to get user offenses");
+    let offenses = match get_user_offenses(guild_member.user.id.into()).await {
+        Some(offenses) => offenses,
+        None => return,
+    };
 
     if offenses.regy_bans > 3 {
         let log_channel = ChannelId(
