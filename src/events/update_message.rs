@@ -20,7 +20,7 @@ use crate::{
 pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdateEvent) {
     let updated_message = event.content.clone().log_expect(
         LogImportance::Warning,
-        "Unable to get updated message content",
+        "Updated message event does not have any content",
     );
     let author = event.author.clone().unwrap();
     let guild_id = event.guild_id;
