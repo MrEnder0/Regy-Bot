@@ -1269,9 +1269,9 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "scorched"
-version = "0.3.0"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5bb82e407e722e9800d6b4df4284281613370f5dd5c8eabcd8bf98d651a21ac"
+checksum = "ec3294dc898d231ae41023e9c8fe32a859bb0fb9ef8d3d8357de1987cfdd3fcb"
 dependencies = [
  "chrono",
  "owo-colors",
