@@ -1,6 +1,6 @@
 [package]
 name = "regy_bot"
-version = "1.17.6"
+version = "1.18.0"
 edition = "2021"
 default-run = "regy_bot"
 
