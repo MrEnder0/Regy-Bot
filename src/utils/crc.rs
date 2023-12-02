@@ -9,8 +9,8 @@ pub struct Server {
     pub regex: Vec<Regex>,
 }
 
-pub enum CacheLevel<U64> {
-    Server { data: U64 },
+pub enum CacheLevel {
+    Server { data: u64 },
     Global,
 }
 
@@ -81,22 +81,22 @@ impl CrcStruct {
         let binding = &CRC;
         let guard = binding.lock().unwrap();
 
-        let comparison_hash = format!(
-            "{:x}",
-            md5::compute(
-                non_async_list_regex(server_id.to_string())
-                    .iter()
-                    .map(|x| x.phrase.clone())
-                    .collect::<Vec<String>>()
-                    .join("\n"),
-            ),
-        );
-
         // Checks if server exists in cache
         if guard.iter().any(|x| x.0 == &server_id) {
-            // Validates cache
+            let comparison_hash = format!(
+                "{:x}",
+                md5::compute(
+                    non_async_list_regex(server_id.to_string())
+                        .iter()
+                        .map(|x| x.phrase.clone())
+                        .collect::<Vec<String>>()
+                        .join("\n"),
+                ),
+            );
+
             let hash = &guard.iter().find(|x| x.0 == &server_id).unwrap().1.hash;
 
+            // Validates the cache by checking if the hashes match
             if comparison_hash == *hash {
                 return true;
             }
@@ -104,7 +104,7 @@ impl CrcStruct {
 
         false
     }
-    pub fn clear_cache(level: CacheLevel<u64>) {
+    pub fn clear_cache(level: CacheLevel) {
         let binding = &CRC;
         let mut guard = binding.lock().unwrap();
 

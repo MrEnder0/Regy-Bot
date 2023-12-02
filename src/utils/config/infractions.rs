@@ -4,7 +4,7 @@ use ron::{
 };
 use scorched::*;
 
-use super::{read_config, server_exists};
+use super::{read_config, server_exists, structs::UserOffenses};
 
 pub async fn add_infraction(server_id: String, id: u64) -> bool {
     let mut data = read_config().await;
@@ -36,6 +36,8 @@ pub async fn add_infraction(server_id: String, id: u64) -> bool {
 
     let config_str = to_string_pretty(&data, config).expect("Serialization failed");
     std::fs::write("config.ron", config_str).unwrap();
+
+    add_user_offense_infraction(id).await;
 
     true
 }
@@ -82,6 +84,8 @@ pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
 
         let config_str = to_string_pretty(&data, config).expect("Serialization failed");
         std::fs::write("config.ron", config_str).unwrap();
+
+        dismiss_user_offense_infraction(id).await;
     } else {
         return false;
     }
@@ -112,4 +116,82 @@ pub async fn list_infractions(server_id: String, id: u64) -> Option<u64> {
         .or_insert(0);
 
     Some(*infractions)
+}
+
+pub async fn add_user_offense_infraction(id: u64) {
+    let mut data = read_config().await;
+
+    let offenses = data
+        .user_global_offenses
+        .entry(id.to_string())
+        .or_insert(UserOffenses {
+            global_infractions: 0,
+            regy_bans: 0,
+        });
+
+    offenses.global_infractions += 1;
+
+    let config = PrettyConfig::new()
+        .depth_limit(4)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
+}
+
+pub async fn dismiss_user_offense_infraction(id: u64) {
+    let mut data = read_config().await;
+
+    let offenses = data
+        .user_global_offenses
+        .entry(id.to_string())
+        .or_insert(UserOffenses {
+            global_infractions: 0,
+            regy_bans: 0,
+        });
+
+    if offenses.global_infractions > 0 {
+        offenses.global_infractions -= 1;
+    }
+
+    let config = PrettyConfig::new()
+        .depth_limit(4)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
+}
+
+pub async fn add_user_offense_ban(id: u64) {
+    let mut data = read_config().await;
+
+    let offenses = data
+        .user_global_offenses
+        .entry(id.to_string())
+        .or_insert(UserOffenses {
+            global_infractions: 0,
+            regy_bans: 0,
+        });
+
+    offenses.regy_bans += 1;
+
+    let config = PrettyConfig::new()
+        .depth_limit(4)
+        .separate_tuple_members(true)
+        .enumerate_arrays(true);
+
+    let config_str = to_string_pretty(&data, config).expect("Serialization failed");
+    std::fs::write("config.ron", config_str).unwrap();
+}
+
+pub async fn get_user_offenses(id: u64) -> Option<UserOffenses> {
+    let mut config = read_config().await;
+
+    config
+        .user_global_offenses
+        .iter_mut()
+        .find(|x| x.0 == &id.to_string())
+        .map(|(_, offences)| offences.clone())
 }

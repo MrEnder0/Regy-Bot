@@ -121,8 +121,14 @@ Note none of these plans are guaranteed and also there may be other changes that
 [x] Debug logthis for optional features being enabled like debug mode
 
 # Release 18
-[ ] Management console
+[x] Screen capture command for debuging
+[x] More advanced user check
+    [x] Check for previoua regy bans / infractions in other servers
+    [x] Config support for new global user offenses x
+
+# Release 19
 [ ] Split some things into a "custom" events mod
+[ ] Base rti packages memory off of uuid and not description
 [ ] Add regex severity
     [ ] Ranks to regex format (low = 0 infraction, medium = 1 infraction, high = 2 infraction, citical = 5 infraction)
     [ ] Add severity ranker (more times regex is broken in a msg will add) (2 low = medium, 2 medium = high...)

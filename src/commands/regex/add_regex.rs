@@ -65,6 +65,8 @@ pub async fn add_regex(
         || regex_phrase == "[a-zA-Z0-9]"
         || regex_phrase == "[a-zA-Z0-9]+"
         || regex_phrase == "^.*$"
+        || regex_phrase == "[a-zA-Z]"
+        || regex_phrase == "[a-zA-Z]+"
     {
         ctx.send(|cr| {
             cr.embed(|ce| {

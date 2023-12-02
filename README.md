@@ -24,8 +24,13 @@
 | Dead Zone Channels                 | ✅ | ✅ |
 | Seamless Poll Detection            | ✅ | ✅ |
 | Message Nuking                     | ✅ | ✅ |
-| Compiled Regex Cache ([CRC](#CRC))  | ✅ | ✅ |
+| Compiled Regex Cache ([CRC](#CRC)) | ✅ | ✅ |
+| Screen capture command             | ✅ | ⚠️ |
 | Self Update System                 | ✅ | ❌ |
+
+* ✅ Works and functions as intended.
+* ⚠️ Untested and may function incorrectly.
+* ❌ Does not work.
 
 ### IPM
 

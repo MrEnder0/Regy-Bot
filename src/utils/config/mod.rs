@@ -8,7 +8,7 @@ use scorched::*;
 
 use self::structs::Config;
 
-pub static CONFIG_VERSION: u8 = 8;
+pub static CONFIG_VERSION: u8 = 9;
 
 pub mod dead_zones;
 pub mod infractions;

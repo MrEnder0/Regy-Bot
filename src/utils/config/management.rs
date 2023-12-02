@@ -22,6 +22,7 @@ pub async fn gen_config() {
             rti_download_frequency: 8,
         },
         servers: HashMap::new(),
+        user_global_offenses: HashMap::new(),
     };
 
     // Writes base config to file
@@ -56,6 +57,14 @@ pub async fn clean_config() {
         server_options.staff.retain(|&x| x != 0);
     });
 
+    let global_offenses_clone = data.user_global_offenses.clone();
+    let empty_users = global_offenses_clone
+        .iter()
+        .filter(|x| x.1.global_infractions == 0 && x.1.regy_bans == 0);
+    for user in empty_users {
+        data.user_global_offenses.remove(user.0);
+    }
+
     let config = PrettyConfig::new()
         .depth_limit(4)
         .separate_tuple_members(true)
@@ -63,6 +72,12 @@ pub async fn clean_config() {
 
     let config_str = to_string_pretty(&data, config).expect("Serialization failed");
     std::fs::write("config.ron", config_str).unwrap();
+
+    log_this(LogData {
+        importance: LogImportance::Info,
+        message: "Finished startup config cleanup.".to_string(),
+    })
+    .await;
 }
 
 pub async fn gen_server(guid_id: String, log_channel_id: u64) {
