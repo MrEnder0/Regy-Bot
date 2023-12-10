@@ -2,7 +2,7 @@ use scorched::*;
 
 use crate::{
     utils::{
-        config::{self, infractions, structs::UserOffenses},
+        config::{self, infractions},
         type_conversions::userid_to_u64,
     },
     Data,
