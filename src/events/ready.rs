@@ -4,7 +4,6 @@ use poise::{
 };
 use scorched::*;
 use std::net::TcpStream;
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 use crate::{
     utils::{
@@ -14,8 +13,6 @@ use crate::{
     IpmStruct,
 };
 
-static OFFLINE_TIME: AtomicUsize = AtomicUsize::new(0);
-
 pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
     log_this(LogData {
         importance: LogImportance::Info,
@@ -23,8 +20,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
             "{} has started and connected to discord.",
             data_about_bot.user.name
         ),
-    })
-    .await;
+    });
 
     #[cfg(feature = "test-deploy")]
     log_this(LogData {
@@ -74,8 +70,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
                     log_this(LogData {
                         importance: LogImportance::Info,
                         message: "Possible raid detected due to IPM influx.".to_string(),
-                    })
-                    .await;
+                    });
 
                     let log_channel = ChannelId(
                         read_config()
@@ -115,23 +110,13 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
             let result = TcpStream::connect("discord.com:443");
             match result {
                 Ok(_) => {
-                    if OFFLINE_TIME.load(Ordering::SeqCst) > 0 {
-                        log_this(LogData {
-                            importance: LogImportance::Info,
-                            message: format!("The bot has reconnected to Discord after being offline for {} minutes.", OFFLINE_TIME.load(Ordering::SeqCst)+1),
-                        }).await;
-                        OFFLINE_TIME.store(0, Ordering::SeqCst);
-                    }
+
                 }
                 Err(_) => {
                     log_this(LogData {
-                        importance: LogImportance::Warning,
-                        message: format!(
-                            "The bot has lost connection, and has been offline for {} minutes.",
-                            OFFLINE_TIME.load(Ordering::SeqCst) + 1
-                        ),
-                    })
-                    .await;
+                        importance: LogImportance::Error,
+                        message: "Bot is unable to connect to discord offline.".to_string(),
+                    });
                 }
             }
         }
