@@ -3,9 +3,12 @@ mod utils;
 use scorched::*;
 use std::{path::Path, process::Command, time::Duration};
 
-pub const VERSION: &str = "1.5.0";
+pub const VERSION: &str = "1.5.1";
 
 fn main() {
+    // Sets logging path
+    set_logging_path("temp/logs/update_helper/");
+
     // Waits for Regy to fully shutdown
     log_this(LogData {
         importance: LogImportance::Info,

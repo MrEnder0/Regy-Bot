@@ -34,8 +34,8 @@ pub async fn clean(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    if std::path::Path::new("logs").exists() {
-        std::fs::remove_dir_all("logs")
+    if std::path::Path::new("temp/logs").exists() {
+        std::fs::remove_dir_all("temp/logs")
             .log_expect(LogImportance::Warning, "Unable to delete log folder");
 
         ctx.send(|cr| {

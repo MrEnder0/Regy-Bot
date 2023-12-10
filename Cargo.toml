@@ -13,7 +13,7 @@ toml  = { version = "0.8.8", optional = true }
 base64 = "0.21.5"
 uuid = { version = "1.6.1", features = ["v4", "serde", "fast-rng"] }
 owo-colors = "3.5.0"
-scorched = "0.4.1"
+scorched = "0.4.3"
 ron = "0.8.1"
 reqwest = { version = "0.11.22", features = ["blocking"] }
 fuzzy-matcher = "0.3.7"
