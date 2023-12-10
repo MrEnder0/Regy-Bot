@@ -24,8 +24,7 @@ pub async fn add_regex(
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -39,8 +38,7 @@ pub async fn add_regex(
                     "A phrase with the value '{}' already exists.",
                     current_phrase.phrase
                 ),
-            })
-            .await;
+            });
 
             return false;
         }
@@ -80,8 +78,7 @@ pub async fn remove_regex(server_id: String, id: Uuid) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -127,8 +124,7 @@ pub async fn list_regex(server_id: String) -> Option<Vec<BlockPhrase>> {
                 "A server with the id '{}' does not exist or does not have any regex phrases.",
                 server_id
             ),
-        })
-        .await;
+        });
 
         return None;
     }

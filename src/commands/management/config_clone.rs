@@ -62,8 +62,7 @@ pub async fn config_clone_regex(
                         "Unable to get regex phrases for server {}",
                         target_server_id
                     ),
-                })
-                .await;
+                });
 
                 ctx.send(|cr| {
                     cr.embed(|ce| {

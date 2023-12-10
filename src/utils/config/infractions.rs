@@ -14,8 +14,7 @@ pub async fn add_infraction(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -50,8 +49,7 @@ pub async fn dismiss_infraction(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -101,8 +99,7 @@ pub async fn list_infractions(server_id: String, id: u64) -> Option<u64> {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
 
         return None;
     }

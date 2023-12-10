@@ -51,8 +51,7 @@ pub async fn clean(ctx: Context<'_>) -> Result<(), Error> {
         log_this(LogData {
             importance: LogImportance::Info,
             message: "Log folder does not exist, unable to delete".to_string(),
-        })
-        .await;
+        });
 
         ctx.send(|cr| {
             cr.embed(|ce| {

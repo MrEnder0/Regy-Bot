@@ -30,8 +30,7 @@ pub async fn read_config() -> Config {
                     "Unable to read config file because of the following error:\n{}",
                     e
                 ),
-            })
-            .await;
+            });
 
             std::process::exit(0);
         }
@@ -71,8 +70,7 @@ pub async fn delete_user(server_id: String, id: u64) {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
     }
 
     // Checks if user is on infraction list and removes them if they are

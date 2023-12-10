@@ -70,8 +70,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
             log_this(LogData {
                 importance: LogImportance::Error,
                 message: "Update has failed, bot will return to normal operation.".to_string(),
-            })
-            .await;
+            });
 
             Ok(())
         }
@@ -92,7 +91,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
             log_this(LogData {
                 importance: LogImportance::Warning,
                 message: "Update has been successful, but a update helper was not found, please restart the bot manually to finish the update.".to_string(),
-            }).await;
+            });
 
             Ok(())
         }
@@ -117,8 +116,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: "Update has been successful, bot will restart.".to_string(),
-            })
-            .await;
+            });
 
             std::process::Command::new("regy_bot_update_helper.exe")
                 .spawn()
@@ -142,7 +140,7 @@ pub async fn update(ctx: Context<'_>) -> Result<(), Error> {
             log_this(LogData {
                 importance: LogImportance::Error,
                 message: "Update has finished with an unknown outcome, bot will return to normal operation and ignore the update and its possible lingering side-effects.".to_string(),
-            }).await;
+            });
 
             Ok(())
         }

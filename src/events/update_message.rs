@@ -130,8 +130,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
                     log_this(LogData {
                         importance: LogImportance::Warning,
                         message: format!("Unable to get infractions for user {}", author.id),
-                    })
-                    .await;
+                    });
 
                     return;
                 }
@@ -219,7 +218,7 @@ pub async fn update_message_event(ctx: &serenity::Context, event: &MessageUpdate
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: format!("{} Has edited a message a message which no longer is not allowed due to the set regex patterns", author.id),
-            }).await;
+            });
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);

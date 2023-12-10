@@ -14,7 +14,7 @@ use crate::{
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-/// Gets stats about the bot
+/// Gets stats about the bot and host system
 #[poise::command(slash_command, ephemeral = true)]
 pub async fn dev_stats(ctx: Context<'_>) -> Result<(), Error> {
     let server_id = ctx.guild_id().unwrap().to_string();

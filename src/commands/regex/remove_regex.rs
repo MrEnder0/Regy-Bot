@@ -104,8 +104,7 @@ pub async fn remove_regex(
                 log_this(LogData {
                     importance: LogImportance::Warning,
                     message: format!("Unable to get regex phrases for server {}", server_id),
-                })
-                .await;
+                });
 
                 ctx.send(|cr| {
                     cr.embed(|ce| {

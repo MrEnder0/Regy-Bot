@@ -37,16 +37,14 @@ pub async fn gen_config() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "Config file has been generated.".to_string(),
-    })
-    .await;
+    });
 }
 
 pub async fn clean_config() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "Running startup config cleanup.".to_string(),
-    })
-    .await;
+    });
 
     let mut data = read_config().await;
 
@@ -76,8 +74,7 @@ pub async fn clean_config() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "Finished startup config cleanup.".to_string(),
-    })
-    .await;
+    });
 }
 
 pub async fn gen_server(guid_id: String, log_channel_id: u64) {
@@ -110,6 +107,5 @@ pub async fn gen_server(guid_id: String, log_channel_id: u64) {
             "A server with the id {} has been added to the config file.",
             guid_id
         ),
-    })
-    .await;
+    });
 }

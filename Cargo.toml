@@ -1,19 +1,19 @@
 [package]
 name = "regy_bot"
-version = "1.18.0"
+version = "1.18.1"
 edition = "2021"
 default-run = "regy_bot"
 
 [dependencies]
 poise = "0.5.7"
-tokio = { version = "1.34.0", features = ["full"] }
+tokio = { version = "1.35.0", features = ["full"] }
 regex = "1.10.2"
 serde = { version = "1.0.193", features = ["derive"] }
 toml  = { version = "0.8.8", optional = true }
 base64 = "0.21.5"
 uuid = { version = "1.6.1", features = ["v4", "serde", "fast-rng"] }
 owo-colors = "3.5.0"
-scorched = "0.3.2"
+scorched = "0.4.1"
 ron = "0.8.1"
 reqwest = { version = "0.11.22", features = ["blocking"] }
 fuzzy-matcher = "0.3.7"

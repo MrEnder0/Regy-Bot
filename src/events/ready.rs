@@ -109,9 +109,7 @@ pub async fn ready_event(data_about_bot: &Ready, ctx: &serenity::Context) {
 
             let result = TcpStream::connect("discord.com:443");
             match result {
-                Ok(_) => {
-
-                }
+                Ok(_) => {}
                 Err(_) => {
                     log_this(LogData {
                         importance: LogImportance::Error,

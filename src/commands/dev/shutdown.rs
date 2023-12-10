@@ -56,8 +56,7 @@ pub async fn shutdown(ctx: Context<'_>) -> Result<(), Error> {
     log_this(LogData {
         importance: LogImportance::Info,
         message: format!("Shutdown from dev commands sent from {}", ctx.author().id),
-    })
-    .await;
+    });
 
     ctx.send(|cr| cr.embed(|ce| ce.title("Shutting down...")))
         .await

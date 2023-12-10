@@ -44,8 +44,7 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
             "{} Has sent a message which breaks an auto-mod rule.",
             user.id
         ),
-    })
-    .await;
+    });
 
     let log_channel = ChannelId(
         read_config()
@@ -92,8 +91,8 @@ pub async fn automod_execution_event(ctx: &serenity::Context, execution: &Action
                 log_this(LogData {
                     importance: LogImportance::Warning,
                     message: format!("Unable to get infractions for user {}", user.id),
-                })
-                .await;
+                });
+
                 return;
             }
         };

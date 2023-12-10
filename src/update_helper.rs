@@ -3,16 +3,14 @@ mod utils;
 use scorched::*;
 use std::{path::Path, process::Command, time::Duration};
 
-pub const VERSION: &str = "1.4.5";
+pub const VERSION: &str = "1.5.0";
 
-#[tokio::main]
-async fn main() {
+fn main() {
     // Waits for Regy to fully shutdown
     log_this(LogData {
         importance: LogImportance::Info,
         message: "[Update Helper] Waiting for Regy to fully shutdown.".to_string(),
-    })
-    .await;
+    });
 
     std::thread::sleep(Duration::from_millis(500));
 
@@ -23,8 +21,7 @@ async fn main() {
                     importance: LogImportance::Error,
                     message: "[Update Helper] Regy has failed to enter update state, shutting down update-helper."
                         .to_string(),
-                })
-                .await;
+                });
 
                 std::process::exit(0);
             }
@@ -36,8 +33,7 @@ async fn main() {
                     tries
                 )
                 .to_string(),
-            })
-            .await;
+            });
 
             std::thread::sleep(Duration::from_millis(1000));
         } else {
@@ -52,8 +48,7 @@ async fn main() {
             importance: LogImportance::Error,
             message: "[Update Helper] Updated Regy binary does not exist, shutting down."
                 .to_string(),
-        })
-        .await;
+        });
 
         std::process::exit(0);
     }
@@ -63,8 +58,7 @@ async fn main() {
             importance: LogImportance::Warning,
             message: "[Update Helper] Regy is not in update state, shutting down update-helper."
                 .to_string(),
-        })
-        .await;
+        });
 
         std::process::exit(0);
     }
@@ -72,8 +66,7 @@ async fn main() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "[Update Helper] Regy has finished updating, cleaning up.".to_string(),
-    })
-    .await;
+    });
 
     std::fs::remove_file("update.lock")
         .log_expect(LogImportance::Error, "Failed to remove update.lock file");
@@ -85,8 +78,7 @@ async fn main() {
                 importance: LogImportance::Error,
                 message: "[Update Helper] Updated Regy binary does not exist, shutting down all services."
                     .to_string(),
-            })
-            .await;
+            });
 
             std::process::exit(0);
         }
@@ -95,8 +87,7 @@ async fn main() {
             importance: LogImportance::Warning,
             message: "[Update Helper] Found update file after updating, everything else seems good, removing update binary."
                 .to_string(),
-        })
-        .await;
+        });
 
         std::fs::remove_file("regy_update.exe").log_expect(
             LogImportance::Error,
@@ -111,8 +102,7 @@ async fn main() {
     log_this(LogData {
         importance: LogImportance::Info,
         message: "[Update Helper] Update helper has finished, closing update helper.".to_string(),
-    })
-    .await;
+    });
 
     std::process::exit(0);
 }

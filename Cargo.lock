@@ -1485,7 +1485,7 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 
 [[package]]
 name = "regy_bot"
-version = "1.18.0"
+version = "1.18.1"
 dependencies = [
  "base64 0.21.5",
  "fuzzy-matcher",
@@ -1689,9 +1689,9 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "scorched"
-version = "0.3.2"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec3294dc898d231ae41023e9c8fe32a859bb0fb9ef8d3d8357de1987cfdd3fcb"
+checksum = "731338b2e1940cf57ca0e7e889528be81a1995436cae88f8993b782740d27182"
 dependencies = [
  "chrono",
  "owo-colors",
@@ -2079,9 +2079,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.34.0"
+version = "1.35.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0c014766411e834f7af5b8f4cf46257aab4036ca95e9d2c144a10f59ad6f5b9"
+checksum = "841d45b238a16291a4e1584e61820b8ae57d696cc5015c459c229ccc6990cc1c"
 dependencies = [
  "backtrace",
  "bytes",
