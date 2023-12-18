@@ -19,7 +19,7 @@ reqwest = { version = "0.11.22", features = ["blocking"] }
 fuzzy-matcher = "0.3.7"
 rand = "0.8.5"
 md5 = "0.7.0"
-screenshots = { version = "0.8.5", optional = true }
+screenshots = { version = "0.8.6", optional = true }
 
 [target.'cfg(target_os = "windows")'.dependencies]
 self-replace = "1.3.7"
