@@ -53,14 +53,19 @@ CRC is a cache generated during runtime that contains compiled regex phrases, th
 
 ### When building
 
-1. Clone the repository and open up the main branch or develop branch, note that the develop branch may have in progress features and will be more
-prone to bugs.
+1. Clone the repository and open up the main branch or develop branch, note that the develop branch may have work in progress features and is more
+prone to bugs or unfinished features.
 2. Build using cargo like so: `cargo build --release`
-3. Run the executable in `target/release/regy_bot.exe`
-4. The bot will generate a template config file in the same directory as the executable and then exit
-5. Configure the bot using the config file under the global options and add your bot token
-6. Re-run the executable and the bot should start up and be ready to use
 
 ### When using
 
-* The bot has to be set up in each server before it can be used to its full potential with `/config_setup <channel>` the channel will be the designated channel for the bot to log messages and infractions in
+> [!IMPORTANT]  
+> Make sure you create a bot application and have the token at hand if you are going to self host the bot
+
+1. Run the executable in `target/release/regy_bot.exe`
+2. The bot will generate a template config file in the same directory as the executable and then exit
+3. Configure the bot using the config file under the global options and add your bot token
+4. Re-run the executable and the bot should start up and be ready to use
+
+> [!IMPORTANT]  
+> The bot has to be set up in each server before it can be used to its full potential with `/config_setup <channel>` the channel will be the designated channel for the bot to log messages and infractions in
