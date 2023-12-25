@@ -15,7 +15,7 @@ uuid = { version = "1.6.1", features = ["v4", "serde", "fast-rng"] }
 owo-colors = "3.5.0"
 scorched = "0.3.2"
 ron = "0.8.1"
-reqwest = { version = "0.11.22", features = ["blocking"] }
+reqwest = { version = "0.11.23", features = ["blocking"] }
 fuzzy-matcher = "0.3.7"
 rand = "0.8.5"
 md5 = "0.7.0"
