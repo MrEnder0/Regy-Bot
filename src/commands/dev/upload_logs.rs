@@ -100,7 +100,7 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
 
     if std::path::Path::new("logs.zip").exists() {
         let log_archive = std::fs::read_to_string("logs.zip")
-                .log_expect(LogImportance::Warning, "Unable to read log file");
+            .log_expect(LogImportance::Warning, "Unable to read log file");
 
         ctx.channel_id()
             .send_files(ctx, vec![(log_archive.as_bytes(), "logs.zip")], |m| {
