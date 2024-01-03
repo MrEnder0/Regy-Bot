@@ -21,8 +21,7 @@ pub async fn update_config() {
                 log_this(LogData {
                     importance: LogImportance::Info,
                     message: "Legacy Toml config found, updating to ron config format.".to_string(),
-                })
-                .await;
+                });
 
                 std::fs::rename("config.toml", "config.toml.bak").unwrap();
 
@@ -99,8 +98,7 @@ pub async fn update_config() {
                 log_this(LogData {
                     importance: LogImportance::Error,
                     message: "Config file not found, generating default.".to_string(),
-                })
-                .await;
+                });
                 gen_config().await;
 
                 std::process::exit(0);
@@ -116,15 +114,13 @@ pub async fn update_config() {
                 log_this(LogData {
                     importance: LogImportance::Error,
                     message: "Legacy Toml config found, please compile with the toml-updating feature to convert toml to ron config format.".to_string(),
-                })
-                .await;
+                });
             }
 
             log_this(LogData {
                 importance: LogImportance::Error,
                 message: "Ron config file not found, generating default.".to_string(),
-            })
-            .await;
+            });
             gen_config().await;
 
             std::process::exit(0);
@@ -156,8 +152,7 @@ pub async fn update_rti_regexes(server_id: String) {
                             "Unable to update found RTI object with the description '{}'.",
                             phrase.description
                         ),
-                    })
-                    .await;
+                    });
                 }
             }
         }

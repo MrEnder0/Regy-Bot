@@ -79,8 +79,7 @@ pub async fn reaction_add_event(ctx: &serenity::Context, add_reaction: &serenity
             log_this(LogData {
                 importance: LogImportance::Info,
                 message: format!("{} Has dismissed a report", reaction_clone.user_id.unwrap()),
-            })
-            .await;
+            });
 
             dismiss_infraction(server_id, user_id.parse::<u64>().unwrap()).await;
 

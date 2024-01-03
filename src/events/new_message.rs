@@ -139,8 +139,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                             "Unable to get infractions for user {}",
                             new_message.author.id
                         ),
-                    })
-                    .await;
+                    });
 
                     return;
                 }
@@ -243,8 +242,7 @@ pub async fn new_message_event(ctx: &serenity::Context, new_message: &serenity::
                     "{} Has sent a message which is not allowed due to the set regex patterns",
                     new_message.author.id
                 ),
-            })
-            .await;
+            });
 
             let mut embed = CreateEmbed::default();
             embed.color(0xFFA500);

@@ -73,8 +73,7 @@ pub async fn capture_screen(ctx: Context<'_>) -> Result<(), Error> {
             ctx.author().name,
             ctx.guild_id().unwrap().0
         ),
-    })
-    .await;
+    });
 
     Ok(())
 }

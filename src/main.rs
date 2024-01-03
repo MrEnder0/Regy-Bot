@@ -3,9 +3,9 @@ mod events;
 mod utils;
 
 use poise::{serenity_prelude as serenity, Event};
+use scorched::set_logging_path;
 use std::path::Path;
-use utils::config::read_config;
-use utils::config::{management::gen_config, updating::update_config};
+use utils::config::{management::gen_config, read_config, updating::update_config};
 
 use crate::events::*;
 use crate::utils::crc::*;
@@ -15,6 +15,9 @@ pub struct Data {}
 
 #[tokio::main]
 async fn main() {
+    // Sets logging path
+    set_logging_path("temp/logs/");
+
     // Check for config file
     if !Path::new("config.ron").exists() {
         if Path::new("config.toml").exists() {

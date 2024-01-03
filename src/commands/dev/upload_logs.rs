@@ -34,11 +34,11 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    if !std::path::Path::new("logs").exists() {
+    if !std::path::Path::new("temp/logs").exists() {
         ctx.send(|cr| {
             cr.embed(|ce| {
                 ce.title("Log upload failed")
-                    .description("There currently is no log folder.")
+                    .description("There is not a log folder currently.")
                     .color(0x8B0000)
             })
         })
@@ -48,11 +48,11 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
         return Ok(());
     }
 
-    if std::fs::read_dir("logs").unwrap().count() == 0 {
+    if std::fs::read_dir("temp/logs").unwrap().count() == 0 {
         ctx.send(|cr| {
             cr.embed(|ce| {
                 ce.title("Log upload failed")
-                    .description("There currently are no log files in the log dir.")
+                    .description("There are no logs in the log folder.")
                     .color(0x8B0000)
             })
         })
@@ -77,6 +77,47 @@ pub async fn upload_logs(ctx: Context<'_>) -> Result<(), Error> {
             })
             .await
             .log_expect(LogImportance::Warning, "Unable to upload log file");
+    }
+
+    if std::path::Path::new("temp/logs/update_helper").exists() {
+        for file in std::fs::read_dir("temp/logs/update_helper").unwrap() {
+            if !file.as_ref().unwrap().path().ends_with(".log") {
+                continue;
+            }
+
+            let log_file = std::fs::read_to_string(file.unwrap().path())
+                .log_expect(LogImportance::Warning, "Unable to read log file");
+            let file_name = log_file.split(' ').collect::<Vec<&str>>()[0];
+
+            ctx.channel_id()
+                .send_files(ctx, vec![(log_file.as_bytes(), "logs.log")], |m| {
+                    m.content(format!("Logs for update_helper {}:", file_name))
+                })
+                .await
+                .log_expect(LogImportance::Warning, "Unable to upload log file");
+        }
+    }
+
+    if std::path::Path::new("logs.zip").exists() {
+        let log_archive = std::fs::read_to_string("logs.zip")
+            .log_expect(LogImportance::Warning, "Unable to read log file");
+
+        ctx.channel_id()
+            .send_files(ctx, vec![(log_archive.as_bytes(), "logs.zip")], |m| {
+                m.content("Logs archive:")
+            })
+            .await
+            .log_expect(LogImportance::Warning, "Unable to upload log archive");
+
+        ctx.send(|cr| {
+            cr.embed(|ce| {
+                ce.title("Uploaded log archive")
+                    .description("Found and uploaded log archive")
+                    .color(0x8B0000)
+            })
+        })
+        .await
+        .log_expect(LogImportance::Warning, "Unable to send message");
     }
 
     Ok(())

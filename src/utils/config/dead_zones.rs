@@ -17,8 +17,7 @@ pub async fn list_dead_zones(server_id: String) -> Option<Vec<u64>> {
                 "A server with the id '{}' does not exist or does not have any dead zones.",
                 server_id
             ),
-        })
-        .await;
+        });
 
         return None;
     }
@@ -35,8 +34,7 @@ pub async fn is_dead_zone(server_id: String, channel_id: u64) -> bool {
                 "A server with the id '{}' does not exist or does not have any dead zones.",
                 server_id
             ),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -55,8 +53,7 @@ pub async fn add_dead_zone(server_id: String, channel_id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -96,8 +93,7 @@ pub async fn remove_dead_zone(server_id: String, channel_id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id {} does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }

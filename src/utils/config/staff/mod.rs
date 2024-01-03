@@ -17,8 +17,7 @@ pub async fn add_staff_role(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id '{}' does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -58,8 +57,7 @@ pub async fn remove_staff_role(server_id: String, id: u64) -> bool {
         log_this(LogData {
             importance: LogImportance::Warning,
             message: format!("A server with the id '{}' does not exist.", server_id),
-        })
-        .await;
+        });
 
         return false;
     }
@@ -102,8 +100,7 @@ pub async fn list_staff_roles(server_id: String) -> Option<Vec<u64>> {
                 "A server with the id '{}' does not exist or does not have any staff roles.",
                 server_id
             ),
-        })
-        .await;
+        });
 
         return None;
     }

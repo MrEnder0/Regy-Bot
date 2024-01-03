@@ -32,8 +32,7 @@ pub async fn download_rti() {
             log_this(LogData {
                 importance: LogImportance::Warning,
                 message: format!("Unable to download RTI packages file:\n{}", e),
-            })
-            .await;
+            });
             return;
         }
     };
@@ -59,8 +58,7 @@ pub async fn read_rti() -> RtiPackages {
             log_this(LogData {
                 importance: LogImportance::Warning,
                 message: format!("Unable to read rti packages file, will attempt to re-download download RTI packages file in the case of corruption:\n{}", e),
-            })
-            .await;
+            });
 
             download_rti().await;
 
@@ -74,8 +72,7 @@ pub async fn read_rti() -> RtiPackages {
                     log_this(LogData {
                         importance: LogImportance::Error,
                         message: format!("Failed to re-download and read RTI packages file with the following error:\n{}", e),
-                    })
-                    .await;
+                    });
 
                     return RtiPackages {
                         meta: MetaData { version: 0 },
