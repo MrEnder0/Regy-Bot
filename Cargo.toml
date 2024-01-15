@@ -5,7 +5,7 @@ edition = "2021"
 default-run = "regy_bot"
 
 [dependencies]
-poise = "0.5.7"
+poise = "0.6.1"
 tokio = { version = "1.35.1", features = ["full"] }
 regex = "1.10.2"
 serde = { version = "1.0.194", features = ["derive"] }
