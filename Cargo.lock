@@ -1696,9 +1696,9 @@ dependencies = [
 
 [[package]]
 name = "screenshots"
-version = "0.8.6"
+version = "0.8.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f768f63babe43992cef597264d1a745b4a1a51eb2e070a298e64c0ab5af0e6e"
+checksum = "038df8746dbf7d8b70715d638470db956794e0f3d08608e4197f4053c2da1620"
 dependencies = [
  "anyhow",
  "core-graphics 0.22.3",
