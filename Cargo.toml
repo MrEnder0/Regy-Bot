@@ -9,7 +9,7 @@ poise = "0.5.7"
 tokio = { version = "1.35.1", features = ["full"] }
 regex = "1.10.2"
 serde = { version = "1.0.194", features = ["derive"] }
-toml  = { version = "0.8.8", optional = true }
+toml  = { version = "0.8.19", optional = true }
 base64 = "0.21.5"
 uuid = { version = "1.6.1", features = ["v4", "serde", "fast-rng"] }
 scorched = "0.4.5"
