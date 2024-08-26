@@ -6,7 +6,7 @@ default-run = "regy_bot"
 
 [dependencies]
 poise = "0.5.7"
-tokio = { version = "1.35.1", features = ["full"] }
+tokio = { version = "1.39.3", features = ["full"] }
 regex = "1.10.2"
 serde = { version = "1.0.194", features = ["derive"] }
 toml  = { version = "0.8.8", optional = true }
