@@ -37,7 +37,7 @@
 
 ### IPM
 
-IPM is a system that allows the bot to detect raids and automatically ban the raiders. It works by scanning messages, whenever it moderates a user it will add a tally for the server which resets every minute. If the tally reaches a certain threshold it will sent a ping (alert) to the staff inside the logging channel notifying them of a possible raid so that they can take appropriate action based on the situation.
+IPM is a system that allows Regy to detect raids and automatically ban the raiders. It works by scanning messages, whenever it moderates a user it will add a tally for the server which resets every minute. If the server tally passes a certain threshold it will sent a alert (ping) to the staff inside the logging channel notifying them of a possible raid so that they can take appropriate action based on the situation.
 
 ### RTI
 
@@ -45,7 +45,7 @@ RTI is a index of community made regex templates that can be used to moderate yo
 
 ### CRC
 
-CRC is a cache generated during runtime that contains compiled regex phrases, this is a optimization regy uses to speed up its message scanning.
+CRC is a cache generated during runtime that contains compiled regex phrases, this is a optimization Regy uses to speed up its message scanning.
 
 ## Quick-Start
 
@@ -71,4 +71,4 @@ prone to bugs or unfinished features.
 4. Re-run the executable and the bot should start up and be ready to use
 
 > [!IMPORTANT]  
-> The bot has to be set up in each server before it can be used to its full potential with `/config_setup <channel>` the channel will be the designated channel for the bot to log messages and infractions in
+> The bot has to be set up in each server before it can be used to its full potential with `/config_setup <channel>` the channel will be the designated channel for the bot to log messages and infractions in, this is required for all logging.
