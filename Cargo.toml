@@ -11,7 +11,7 @@ regex = "1.10.3"
 serde = { version = "1.0.197", features = ["derive"] }
 toml  = { version = "0.8.10", optional = true }
 base64 = "0.22.0"
-uuid = { version = "1.7.0", features = ["v4", "serde", "fast-rng"] }
+uuid = { version = "1.13.1", features = ["v4", "serde", "fast-rng"] }
 scorched = "0.5.2"
 ron = "0.8.1"
 reqwest = { version = "0.11.24", features = ["blocking"] }
