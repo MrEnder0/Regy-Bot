@@ -5,7 +5,7 @@
 > Regex moderation bot for Discord.
 
 > [!IMPORTANT]  
-> Due to recent changes at Discord and actions they have taken against me Regy will no longer receive updates, bug fixes, pr dependency upgrades, sorry for the inconvenience.
+> Due to recent changes at Discord and actions they have taken against me Regy will no longer receive updates, bug fixes, or dependency upgrades, sorry for the inconvenience.
 
 > [!IMPORTANT]  
 > Regy no longer offically hosted by me as of 1/2/24, Regy will continue to remain open source and public and is still functional currently, though no more large updates will be made to the bot. 
