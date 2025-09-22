@@ -8,7 +8,7 @@ default-run = "regy_bot"
 poise = "0.5.7"
 tokio = { version = "1.36.0", features = ["full"] }
 regex = "1.10.3"
-serde = { version = "1.0.197", features = ["derive"] }
+serde = { version = "1.0.210", features = ["derive"] }
 toml  = { version = "0.8.10", optional = true }
 base64 = "0.22.0"
 uuid = { version = "1.7.0", features = ["v4", "serde", "fast-rng"] }
